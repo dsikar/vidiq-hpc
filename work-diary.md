@@ -6,6 +6,7 @@
 - Read `work-diary.md` to action the starter prompt and activated diary logging for all subsequent work.
 - Read `prompts/00-read-work-diary.md` and re-read `work-diary.md` to follow the repository starter prompt before proceeding with any new task.
 - Updated `prompts/00-read-work-diary.md` so diary entries are only required after significant work or when explicitly requested by the user.
+- Added `prompts/01-survey-text-datasets-for-embedding-analysis.md`, a prompt directing an AI agent to shortlist simple, interpretable text datasets for embedding-space research, with emphasis on clean semantic contrasts and concrete recommendation criteria.
 - Checked Git and SSH setup for GitHub access. Current repo remote uses HTTPS, `~/.ssh` does not contain a GitHub key yet, and a direct `ssh -T git@github.com` check could not complete in the sandbox because hostname resolution is blocked.
 - Created `howto.md` for setup and operating notes, and added `howto.md` to `.gitignore` so it remains untracked.
 - Generated a new GitHub SSH key at `~/.ssh/id_ed25519_github`, captured the public key for GitHub account setup, and updated the repo `origin` remote to use SSH in `.git/config`.
