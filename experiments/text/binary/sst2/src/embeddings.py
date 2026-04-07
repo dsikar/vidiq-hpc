@@ -5,6 +5,7 @@ from typing import Any
 
 import numpy as np
 import torch
+from tqdm.auto import tqdm
 from transformers import AutoModel, AutoTokenizer
 
 from io_utils import ensure_dir, slugify, write_json
@@ -48,9 +49,15 @@ def embed_texts(
     outputs = []
     truncation_count = 0
     token_lengths = []
+    batch_starts = range(0, len(texts), batch_size)
 
     with torch.no_grad():
-        for start in range(0, len(texts), batch_size):
+        for start in tqdm(
+            batch_starts,
+            desc=f"Embedding {model_name}",
+            unit="batch",
+            total=(len(texts) + batch_size - 1) // batch_size,
+        ):
             batch = texts[start : start + batch_size]
             encoded = tokenizer(
                 batch,
@@ -111,4 +118,3 @@ def save_embedding_variants(
         "centered_l2": str(centered_l2_path),
         "metadata": str(metadata_path),
     }
-
