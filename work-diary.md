@@ -19,3 +19,11 @@
 - Retried the transfer with direct `scp -P 2000` to `adhp543@localhost:~/.ssh/`. The copy still failed with the same authentication error before any files could be written remotely.
 - Created `~/.ssh/config` with a `github.com` host entry that forces Git to use `~/.ssh/id_ed25519_github` via `IdentitiesOnly yes`.
 - Added `reports/gemini-text-dataset-report.md`, a survey report on text datasets for embedding-space analysis, and prepared it for publishing to GitHub.
+- Added `reports/openai-text-dataset-report.md` and prepared the new report plus the diary update for publishing to GitHub.
+
+## 2026-04-07
+
+- Reviewed the local literature set in `/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq/lit-survey/gemini` using the extracted summary report in `/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq/reports/title-abstract-conclusion.md`.
+- Verified that the extraction report covers all 82 PDFs in the local literature folder and used it as the basis for a full pass over the set.
+- Synthesized model-selection guidance for sentence embeddings, including model-family choice, pooling strategy, normalization strategy, and validation metrics for embedding geometry experiments.
+- Added `reports/text-embedding-model-and-validation-guide.md` as a reusable prompt-context document for later implementation and analysis work in `vidiq-hpc`.
