@@ -3,3 +3,4 @@ howto.md
 __pycache__/
 *.pyc
 experiments/text/*/*/artifacts/embeddings/*.npy
+experiments/text/*/*/artifacts/logs/mplconfig/

@@ -1,0 +1,77 @@
+{
+  "centered_l2": {
+    "embedding_variant": "centered_l2",
+    "nonlinear_projection_method": "tsne",
+    "pca_class_centroids": {
+      "negative": [
+        0.22315578162670135,
+        -0.010893906466662884
+      ],
+      "positive": [
+        -0.21511423587799072,
+        0.010501326061785221
+      ]
+    },
+    "pca_explained_variance_ratio": [
+      0.07927628606557846,
+      0.032642100006341934
+    ],
+    "run_name": "run-103-bge-base-en-v1-5-centered-l2-meanpool",
+    "sentiment_axis_stats": {
+      "negative_mean": -0.22237452864646912,
+      "negative_std": 0.17463257908821106,
+      "positive_mean": 0.2207963764667511,
+      "positive_std": 0.16452187299728394
+    }
+  },
+  "l2": {
+    "embedding_variant": "l2",
+    "nonlinear_projection_method": "tsne",
+    "pca_class_centroids": {
+      "negative": [
+        0.14941926300525665,
+        -0.006904725916683674
+      ],
+      "positive": [
+        -0.14403465390205383,
+        0.00665593147277832
+      ]
+    },
+    "pca_explained_variance_ratio": [
+      0.0796518549323082,
+      0.032318126410245895
+    ],
+    "run_name": "run-102-bge-base-en-v1-5-l2-meanpool",
+    "sentiment_axis_stats": {
+      "negative_mean": -0.13361339271068573,
+      "negative_std": 0.11944592744112015,
+      "positive_mean": 0.16320854425430298,
+      "positive_std": 0.10874542593955994
+    }
+  },
+  "raw": {
+    "embedding_variant": "raw",
+    "nonlinear_projection_method": "tsne",
+    "pca_class_centroids": {
+      "negative": [
+        2.308462619781494,
+        -0.10074857622385025
+      ],
+      "positive": [
+        -2.2252726554870605,
+        0.09711841493844986
+      ]
+    },
+    "pca_explained_variance_ratio": [
+      0.08010756224393845,
+      0.0323559008538723
+    ],
+    "run_name": "run-101-bge-base-en-v1-5-raw-meanpool",
+    "sentiment_axis_stats": {
+      "negative_mean": -2.2498836517333984,
+      "negative_std": 1.860472559928894,
+      "positive_mean": 2.3356411457061768,
+      "positive_std": 1.678467869758606
+    }
+  }
+}

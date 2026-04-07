@@ -1,0 +1,36 @@
+{
+  "cluster": {
+    "silhouette": 0.04675483703613281
+  },
+  "geometry": {
+    "avg_inter_class_distance": 1.0705015783736465,
+    "avg_intra_class_distance": 0.9743677994253439,
+    "centroid_cosine_distance": 1.9973945617675781,
+    "centroid_euclidean_distance": 0.4431709051132202,
+    "intra_to_inter_ratio": 0.9101974430580912
+  },
+  "knn": {
+    "1": {
+      "accuracy": 0.8256880733944955,
+      "macro_f1": 0.8251582946390882
+    },
+    "5": {
+      "accuracy": 0.8635321100917431,
+      "macro_f1": 0.8631345006100175
+    }
+  },
+  "logistic_regression": {
+    "accuracy": 0.8830275229357798,
+    "macro_f1": 0.8827555297777543
+  },
+  "pca": {
+    "explained_variance_ratio": [
+      0.07927632331848145,
+      0.0326421856880188,
+      0.02911769226193428,
+      0.02477990835905075,
+      0.020779184997081757
+    ],
+    "top_component_ratio": 0.07927632331848145
+  }
+}
