@@ -28,3 +28,5 @@
 - Synthesized model-selection guidance for sentence embeddings, including model-family choice, pooling strategy, normalization strategy, and validation metrics for embedding geometry experiments.
 - Added `reports/binary-emotion-dataset-experiment-report.md` as a reusable prompt-context document for later implementation and analysis work in `vidiq-hpc`.
 - Reviewed current SST-2 dataset information from public online sources and updated `reports/binary-emotion-dataset-experiment-report.md` with SST-2-specific guidance on splits, preprocessing, sequence length, validation priorities, baselines, and dataset-specific risks.
+- Reviewed the existing OpenAI and Gemini dataset survey reports to select a multiclass follow-up dataset.
+- Chose `dair-ai/emotion` as the recommended next multiclass dataset and added `reports/multiclass-emotion-dataset-experiment-report.md` with dataset-specific guidance on model choice, embedding construction, multiclass validation metrics, confusion analysis, class-imbalance handling, and recommended baselines.
