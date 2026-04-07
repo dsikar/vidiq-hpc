@@ -120,6 +120,65 @@ Decision:
   - L2-normalized mean pooled embeddings
   - mean-centered plus L2-normalized embeddings
 
+## BGE Ablation Outcome
+
+The second stage has now been completed on the full SST-2 train split and the full SST-2 validation split.
+
+Embedding variants compared:
+
+- raw mean pooled
+- L2-normalized mean pooled
+- mean-centered plus L2-normalized mean pooled
+
+Quantitative evaluation rule:
+
+- all metrics were computed on the original `768`-dimensional embeddings
+- no dimensionality reduction was used for the actual metric calculations
+
+Visualization rule:
+
+- PCA and nonlinear projections were used only for inspection
+- reduced-dimensional plots were not used to rank the embedding variants
+
+Observed results:
+
+- `raw`
+  - logistic regression macro F1: `0.8874`
+  - kNN@1 accuracy: `0.8417`
+  - kNN@5 accuracy: `0.8670`
+  - silhouette: `0.0468`
+  - intra / inter distance ratio: `0.9099`
+- `l2`
+  - logistic regression macro F1: `0.8829`
+  - kNN@1 accuracy: `0.8475`
+  - kNN@5 accuracy: `0.8658`
+  - silhouette: `0.0468`
+  - intra / inter distance ratio: `0.9100`
+- `centered_l2`
+  - logistic regression macro F1: `0.8828`
+  - kNN@1 accuracy: `0.8257`
+  - kNN@5 accuracy: `0.8635`
+  - silhouette: `0.0468`
+  - intra / inter distance ratio: `0.9102`
+
+Interpretation:
+
+- `raw` was the best overall variant
+- `l2` was very close, but slightly weaker on the main probe result and `k = 5` neighborhood quality
+- `centered_l2` did not help on SST-2 and reduced `k = 1` neighborhood quality noticeably
+
+Decision:
+
+- use `BAAI/bge-base-en-v1.5` with raw mean pooling as the current default SST-2 embedding representation
+- keep the L2 and centered-L2 variants saved for analysis and later robustness checks
+
+Visual interpretation:
+
+- the validation-set plots show a strong primary polarity axis under PCA for all three variants
+- the positive and negative classes are separable but not cleanly split into two fully disjoint clusters
+- the sentiment-axis histograms still overlap, which is consistent with the non-trivial classification error rate
+- the nonlinear inspection plots were generated with `t-SNE` in this environment as a fallback because UMAP encountered environment-specific caching issues
+
 ## Original Broader Use Case
 
 The broader use case still includes sentence-level embeddings for clean text datasets such as:
@@ -137,7 +196,7 @@ Do not use raw hidden states from a generative decoder LLM as the main baseline 
 
 The current production choice for SST-2 should be:
 
-- `BAAI/bge-base-en-v1.5`
+- `BAAI/bge-base-en-v1.5` with raw mean pooling
 
 Strong alternative:
 
@@ -283,6 +342,11 @@ Reason:
 - normalized vectors are easier to compare with cosine and Euclidean-on-unit-sphere analyses
 - storing all three avoids recomputation and makes ablation easier
 
+Current SST-2-specific conclusion:
+
+- raw mean pooled embeddings are the current default for this dataset
+- normalized variants are still worth saving, but they are not the first-choice representation for the current binary experiment
+
 ### Suggested Saved Outputs
 
 For each dataset split, save:
@@ -345,23 +409,27 @@ For SST-2, also log:
 
 ### Phase 3: Geometry Validation
 
-Run all validation on both:
+Run validation on all saved variants:
 
+- raw mean pooled embeddings
 - L2-normalized embeddings
 - mean-centered + L2-normalized embeddings
 
-This comparison is important because geometry improvements may come from post-processing rather than the encoder alone.
+Current SST-2 result:
 
-For SST-2, the main question is:
+- this comparison has been completed
+- raw mean pooled embeddings are the best current choice
+
+For SST-2, the main question remains:
 
 - does the embedding space exhibit a stable positive / negative polarity separation without relying only on a supervised classifier
 
 ### Phase 4: Comparative Baselines
 
-After the first selected-model ablations are stable:
+After the selected-model ablations:
 
-- compare the three BGE embedding variants first
-- then compare the chosen BGE setup against the stored `all-mpnet-base-v2` model-selection result
+- compare the chosen BGE setup against the stored `all-mpnet-base-v2` model-selection result
+- add `TF-IDF + logistic regression` as the first lexical baseline
 - only then add a decoder-LLM hidden-state baseline if still needed
 
 ## Core Validation Metrics
