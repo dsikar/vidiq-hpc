@@ -21,6 +21,12 @@
 - Added `reports/gemini-text-dataset-report.md`, a survey report on text datasets for embedding-space analysis, and prepared it for publishing to GitHub.
 - Added `reports/openai-text-dataset-report.md` and prepared the new report plus the diary update for publishing to GitHub.
 
+## 2026-04-11
+
+- Read the 11 April meeting transcript from `meetings/2026-04-11_transcript_llm-embedding-geometry_sentiment-experiments_neurips.docx`.
+- Created `meetings/2026-04-11_minutes_llm-embedding-geometry_sentiment-experiments_neurips.md` with full meeting minutes, discussion notes, and action points for both Pritish and Daniel through to the 4 May NeurIPS deadline.
+- Created `experiments/text/multiclass/dair-ai-emotion/reports/next-experiments-plan.md` defining five new experiment stages: (1) inter-centroid Euclidean distance matrix in 768D, (2) cross-model validation of the belt-density pattern, (3) fine-tuned classifier with logit-geometry correlation analysis, (4) improved stacked overlap bar charts, (5) multi-panel pairwise scatter plot figure.
+
 ## 2026-04-07
 
 - Reviewed the local literature set in `/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq/lit-survey/gemini` using the extracted summary report in `/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq/reports/title-abstract-conclusion.md`.
