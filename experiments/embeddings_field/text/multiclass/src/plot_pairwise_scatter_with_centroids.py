@@ -6,28 +6,28 @@ import os
 from itertools import combinations
 from pathlib import Path
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import numpy as np
-
-
 BASE_DIR = Path(__file__).resolve().parents[1]
 PAIRWISE_ROOT_DEFAULT = BASE_DIR / "pairwise"
 PLOTS_CONFIG = PAIRWISE_ROOT_DEFAULT / "mplconfig"
 PLOTS_CONFIG.mkdir(parents=True, exist_ok=True)
 os.environ.setdefault("MPLCONFIGDIR", str(PLOTS_CONFIG))
 
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
+
 VIDIQ_ROOT = Path(__file__).resolve().parents[5]
 DEFAULT_DATA_ROOT = VIDIQ_ROOT / "experiments" / "text" / "multiclass" / "dair-ai-emotion"
 DEFAULT_EMBEDDINGS_NAME = "dair_ai_emotion_train_bge-base-en-v1-5_raw.npy"
 DEFAULT_LABELS_REL = Path("data") / "processed" / "train" / "labels.npy"
 CONFIG_PATH = DEFAULT_DATA_ROOT / "configs" / "bge-ablation-stage.json"
+DEFAULT_LABEL_NAMES = ["sadness", "joy", "love", "anger", "fear", "surprise"]
 
 
 def load_label_names() -> list[str]:
     if not CONFIG_PATH.exists():
-        return []
+        return DEFAULT_LABEL_NAMES
     with CONFIG_PATH.open("r", encoding="utf-8") as fh:
         data = json.load(fh)
     return data.get("dataset", {}).get("label_names", [])
@@ -46,6 +46,73 @@ def project_pca(points: np.ndarray, n_components: int = 2) -> tuple[np.ndarray, 
     components = vh[:n_components].T
     coords = centered @ components
     return coords, centroid, components
+
+
+def density_belt_radii(distances: np.ndarray, bins: int = 80, drop_ratio: float = 0.1) -> tuple[float, float]:
+    if len(distances) == 0:
+        return 0.0, 0.0
+    hist, edges = np.histogram(distances, bins=bins)
+    widths = np.diff(edges)
+    widths = np.where(widths <= 0, 1e-6, widths)
+    density_per_unit = hist / widths
+    peak_idx = int(np.argmax(density_per_unit)) if density_per_unit.size else 0
+    peak_radius = float((edges[peak_idx] + edges[peak_idx + 1]) / 2)
+    threshold = density_per_unit[peak_idx] * drop_ratio
+    drop_idx = peak_idx
+    for idx in range(peak_idx, len(density_per_unit)):
+        if density_per_unit[idx] <= threshold:
+            drop_idx = idx
+            break
+    drop_radius = float((edges[drop_idx] + edges[drop_idx + 1]) / 2)
+    return peak_radius, drop_radius
+
+
+def sample_overlap_angles(coords: np.ndarray, centroid: np.ndarray, max_angles: int = 6) -> np.ndarray:
+    if len(coords) == 0:
+        return np.array([])
+    vectors = coords - centroid
+    angles = np.arctan2(vectors[:, 1], vectors[:, 0])
+    angles = np.sort(angles)
+    if len(angles) <= max_angles:
+        return angles
+    indices = np.linspace(0, len(angles) - 1, max_angles, dtype=int)
+    return angles[indices]
+
+
+def plot_overlap_arcs(
+    ax: matplotlib.axes.Axes,
+    centroid: np.ndarray,
+    radius: float,
+    angles: np.ndarray,
+    color: str,
+    linestyle: str,
+    label: str | None = None,
+    arc_width: float = np.pi / 18,
+) -> None:
+    if radius <= 0 or len(angles) == 0:
+        return
+    for idx, angle in enumerate(angles):
+        theta = np.linspace(angle - arc_width, angle + arc_width, 64)
+        x = centroid[0] + radius * np.cos(theta)
+        y = centroid[1] + radius * np.sin(theta)
+        plot_kwargs = dict(color=color, linestyle=linestyle, linewidth=1.4)
+        if label and idx == 0:
+            plot_kwargs["label"] = label
+        else:
+            plot_kwargs["alpha"] = 0.8
+        ax.plot(x, y, **plot_kwargs)
+
+
+def compute_plot_scale(coords: np.ndarray, centroid: np.ndarray, distances: np.ndarray) -> float:
+    if len(coords) == 0 or len(distances) == 0:
+        return 1.0
+    plot_dists = np.linalg.norm(coords - centroid, axis=1)
+    auto = np.where(distances <= 0, 1e-6, distances)
+    ratios = plot_dists / auto
+    ratios = ratios[np.isfinite(ratios)]
+    if ratios.size == 0:
+        return 1.0
+    return float(np.median(ratios))
 
 
 def ensure_pair_dirs(path: Path) -> Path:
@@ -79,14 +146,33 @@ def scatter_pair(
     # determine overlap per point
     a_centroid = class_centroids[a]
     b_centroid = class_centroids[b]
-    distances_a = np.linalg.norm(subset_embeddings[subset_labels == a] - embeddings[labels == a].mean(axis=0), axis=1)
-    distances_a_to_b = np.linalg.norm(subset_embeddings[subset_labels == a] - embeddings[labels == b].mean(axis=0), axis=1)
-    distances_b = np.linalg.norm(subset_embeddings[subset_labels == b] - embeddings[labels == b].mean(axis=0), axis=1)
-    distances_b_to_a = np.linalg.norm(subset_embeddings[subset_labels == b] - embeddings[labels == a].mean(axis=0), axis=1)
+    a_mask = subset_labels == a
+    b_mask = subset_labels == b
+    distances_a = np.linalg.norm(subset_embeddings[a_mask] - embeddings[labels == a].mean(axis=0), axis=1)
+    distances_a_to_b = np.linalg.norm(subset_embeddings[a_mask] - embeddings[labels == b].mean(axis=0), axis=1)
+    distances_b = np.linalg.norm(subset_embeddings[b_mask] - embeddings[labels == b].mean(axis=0), axis=1)
+    distances_b_to_a = np.linalg.norm(subset_embeddings[b_mask] - embeddings[labels == a].mean(axis=0), axis=1)
 
     overlap_mask = np.zeros(len(subset_labels), dtype=bool)
     overlap_mask[subset_labels == a] = distances_a_to_b < distances_a
     overlap_mask[subset_labels == b] = distances_b_to_a < distances_b
+
+    a_peak_radius, a_drop_radius = density_belt_radii(distances_a)
+    b_peak_radius, b_drop_radius = density_belt_radii(distances_b)
+    a_coords = coords[a_mask]
+    b_coords = coords[b_mask]
+    a_scale = compute_plot_scale(a_coords, a_centroid, distances_a)
+    b_scale = compute_plot_scale(b_coords, b_centroid, distances_b)
+    a_peak_plot = a_peak_radius * a_scale
+    a_drop_plot = a_drop_radius * a_scale
+    b_peak_plot = b_peak_radius * b_scale
+    b_drop_plot = b_drop_radius * b_scale
+    a_overlap_angles = sample_overlap_angles(coords[a_mask & overlap_mask], a_centroid)
+    if len(a_overlap_angles) == 0:
+        a_overlap_angles = sample_overlap_angles(a_coords, a_centroid)
+    b_overlap_angles = sample_overlap_angles(coords[b_mask & overlap_mask], b_centroid)
+    if len(b_overlap_angles) == 0:
+        b_overlap_angles = sample_overlap_angles(b_coords, b_centroid)
 
     fig, ax = plt.subplots(figsize=(8, 6))
     colors = ["#246eb5", "#f79d65"]
@@ -132,6 +218,43 @@ def scatter_pair(
         edgecolors="k",
         linewidth=1.2,
         label=f"{label_names[b]} centroid",
+    )
+
+    plot_overlap_arcs(
+        ax,
+        a_centroid,
+        a_peak_plot,
+        a_overlap_angles,
+        color=colors[0],
+        linestyle="-",
+        label=f"{label_names[a]} belt peak",
+    )
+    plot_overlap_arcs(
+        ax,
+        a_centroid,
+        a_drop_plot,
+        a_overlap_angles,
+        color=colors[0],
+        linestyle="--",
+        label=None,
+    )
+    plot_overlap_arcs(
+        ax,
+        b_centroid,
+        b_peak_plot,
+        b_overlap_angles,
+        color=colors[1],
+        linestyle="-",
+        label=f"{label_names[b]} belt peak",
+    )
+    plot_overlap_arcs(
+        ax,
+        b_centroid,
+        b_drop_plot,
+        b_overlap_angles,
+        color=colors[1],
+        linestyle="--",
+        label=None,
     )
 
     ax.set_title(f"{label_names[a]} vs {label_names[b]} scatter")
