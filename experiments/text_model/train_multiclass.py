@@ -268,7 +268,7 @@ def main() -> None:
         shuffle=False,
         collate_fn=collate_fn,
     )
-    model = EmotionEmbeddingClassifier(str(args.model_path), num_labels=5, freeze_backbone=args.freeze_backbone)
+    model = EmotionEmbeddingClassifier(str(args.model_path), num_labels=6, freeze_backbone=args.freeze_backbone)
     device = torch.device(args.device)
     model.to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
