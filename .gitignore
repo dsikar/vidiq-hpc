@@ -5,3 +5,4 @@ __pycache__/
 experiments/text/*/*/artifacts/embeddings/*.npy
 experiments/text/multiclass/dair-ai-emotion/artifacts/embeddings/*.npy
 experiments/text/*/*/artifacts/logs/mplconfig/
+outputs/
