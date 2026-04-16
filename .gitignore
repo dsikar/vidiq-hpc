@@ -7,3 +7,4 @@ experiments/text/multiclass/dair-ai-emotion/artifacts/embeddings/*.npy
 experiments/text/*/*/artifacts/logs/mplconfig/
 outputs/
 experiments/text_model/runs/
+meetings/*_minutes*.docx
