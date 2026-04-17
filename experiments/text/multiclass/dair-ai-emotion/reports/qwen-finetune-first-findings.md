@@ -74,9 +74,24 @@ For repo structure, the correct approach is:
 
 This avoids large-file duplication while making the fine-tuned stage visible alongside the BGE-stage work.
 
+## Plot Output
+
+The dataset-level plotting stage writes publication-facing outputs under:
+
+- `experiments/text/multiclass/dair-ai-emotion/artifacts/plots/qwen-finetune-10e/`
+
+That directory now contains:
+
+- `train-loss-vs-epoch.png`
+- `eval-accuracy-vs-epoch.png`
+- `eval-embeddings-pca-2d.png`
+- `eval-embeddings-tsne-2d.png`
+- `centroid-distance-heatmap.png`
+- `projection-summary.json`
+
 ## Immediate Next Steps
 
-1. Add dataset-level plots for this run under `artifacts/plots/`.
+1. Inspect the generated Phase 2 plots for this run under `artifacts/plots/qwen-finetune-10e/`.
 2. Inspect the saved embeddings and centroids to determine whether fine-tuning tightened class structure.
 3. Add a logit-geometry analysis step before making any claim about geometry improvement.
 4. Keep the earlier BGE stage as the geometry-first baseline until those comparisons are complete.

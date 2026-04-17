@@ -1,0 +1,39 @@
+{
+  "bridge_run": "run-201-qwen3-1-7b-finetune-10e",
+  "evaluation": {
+    "accuracy": 0.9804358593363051,
+    "dataset_size": 4038,
+    "embedding_dimensionality": 2048,
+    "label_caveat": "The Qwen stage uses happiness while the earlier BGE materials use joy.",
+    "label_names": [
+      "anger",
+      "fear",
+      "happiness",
+      "love",
+      "sadness",
+      "surprise"
+    ]
+  },
+  "plotting": {
+    "centroid_distance_metric": "cosine",
+    "generated_files": [
+      "train-loss-vs-epoch.png",
+      "eval-accuracy-vs-epoch.png",
+      "eval-embeddings-pca-2d.png",
+      "eval-embeddings-tsne-2d.png",
+      "centroid-distance-heatmap.png"
+    ],
+    "nonlinear_projection_method": "tsne",
+    "pca_explained_variance_ratio": [
+      0.3445777893066406,
+      0.1531752645969391
+    ]
+  },
+  "source_files": {
+    "centroids": "/home/daniel/git/vidiq/vidiq-hpc/experiments/text_model/runs/tmqb0010_17763/analysis/centroids.json",
+    "eval_embeddings": "/home/daniel/git/vidiq/vidiq-hpc/experiments/text_model/runs/tmqb0010_17763/analysis/eval_embeddings.npy",
+    "eval_metrics": "/home/daniel/git/vidiq/vidiq-hpc/experiments/text_model/runs/tmqb0010_17763/analysis/eval_metrics.json",
+    "train_metrics": "/home/daniel/git/vidiq/vidiq-hpc/experiments/text_model/runs/tmqb0010_17763/train_metrics.json"
+  },
+  "source_run_id": "tmqb0010_17763"
+}
