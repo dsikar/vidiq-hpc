@@ -1,0 +1,62 @@
+{
+  "label_names": [
+    "anger",
+    "fear",
+    "happiness",
+    "love",
+    "sadness",
+    "surprise"
+  ],
+  "margin_summary": {
+    "cosine_logit_margin_spearman": {
+      "spearman_p": 5.021225236296514e-220,
+      "spearman_r": 0.4690164024832031
+    },
+    "euclidean_logit_margin_spearman": {
+      "spearman_p": 3.1438455570090104e-126,
+      "spearman_r": 0.36328169387253456
+    }
+  },
+  "mean_spearman_p": {
+    "cosine": 0.16353818895420613,
+    "euclidean": 0.15571390738422303
+  },
+  "mean_spearman_r": {
+    "cosine": 0.715913111158282,
+    "euclidean": 0.7189414844689734
+  },
+  "per_class_mean_spearman_p": {
+    "anger": 0.0277526067952122,
+    "fear": 0.011049016847239829,
+    "happiness": 0.3008540497922794,
+    "love": 0.19526884105372141,
+    "sadness": 0.08545800319703341,
+    "surprise": 0.3139009266198519
+  },
+  "per_class_mean_spearman_r": {
+    "anger": 0.8807047336022077,
+    "fear": 0.9306304393971557,
+    "happiness": 0.5193377202292507,
+    "love": 0.6286987900658035,
+    "sadness": 0.8053916365952027,
+    "surprise": 0.5488855869242201
+  },
+  "primary_metric": "euclidean",
+  "secondary_metric": "cosine",
+  "secondary_per_class_mean_spearman_p": {
+    "anger": 0.05001948544223459,
+    "fear": 0.015706254142497558,
+    "happiness": 0.22402703182737746,
+    "love": 0.10107477505967356,
+    "sadness": 0.0255931796620155,
+    "surprise": 0.5648084075914382
+  },
+  "secondary_per_class_mean_spearman_r": {
+    "anger": 0.8306092124814266,
+    "fear": 0.9170452133305033,
+    "happiness": 0.5953300785395882,
+    "love": 0.7504563786881767,
+    "sadness": 0.9003184037359373,
+    "surprise": 0.30171938017406075
+  }
+}

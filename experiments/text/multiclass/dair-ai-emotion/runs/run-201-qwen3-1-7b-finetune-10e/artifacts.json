@@ -1,0 +1,15 @@
+{
+  "source_run_root": "../../../../../text_model/runs/tmqb0010_17763",
+  "train_metrics": "../../../../../text_model/runs/tmqb0010_17763/train_metrics.json",
+  "run_metadata": "../../../../../text_model/runs/tmqb0010_17763/run_metadata.json",
+  "analysis": {
+    "centroids": "../../../../../text_model/runs/tmqb0010_17763/analysis/centroids.json",
+    "eval_embeddings": "../../../../../text_model/runs/tmqb0010_17763/analysis/eval_embeddings.npy",
+    "eval_logits": "../../../../../text_model/runs/tmqb0010_17763/analysis/eval_logits.npy",
+    "eval_metrics": "../../../../../text_model/runs/tmqb0010_17763/analysis/eval_metrics.json"
+  },
+  "notes": {
+    "large_arrays_not_duplicated": true,
+    "model_and_tokenizer_remain_only_under_text_model_run": true
+  }
+}
