@@ -16,16 +16,22 @@
 # Environment
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export CUDA_VISIBLE_DEVICES=0
+export HF_HOME="${HF_HOME:-/users/aczd097/sharedscratch/huggingface}"
+export HF_HUB_CACHE="${HF_HUB_CACHE:-${HF_HOME}/hub}"
+export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-${HF_HOME}/transformers}"
+MODEL_REF="${MODEL_REF:?Set MODEL_REF to a Hugging Face model id or local checkpoint path.}"
 source /users/aczd097/sharedscratch/venvs/main/bin/activate
 
 # Start
 start=$(date +%s)
 mkdir -p outputs
 echo "Job started at $(date)"
+echo "Model ref: ${MODEL_REF}"
+echo "HF_HOME: ${HF_HOME}"
 
 python experiments/text_model/train_multiclass.py \
     --data-root experiments/text/multiclass/dair-ai-emotion \
-    --model-path models/qwen3-1.7B \
+    --model-path "${MODEL_REF}" \
     --run-root experiments/text_model/runs \
     --run-name "${SLURM_JOB_NAME}_${SLURM_JOB_ID}" \
     --batch-size 8 \
