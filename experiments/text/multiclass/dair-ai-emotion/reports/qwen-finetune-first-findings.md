@@ -35,7 +35,7 @@ The result is also narrower than the earlier BGE-stage findings:
 - this is not the same setup as the earlier BGE embedding-only validation stage
 - the number therefore should not be treated as directly comparable to the earlier BGE macro-F1 and clustering metrics
 
-In other words, this run establishes that the supervised Qwen stage works, but it does not yet show whether the fine-tuned geometry is better, tighter, or more interpretable than the earlier BGE baseline.
+In other words, this run establishes that the supervised Qwen stage works and that its logits are internally consistent with its exported embedding geometry, but it does not yet show whether the fine-tuned geometry is better, tighter, or more interpretable than the earlier BGE baseline.
 
 ## Label-Schema Caveat
 
@@ -89,9 +89,33 @@ That directory now contains:
 - `centroid-distance-heatmap.png`
 - `projection-summary.json`
 
+## Phase 3 Output
+
+The dataset-level logit-geometry stage now writes analytical outputs under:
+
+- `experiments/text/multiclass/dair-ai-emotion/artifacts/metrics/qwen-finetune-10e/`
+- `experiments/text/multiclass/dair-ai-emotion/artifacts/plots/qwen-finetune-10e/logit-geometry/`
+
+The main within-run signals are:
+
+- mean per-example rank agreement between logits and centroid proximity:
+  - Euclidean: `0.7189`
+  - cosine: `0.7159`
+- predicted class equals nearest centroid:
+  - Euclidean: `0.9941`
+  - cosine: `0.9926`
+- global true-class logit vs distance correlation:
+  - Euclidean: `-0.5802`
+  - cosine: `-0.5307`
+
+These numbers support a conservative claim of within-run geometry/logit coherence for the fine-tuned Qwen stage.
+
 ## Immediate Next Steps
 
-1. Inspect the generated Phase 2 plots for this run under `artifacts/plots/qwen-finetune-10e/`.
-2. Inspect the saved embeddings and centroids to determine whether fine-tuning tightened class structure.
-3. Add a logit-geometry analysis step before making any claim about geometry improvement.
-4. Keep the earlier BGE stage as the geometry-first baseline until those comparisons are complete.
+1. Inspect the generated Phase 3 plots under `artifacts/plots/qwen-finetune-10e/logit-geometry/` for class-specific disagreement patterns and outliers.
+2. Review `qwen-finetune-logit-geometry-findings.md` before making any stronger paper-facing claim.
+3. Keep the earlier BGE stage as the geometry-first baseline until cross-stage comparison is explicitly label-aligned.
+4. Treat any future Qwen run the same way:
+   - create a bridge run
+   - rerun Phase 2 plotting
+   - rerun Phase 3 logit-geometry analysis

@@ -55,7 +55,11 @@ Current interpretation:
 
 - BGE ablation stage remains the geometry-first baseline
 - Qwen fine-tuned stage is the supervised follow-on stage for logit/geometry analysis
-- further plotting and geometric comparison are still needed before claiming that fine-tuning improves class structure
+- Phase 3 within-run analysis now shows strong Qwen logit/geometry coherence:
+  - mean rank agreement is `0.7189` under Euclidean distance and `0.7159` under cosine
+  - predicted class matches the nearest centroid for `0.9941` of examples under Euclidean distance
+  - true-class logit vs true-centroid distance correlation is `-0.5802` under Euclidean distance
+- this supports a within-run coherence claim, but not a cross-stage superiority claim over the earlier BGE baseline
 
 ## Decision
 

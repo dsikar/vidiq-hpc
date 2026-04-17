@@ -93,6 +93,11 @@ It includes:
 - `run_metadata.json`
 - `train_metrics.json`
 
+Additional Qwen long-run results from the Hyperion `50e`, `100e`, `250e`, `500e`, and `1000e` jobs should be incorporated through the dataset-level bridge workflow documented in:
+
+- `experiments/text/multiclass/dair-ai-emotion/README.md`
+- `reports/qwen-finetune-phase3-implementation-report-codex.md`
+
 ## Image Dataset Survey Work
 
 The current image-extension planning material includes:

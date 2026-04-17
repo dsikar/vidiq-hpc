@@ -1,0 +1,196 @@
+{
+  "global": {
+    "outlier_count": 39,
+    "outlier_rate": 0.009658246656760773,
+    "true_class_logit_distance_correlation": {
+      "cosine": {
+        "spearman_p": 2.7268692575139564e-292,
+        "spearman_r": -0.530725894942484
+      },
+      "euclidean": {
+        "spearman_p": 0.0,
+        "spearman_r": -0.5802430209319167
+      }
+    }
+  },
+  "label_names": [
+    "anger",
+    "fear",
+    "happiness",
+    "love",
+    "sadness",
+    "surprise"
+  ],
+  "per_class": [
+    {
+      "count": 673,
+      "label": "anger",
+      "outlier_count": 1,
+      "outlier_rate": 0.0014858841010401188,
+      "prediction_matches_nearest_centroid": {
+        "cosine": 0.9940564635958395,
+        "euclidean": 0.9985141158989599
+      },
+      "secondary_spearman_p": 0.05001948544223459,
+      "secondary_spearman_r": 0.8306092124814266,
+      "spearman_p": 0.0277526067952122,
+      "spearman_r": 0.8807047336022077,
+      "true_class_logit_distance_correlation": {
+        "cosine": {
+          "spearman_p": 1.2789926853350675e-51,
+          "spearman_r": -0.5373690560699216
+        },
+        "euclidean": {
+          "spearman_p": 1.3652240522932948e-51,
+          "spearman_r": -0.5372407969982496
+        }
+      },
+      "true_label_is_nearest_centroid": {
+        "cosine": 0.9732540861812778,
+        "euclidean": 0.974739970282318
+      }
+    },
+    {
+      "count": 673,
+      "label": "fear",
+      "outlier_count": 7,
+      "outlier_rate": 0.010401188707280832,
+      "prediction_matches_nearest_centroid": {
+        "cosine": 0.9910846953937593,
+        "euclidean": 0.9895988112927192
+      },
+      "secondary_spearman_p": 0.015706254142497558,
+      "secondary_spearman_r": 0.9170452133305033,
+      "spearman_p": 0.011049016847239829,
+      "spearman_r": 0.9306304393971557,
+      "true_class_logit_distance_correlation": {
+        "cosine": {
+          "spearman_p": 9.895876926389444e-65,
+          "spearman_r": -0.5914280815290733
+        },
+        "euclidean": {
+          "spearman_p": 4.819154624898459e-76,
+          "spearman_r": -0.6310656210009155
+        }
+      },
+      "true_label_is_nearest_centroid": {
+        "cosine": 0.974739970282318,
+        "euclidean": 0.9717682020802377
+      }
+    },
+    {
+      "count": 673,
+      "label": "happiness",
+      "outlier_count": 3,
+      "outlier_rate": 0.004457652303120356,
+      "prediction_matches_nearest_centroid": {
+        "cosine": 0.9955423476968797,
+        "euclidean": 0.9955423476968797
+      },
+      "secondary_spearman_p": 0.22402703182737746,
+      "secondary_spearman_r": 0.5953300785395882,
+      "spearman_p": 0.3008540497922794,
+      "spearman_r": 0.5193377202292507,
+      "true_class_logit_distance_correlation": {
+        "cosine": {
+          "spearman_p": 4.9881497933495127e-64,
+          "spearman_r": -0.5887728354687275
+        },
+        "euclidean": {
+          "spearman_p": 1.2938629341731297e-77,
+          "spearman_r": -0.6361472407844007
+        }
+      },
+      "true_label_is_nearest_centroid": {
+        "cosine": 0.9955423476968797,
+        "euclidean": 0.9955423476968797
+      }
+    },
+    {
+      "count": 673,
+      "label": "love",
+      "outlier_count": 6,
+      "outlier_rate": 0.008915304606240713,
+      "prediction_matches_nearest_centroid": {
+        "cosine": 0.9970282317979198,
+        "euclidean": 0.9970282317979198
+      },
+      "secondary_spearman_p": 0.10107477505967356,
+      "secondary_spearman_r": 0.7504563786881767,
+      "spearman_p": 0.19526884105372141,
+      "spearman_r": 0.6286987900658035,
+      "true_class_logit_distance_correlation": {
+        "cosine": {
+          "spearman_p": 0.004832135358489099,
+          "spearman_r": -0.10850737253956913
+        },
+        "euclidean": {
+          "spearman_p": 4.167838583592335e-05,
+          "spearman_r": -0.15727353337444344
+        }
+      },
+      "true_label_is_nearest_centroid": {
+        "cosine": 0.9925705794947994,
+        "euclidean": 0.9925705794947994
+      }
+    },
+    {
+      "count": 673,
+      "label": "sadness",
+      "outlier_count": 8,
+      "outlier_rate": 0.01188707280832095,
+      "prediction_matches_nearest_centroid": {
+        "cosine": 0.9851411589895989,
+        "euclidean": 0.9881129271916791
+      },
+      "secondary_spearman_p": 0.0255931796620155,
+      "secondary_spearman_r": 0.9003184037359373,
+      "spearman_p": 0.08545800319703341,
+      "spearman_r": 0.8053916365952027,
+      "true_class_logit_distance_correlation": {
+        "cosine": {
+          "spearman_p": 9.83176588046338e-63,
+          "spearman_r": -0.5838138783716625
+        },
+        "euclidean": {
+          "spearman_p": 6.841595085732821e-71,
+          "spearman_r": -0.6137070603745134
+        }
+      },
+      "true_label_is_nearest_centroid": {
+        "cosine": 0.9554234769687965,
+        "euclidean": 0.9583952451708767
+      }
+    },
+    {
+      "count": 673,
+      "label": "surprise",
+      "outlier_count": 14,
+      "outlier_rate": 0.020802377414561663,
+      "prediction_matches_nearest_centroid": {
+        "cosine": 0.9925705794947994,
+        "euclidean": 0.9955423476968797
+      },
+      "secondary_spearman_p": 0.5648084075914382,
+      "secondary_spearman_r": 0.30171938017406075,
+      "spearman_p": 0.3139009266198519,
+      "spearman_r": 0.5488855869242201,
+      "true_class_logit_distance_correlation": {
+        "cosine": {
+          "spearman_p": 2.3806905503113395e-24,
+          "spearman_r": -0.3785026379324355
+        },
+        "euclidean": {
+          "spearman_p": 8.179030423956165e-37,
+          "spearman_r": -0.46156983434817306
+        }
+      },
+      "true_label_is_nearest_centroid": {
+        "cosine": 0.9836552748885586,
+        "euclidean": 0.9806835066864784
+      }
+    }
+  ],
+  "primary_metric": "euclidean",
+  "secondary_metric": "cosine"
+}

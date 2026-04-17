@@ -1,0 +1,171 @@
+{
+  "agreement_metrics": {
+    "mean_rank_agreement": {
+      "cosine": 0.715913111158282,
+      "euclidean": 0.7189414844689734
+    },
+    "prediction_matches_nearest_centroid_rate": {
+      "cosine": 0.9925705794947994,
+      "euclidean": 0.9940564635958395
+    },
+    "true_label_is_nearest_centroid_rate": {
+      "cosine": 0.9791976225854383,
+      "euclidean": 0.978949975235265
+    }
+  },
+  "bridge_run": "run-201-qwen3-1-7b-finetune-10e",
+  "distance_metrics": {
+    "global_true_class_logit_distance_correlation": {
+      "cosine": {
+        "spearman_p": 2.7268692575139564e-292,
+        "spearman_r": -0.530725894942484
+      },
+      "euclidean": {
+        "spearman_p": 0.0,
+        "spearman_r": -0.5802430209319167
+      }
+    },
+    "mean_margin_alignment": {
+      "cosine": {
+        "spearman_p": 5.021225236296514e-220,
+        "spearman_r": 0.4690164024832031
+      },
+      "euclidean": {
+        "spearman_p": 3.1438455570090104e-126,
+        "spearman_r": 0.36328169387253456
+      }
+    },
+    "phase2_centroid_heatmap_metric": "cosine",
+    "primary_metric": "euclidean",
+    "secondary_metric": "cosine"
+  },
+  "evaluation": {
+    "accuracy": 0.9804358593363051,
+    "dataset_provenance": {
+      "csv_path": "experiments/text/multiclass/dair-ai-emotion/data/raw/balanced_emotions_6classes.csv",
+      "csv_sha256": "8617528dc8504576aac4edc28e8594c1f61774b166d1dfc14514a38d7566d98b",
+      "eval_label_counts": [
+        673,
+        673,
+        673,
+        673,
+        673,
+        673
+      ],
+      "eval_text_sample_sha256": "794bf8fb4bebd17fe330953d13b10153e7bd8cbbb6abc1f0a8fc3cb430e2ea20",
+      "filtered_row_count": 20190,
+      "full_label_counts": [
+        3365,
+        3365,
+        3365,
+        3365,
+        3365,
+        3365
+      ]
+    },
+    "dataset_size": 4038,
+    "embedding_dimensionality": 2048,
+    "label_names": [
+      "anger",
+      "fear",
+      "happiness",
+      "love",
+      "sadness",
+      "surprise"
+    ],
+    "num_labels": 6,
+    "per_class_counts": {
+      "anger": 673,
+      "fear": 673,
+      "happiness": 673,
+      "love": 673,
+      "sadness": 673,
+      "surprise": 673
+    },
+    "validation": {
+      "expected_eval_label_counts": [
+        673,
+        673,
+        673,
+        673,
+        673,
+        673
+      ],
+      "observed_eval_label_counts": [
+        673,
+        673,
+        673,
+        673,
+        673,
+        673
+      ]
+    }
+  },
+  "generated_files": {
+    "metrics": [
+      "experiments/text/multiclass/dair-ai-emotion/artifacts/metrics/qwen-finetune-10e/logit-geometry-summary.json",
+      "experiments/text/multiclass/dair-ai-emotion/artifacts/metrics/qwen-finetune-10e/per-class-logit-distance-correlations.json",
+      "experiments/text/multiclass/dair-ai-emotion/artifacts/metrics/qwen-finetune-10e/nearest-centroid-vs-prediction.json",
+      "experiments/text/multiclass/dair-ai-emotion/artifacts/metrics/qwen-finetune-10e/distance-rank-agreement.json"
+    ],
+    "plots": [
+      "experiments/text/multiclass/dair-ai-emotion/artifacts/plots/qwen-finetune-10e/logit-geometry/true-class-logit-vs-distance.png",
+      "experiments/text/multiclass/dair-ai-emotion/artifacts/plots/qwen-finetune-10e/logit-geometry/predicted-class-logit-vs-distance.png",
+      "experiments/text/multiclass/dair-ai-emotion/artifacts/plots/qwen-finetune-10e/logit-geometry/distance-margin-vs-logit-margin.png",
+      "experiments/text/multiclass/dair-ai-emotion/artifacts/plots/qwen-finetune-10e/logit-geometry/rank-correlation-by-class.png",
+      "experiments/text/multiclass/dair-ai-emotion/artifacts/plots/qwen-finetune-10e/logit-geometry/nearest-centroid-confusion-heatmap.png"
+    ],
+    "report": "experiments/text/multiclass/dair-ai-emotion/reports/qwen-finetune-logit-geometry-findings.md"
+  },
+  "label_mapping": {
+    "id_to_label": {
+      "0": "anger",
+      "1": "fear",
+      "2": "happiness",
+      "3": "love",
+      "4": "sadness",
+      "5": "surprise"
+    },
+    "label_caveat": "The Qwen stage uses happiness while the earlier BGE materials use joy.",
+    "label_to_id": {
+      "anger": 0,
+      "fear": 1,
+      "happiness": 2,
+      "love": 3,
+      "sadness": 4,
+      "surprise": 5
+    }
+  },
+  "notes": {
+    "comparison_constraint": "This is a within-run Qwen analysis only. It does not justify direct superiority claims against the earlier BGE stage.",
+    "large_arrays_not_duplicated": true,
+    "outlier_policy": "predicted class differs from nearest centroid or per-example Spearman rank agreement is non-positive under the primary metric",
+    "phase2_metric_note": "Phase 2 used cosine distance for the centroid heatmap. Phase 3 uses Euclidean as primary and cosine as secondary."
+  },
+  "significance": {
+    "examples_with_p_lt_0_05_fraction": {
+      "cosine": 0.48959881129271915,
+      "euclidean": 0.4467558197127291
+    },
+    "global_true_class_logit_distance_p_value": {
+      "cosine": 2.7268692575139564e-292,
+      "euclidean": 0.0
+    },
+    "mean_rank_agreement_p_value": {
+      "cosine": 0.16353818895420613,
+      "euclidean": 0.15571390738422303
+    }
+  },
+  "source_files": {
+    "bridge_artifacts": "experiments/text/multiclass/dair-ai-emotion/runs/run-201-qwen3-1-7b-finetune-10e/artifacts.json",
+    "bridge_run_metadata": "experiments/text/multiclass/dair-ai-emotion/runs/run-201-qwen3-1-7b-finetune-10e/run-metadata.json",
+    "centroids": "experiments/text_model/runs/tmqb0010_17763/analysis/centroids.json",
+    "csv_path": "experiments/text/multiclass/dair-ai-emotion/data/raw/balanced_emotions_6classes.csv",
+    "eval_embeddings": "experiments/text_model/runs/tmqb0010_17763/analysis/eval_embeddings.npy",
+    "eval_logits": "experiments/text_model/runs/tmqb0010_17763/analysis/eval_logits.npy",
+    "eval_metrics": "experiments/text_model/runs/tmqb0010_17763/analysis/eval_metrics.json",
+    "source_run_metadata": "experiments/text_model/runs/tmqb0010_17763/run_metadata.json",
+    "train_metrics": "experiments/text_model/runs/tmqb0010_17763/train_metrics.json"
+  },
+  "source_run_id": "tmqb0010_17763"
+}
