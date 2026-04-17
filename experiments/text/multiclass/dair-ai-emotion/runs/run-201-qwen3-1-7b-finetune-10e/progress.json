@@ -1,0 +1,6 @@
+{
+  "completed_at_utc": "2026-04-17T20:54:49Z",
+  "source_run_id": "tmqb0010_17763",
+  "status": "completed",
+  "stage": "finetuned-classifier-bridge"
+}

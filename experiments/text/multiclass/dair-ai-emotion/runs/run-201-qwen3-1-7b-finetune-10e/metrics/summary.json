@@ -1,0 +1,23 @@
+{
+  "evaluation": {
+    "accuracy": 0.9804358593363051,
+    "dataset_size": 4038,
+    "split_note": "Held-out split from the balanced CSV workflow."
+  },
+  "training": {
+    "epochs_completed": 10,
+    "final_loss": 0.001302476738934478,
+    "final_eval_accuracy": 0.9804358593363051
+  },
+  "labels": {
+    "qwen_stage": [
+      "anger",
+      "fear",
+      "happiness",
+      "love",
+      "sadness",
+      "surprise"
+    ],
+    "bge_stage_note": "The earlier BGE multiclass reports use joy rather than happiness for the positive high-arousal class."
+  }
+}

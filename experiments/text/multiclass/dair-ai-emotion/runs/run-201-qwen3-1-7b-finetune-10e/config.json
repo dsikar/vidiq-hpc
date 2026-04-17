@@ -1,0 +1,39 @@
+{
+  "experiment_name": "dair-ai-emotion-qwen-finetune-stage",
+  "stage": "finetuned-classifier",
+  "source_run_id": "tmqb0010_17763",
+  "source_run_root": "../../../../../text_model/runs/tmqb0010_17763",
+  "dataset": {
+    "name": "dair-ai/emotion balanced csv variant",
+    "source_csv": "../../data/raw/balanced_emotions_6classes.csv",
+    "text_column": "cleaned_text",
+    "label_column": "emotion",
+    "labels": [
+      "anger",
+      "fear",
+      "happiness",
+      "love",
+      "sadness",
+      "surprise"
+    ],
+    "comparison_note": "The earlier BGE stage uses the label name joy rather than happiness. Cross-stage comparison must map or explain this mismatch explicitly."
+  },
+  "model": {
+    "name": "Qwen/Qwen3-1.7B",
+    "slug": "qwen3-1-7b",
+    "freeze_backbone": false
+  },
+  "training": {
+    "batch_size": 8,
+    "num_epochs": 10,
+    "learning_rate": 5e-05,
+    "max_length": 256,
+    "test_size": 0.2,
+    "seed": 42
+  },
+  "evaluation": {
+    "metric": "accuracy",
+    "dataset_size": 4038,
+    "split_note": "Held-out split from the balanced CSV workflow; not directly comparable to the earlier BGE validation setup."
+  }
+}

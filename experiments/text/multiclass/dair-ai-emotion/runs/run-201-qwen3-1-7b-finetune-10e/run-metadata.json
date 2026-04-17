@@ -1,0 +1,7 @@
+{
+  "config_path": "config.json",
+  "created_at_utc": "2026-04-17T20:54:49Z",
+  "experiment_name": "dair-ai-emotion-qwen-finetune-stage",
+  "source_run_id": "tmqb0010_17763",
+  "source_run_root": "../../../../../text_model/runs/tmqb0010_17763"
+}

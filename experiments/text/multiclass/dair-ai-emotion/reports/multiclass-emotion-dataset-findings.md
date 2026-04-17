@@ -36,6 +36,27 @@
 - centroid heatmaps confirm the pairwise distances listed in the summary
 - the overlaps are real (not just visualization artifacts), as the metrics were computed in the native 768D space
 
+## Fine-Tuned Qwen Stage
+
+- first supervised fine-tuning result now exists at `experiments/text_model/runs/tmqb0010_17763/`
+- integrated dataset-level bridge run: `experiments/text/multiclass/dair-ai-emotion/runs/run-201-qwen3-1-7b-finetune-10e/`
+- model: `Qwen/Qwen3-1.7B`
+- held-out balanced-CSV evaluation accuracy: `0.9804` on `4038` examples
+
+This result shows that the supervised classifier stage is operational and produces the expected embeddings, logits, centroids, and training metrics. It does **not** yet replace the earlier BGE-stage findings as the geometry baseline.
+
+Important caveats:
+
+- the Qwen run is evaluated on a held-out split from the balanced CSV workflow, not on the earlier BGE validation setup
+- the Qwen label schema uses `happiness`, while the earlier BGE-stage reports use `joy`
+- any cross-stage geometry comparison must therefore document the label mapping explicitly rather than assuming direct equivalence
+
+Current interpretation:
+
+- BGE ablation stage remains the geometry-first baseline
+- Qwen fine-tuned stage is the supervised follow-on stage for logit/geometry analysis
+- further plotting and geometric comparison are still needed before claiming that fine-tuning improves class structure
+
 ## Decision
 
 - keep `BAAI/bge-base-en-v1.5` raw mean pooling as the multiclass default
