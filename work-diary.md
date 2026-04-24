@@ -138,3 +138,4 @@
 - Created `prompts/09-audit-image-embedding-implementation.md` to instruct an agent to audit the Image Embedding framework, specifically focusing on the presence of training/evaluation logic and structured metrics storage.
 - Executed the audit (Prompt 09) and saved the findings to `reports/image-embedding-audit-report.md`.
 - Identified that the architecture, path handling, and logging are successfully aligned with the `kai-centroid-experiments` reference, but the training module (`training.py`) and classification evaluation logic are currently missing from the framework.
+- Modified `hpc/image_embedding_emoset.slurm` to use the `preemptgpu` partition and `a100_80g` GPU, following patterns found in `~/git/PyTorch-Scratch-Vision-Transformer-ViT`.
