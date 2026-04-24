@@ -82,6 +82,20 @@ class EmoSetDataset(Dataset):
                 indent=2,
             )
 
+    @staticmethod
+    def _detach_rgb_image(image: Image.Image) -> Image.Image:
+        converted = image.convert("RGB")
+        detached = converted.copy()
+        try:
+            image.close()
+        except Exception:
+            pass
+        try:
+            converted.close()
+        except Exception:
+            pass
+        return detached
+
     def _missing_data_message(self, hf_error: Exception | None = None) -> str:
         lines = [
             f"EmoSet staged metadata was not found at {self.annotation_file}.",
@@ -141,13 +155,14 @@ class EmoSetDataset(Dataset):
                 if isinstance(image, dict):
                     image_path = image.get("path")
                     if image_path:
-                        image = Image.open(image_path).convert("RGB")
+                        with Image.open(image_path) as image_file:
+                            image = image_file.convert("RGB").copy()
                     else:
                         raise RuntimeError("Hugging Face EmoSet row did not provide a usable image payload.")
                 else:
                     raise RuntimeError("Unsupported Hugging Face image payload type.")
             else:
-                image = image.convert("RGB")
+                image = self._detach_rgb_image(image)
 
             if "label" in row and isinstance(row["label"], int):
                 label = int(row["label"])
@@ -166,7 +181,8 @@ class EmoSetDataset(Dataset):
                 f"EmoSet staged image is missing: {img_path}. "
                 f"Check that `data_root` points at the correct staged dataset root."
             )
-        image = Image.open(img_path).convert("RGB")
+        with Image.open(img_path) as image_file:
+            image = image_file.convert("RGB").copy()
         label = self.label_to_id[row["emotion"]]
 
         if self.transform:

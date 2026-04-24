@@ -4,7 +4,7 @@
   "run_name": "emoset_phase1_clip",
   "backbone": "openai/clip-vit-base-patch32",
   "batch_size": 32,
-  "num_workers": 4,
+  "num_workers": 0,
   "image_size": 224,
   "device": "cuda",
   "hf_dataset_id": "Woleek/EmoSet-118K",

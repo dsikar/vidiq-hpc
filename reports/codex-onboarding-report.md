@@ -265,8 +265,8 @@ Image framework status:
   - summary metrics are present
   - plots are absent
   - `.npy` arrays are not committed
-- The image framework has code, config, and SLURM wiring, but no committed `experiments/image/` run outputs yet.
-- The image framework remains extraction-first. The audit report says supervised train/eval support is missing.
+- The image framework has code, config, SLURM wiring, and a newly added linear-probe evaluation path, but no committed `experiments/image/` run outputs yet.
+- The older audit report still says supervised train/eval support is missing. That is now only partly true: a minimal frozen-embedding evaluation path exists, but the Hyperion run and first committed outputs are still outstanding.
 - [experiments/text_model/README.md](/home/daniel/git/vidiq-hpc/experiments/text_model/README.md) still says `train_multiclass.py` is not present on the current `main` checkout, but the file does exist in this checkout. That README is historically valuable but not fully synchronized with the filesystem.
 - There are tracked `__pycache__` artifacts inside `experiments/text/multiclass/dair-ai-emotion/src/__pycache__/`, which are not meaningful source-of-truth files.
 
@@ -282,7 +282,36 @@ Image framework status:
 
 ## 8. Recommended Next Actions
 
-1. Reconcile the Qwen parity workflow with reality by either generating and committing the missing plot bundle or revising the README so it no longer implies those plots exist.
-2. Add supervised training/evaluation to the image framework, as already flagged in [reports/image-embedding-audit-report.md](/home/daniel/git/vidiq-hpc/reports/image-embedding-audit-report.md).
-3. Run and verify the staged EmoSet pipeline on Hyperion using the new archive/sharedscratch defaults, then commit the first `experiments/image/` outputs once stable.
-4. Clean up repo hygiene issues such as tracked `__pycache__` artifacts and any stale documentation drift.
+1. Qwen parity reconciliation. Status: partly done.
+   Completed:
+   - the Qwen parity workflow was re-surveyed against the actual filesystem
+   - the repo now has committed parity run directories, parity metadata, and the parity summary metric bundle
+   - the remaining mismatch was documented explicitly in this report
+   Remaining:
+   - either generate and commit the missing parity plot bundle or revise [experiments/text/multiclass/dair-ai-emotion/README.md](/home/daniel/git/vidiq-hpc/experiments/text/multiclass/dair-ai-emotion/README.md) so it no longer implies those plots exist
+
+2. Image supervised training/evaluation. Status: partly done.
+   Completed:
+   - a minimal supervised evaluation path was added via [src/image_experiments/training.py](/home/daniel/git/vidiq-hpc/src/image_experiments/training.py)
+   - [scripts/run_image_embeddings.py](/home/daniel/git/vidiq-hpc/scripts/run_image_embeddings.py) now writes classification metrics, a confusion matrix, training history, and a linear-probe checkpoint
+   - [configs/emoset_phase1.json](/home/daniel/git/vidiq-hpc/configs/emoset_phase1.json) was extended to drive the evaluation step
+   Remaining:
+   - run and verify that evaluation path on Hyperion
+   - decide whether the current linear-probe layer is sufficient, or whether a broader end-to-end image training framework is still required beyond what the audit originally asked for
+
+3. Hyperion EmoSet run verification. Status: partly done.
+   Completed:
+   - dataset staging was fixed to prefer `/users/aczd097/archive/vidiq-hpc/data/image/emoset`
+   - Hugging Face dataset fallback and cache support were added for `/users/aczd097/sharedscratch/huggingface/datasets`
+   - the image SLURM job and top-level config were updated to use those defaults
+   Remaining:
+   - complete a clean Hyperion run
+   - inspect the resulting `experiments/image/` output bundle
+   - commit the first stable `experiments/image/` outputs
+
+4. Repo hygiene cleanup. Status: partly done.
+   Completed:
+   - the main hygiene issues were identified and recorded in this report
+   Remaining:
+   - remove tracked `__pycache__` artifacts
+   - clean up stale documentation drift, especially where older READMEs no longer match the current checkout
