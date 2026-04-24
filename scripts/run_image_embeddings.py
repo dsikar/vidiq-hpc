@@ -7,6 +7,7 @@ import sys
 import time
 from pathlib import Path
 import torch
+import torch.multiprocessing as mp
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
@@ -74,7 +75,19 @@ def main() -> None:
         split=config.dataset_split,
         hf_cache_dir=config.hf_cache_dir,
     )
-    dataloader = DataLoader(dataset, batch_size=config.batch_size, num_workers=config.num_workers, shuffle=False)
+    if config.num_workers > 0:
+        try:
+            mp.set_sharing_strategy("file_system")
+            print("DATALOADER: using torch sharing strategy `file_system`")
+        except (AttributeError, RuntimeError) as exc:
+            print(f"DATALOADER: could not set sharing strategy: {exc}")
+
+    dataloader = DataLoader(
+        dataset,
+        batch_size=config.batch_size,
+        num_workers=config.num_workers,
+        shuffle=False,
+    )
 
     # 2. Embeddings
     embedder = ImageEmbedder(config.backbone, device=config.device)
