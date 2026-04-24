@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -D /users/aczd097/git/vidiq-hpc
-#SBATCH --job-name=ie_emo1
+#SBATCH --job-name=ie_emo1p
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=daniel.sikar@city.ac.uk
 #SBATCH --partition=preemptgpu
