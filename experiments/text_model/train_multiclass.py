@@ -116,6 +116,30 @@ class EmotionEmbeddingClassifier(nn.Module):
         return hidden, logits
 
 
+class PretrainedEmbeddingExtractor(nn.Module):
+    def __init__(self, backbone: str) -> None:
+        super().__init__()
+        self.transformer = AutoModelForCausalLM.from_pretrained(
+            backbone,
+            trust_remote_code=True,
+            output_hidden_states=True,
+        )
+
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        attention_mask: torch.Tensor,
+        token_type_ids: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        outputs = self.transformer(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            token_type_ids=token_type_ids,
+            return_dict=True,
+        )
+        return outputs.hidden_states[-1][:, -1, :].to(torch.float32)
+
+
 def load_texts_and_labels_from_jsonl(base_path: Path) -> tuple[list[str], np.ndarray, DatasetInfo]:
     texts_path = base_path / "texts.jsonl"
     if not texts_path.exists():
@@ -184,11 +208,28 @@ def load_texts_and_labels_from_csv(csv_path: Path) -> tuple[list[str], np.ndarra
     return texts, labels, dataset_info
 
 
-def load_texts_and_labels(data_root: Path | None, csv_path: Path | None) -> tuple[list[str], np.ndarray, DatasetInfo]:
+def resolve_processed_split_root(data_root: Path, data_split: str) -> Path:
+    direct_texts_path = data_root / "texts.jsonl"
+    if direct_texts_path.exists():
+        return data_root
+    split_root = data_root / "data" / "processed" / data_split
+    if (split_root / "texts.jsonl").exists():
+        return split_root
+    raise FileNotFoundError(
+        f"Could not resolve processed split '{data_split}' from {data_root}. "
+        f"Expected either {direct_texts_path} or {split_root / 'texts.jsonl'}."
+    )
+
+
+def load_texts_and_labels(
+    data_root: Path | None,
+    csv_path: Path | None,
+    data_split: str,
+) -> tuple[list[str], np.ndarray, DatasetInfo]:
     if csv_path is not None:
         return load_texts_and_labels_from_csv(csv_path)
     if data_root is not None:
-        return load_texts_and_labels_from_jsonl(data_root)
+        return load_texts_and_labels_from_jsonl(resolve_processed_split_root(data_root, data_split))
     raise ValueError("Either data_root or csv_path must be provided")
 
 
@@ -266,6 +307,43 @@ def evaluate(
     }
 
 
+def extract_embeddings(
+    model: PretrainedEmbeddingExtractor,
+    dataloader: DataLoader,
+    device: torch.device,
+) -> dict[str, object]:
+    model.eval()
+    all_embeddings: list[np.ndarray] = []
+    all_labels: list[int] = []
+    with torch.no_grad():
+        for batch in tqdm(dataloader, desc="extract", leave=False):
+            batch = {k: v.to(device) for k, v in batch.items()}
+            embeddings = model(
+                input_ids=batch["input_ids"],
+                attention_mask=batch["attention_mask"],
+                token_type_ids=batch.get("token_type_ids"),
+            )
+            all_embeddings.append(embeddings.detach().cpu().numpy())
+            all_labels.append(batch["labels"].cpu().numpy())
+    embeddings = np.concatenate(all_embeddings, axis=0)
+    labels = np.concatenate(all_labels, axis=0)
+    return {
+        "embeddings": embeddings,
+        "labels": labels,
+        "dataset_size": int(len(labels)),
+        "embedding_dim": int(embeddings.shape[1]) if embeddings.ndim == 2 else None,
+    }
+
+
+def _write_centroids(path: Path, embeddings: np.ndarray, labels: np.ndarray) -> None:
+    centroids = []
+    for cls in sorted(set(labels.tolist())):
+        centroid = np.mean(embeddings[labels == cls], axis=0)
+        centroids.append({"class": int(cls), "centroid": centroid.tolist()})
+    with path.open("w", encoding="utf-8") as fh:
+        json.dump(centroids, fh, indent=2)
+
+
 def save_evaluation_artifacts(run_config: RunConfig, eval_output: dict[str, object]) -> dict[str, object]:
     run_config.analysis_dir.mkdir(parents=True, exist_ok=True)
     np.save(run_config.embeddings_dir / "eval_embeddings.npy", eval_output["embeddings"])
@@ -276,12 +354,33 @@ def save_evaluation_artifacts(run_config: RunConfig, eval_output: dict[str, obje
     }
     with run_config.metrics_path.open("w", encoding="utf-8") as fh:
         json.dump(metrics, fh, indent=2)
-    centroids = []
-    for cls in sorted(set(eval_output["labels"])):
-        centroid = np.mean(eval_output["embeddings"][eval_output["labels"] == cls], axis=0)
-        centroids.append({"class": int(cls), "centroid": centroid.tolist()})
-    with run_config.centroid_path.open("w", encoding="utf-8") as fh:
-        json.dump(centroids, fh, indent=2)
+    _write_centroids(run_config.centroid_path, eval_output["embeddings"], eval_output["labels"])
+    return metrics
+
+
+def save_extraction_artifacts(
+    run_config: RunConfig,
+    extraction_output: dict[str, object],
+    *,
+    split_name: str,
+    model_path: str,
+) -> dict[str, object]:
+    run_config.analysis_dir.mkdir(parents=True, exist_ok=True)
+    embeddings_path = run_config.analysis_dir / f"{split_name}_embeddings.npy"
+    metrics_path = run_config.analysis_dir / f"{split_name}_metrics.json"
+    centroids_path = run_config.analysis_dir / f"{split_name}_centroids.json"
+    np.save(embeddings_path, extraction_output["embeddings"])
+    metrics = {
+        "dataset_size": int(extraction_output["dataset_size"]),
+        "embedding_dim": int(extraction_output["embedding_dim"]),
+        "source_split": split_name,
+        "model_name": model_path,
+        "mode": "extract-only",
+        "pretrained_only": True,
+    }
+    with metrics_path.open("w", encoding="utf-8") as fh:
+        json.dump(metrics, fh, indent=2)
+    _write_centroids(centroids_path, extraction_output["embeddings"], extraction_output["labels"])
     return metrics
 
 
@@ -342,28 +441,36 @@ def jsonable_args(args: argparse.Namespace) -> dict[str, object]:
 def save_run_metadata(run_config: RunConfig, args: argparse.Namespace, dataset_info: DatasetInfo) -> None:
     slurm_job_name = os.getenv("SLURM_JOB_NAME")
     slurm_job_id = os.getenv("SLURM_JOB_ID")
+    processed_split_root = None
+    if args.csv_path is None and args.data_root is not None:
+        processed_split_root = resolve_processed_split_root(args.data_root, args.data_split)
     metadata = {
         "run_name": run_config.root.name,
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "git_commit": try_get_git_commit(),
         "slurm_job_name": slurm_job_name,
         "slurm_job_id": slurm_job_id,
+        "mode": args.mode,
+        "fine_tuning_performed": args.mode == "train",
+        "pretrained_only": args.mode == "extract-only",
         "args": jsonable_args(args),
         "dataset": {
             "source_type": dataset_info.source_type,
             "source_path": str(dataset_info.source_path),
+            "processed_split_path": str(processed_split_root) if processed_split_root is not None else None,
+            "data_split": args.data_split if args.csv_path is None else None,
             "text_column": dataset_info.text_column,
             "label_column": dataset_info.label_column,
             "num_labels": len(dataset_info.label_to_id),
             "label_to_id": dataset_info.label_to_id,
         },
         "local_run_root": str(run_config.root),
-        "archive_run_root": str(run_config.archive_root),
+        "archive_run_root": str(run_config.archive_root) if args.mode == "train" else None,
         "analysis_dir": str(run_config.analysis_dir),
-        "model_symlink": str(run_config.model_dir),
-        "model_target": str(run_config.archive_model_dir),
-        "tokenizer_symlink": str(run_config.tokenizer_dir),
-        "tokenizer_target": str(run_config.archive_tokenizer_dir),
+        "model_symlink": str(run_config.model_dir) if args.mode == "train" else None,
+        "model_target": str(run_config.archive_model_dir) if args.mode == "train" else None,
+        "tokenizer_symlink": str(run_config.tokenizer_dir) if args.mode == "train" else None,
+        "tokenizer_target": str(run_config.archive_tokenizer_dir) if args.mode == "train" else None,
     }
     with run_config.run_metadata_path.open("w", encoding="utf-8") as fh:
         json.dump(metadata, fh, indent=2)
@@ -380,7 +487,9 @@ def get_default_run_name(args: argparse.Namespace) -> str:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train qwen3-based emotion classifier and log 768D embeddings.")
+    parser.add_argument("--mode", choices=("train", "extract-only"), default="train")
     parser.add_argument("--data-root", type=Path, default=None, help="Dataset root containing processed text/labels.")
+    parser.add_argument("--data-split", choices=("train", "validation"), default="train")
     parser.add_argument("--csv-path", type=Path, default=None, help="Raw CSV dataset path for direct training.")
     parser.add_argument(
         "--model-path",
@@ -414,57 +523,76 @@ def main() -> None:
     args.archive_root = args.archive_root.expanduser()
     if args.data_root is None and args.csv_path is None:
         raise ValueError("Pass either --data-root or --csv-path")
+    if args.mode == "extract-only" and args.csv_path is not None:
+        raise ValueError("extract-only mode currently supports processed dataset splits via --data-root, not --csv-path")
     set_seed(args.seed)
-    dataset_root = args.data_root / "data" / "processed" / "train" if args.data_root is not None else None
-    texts, labels, dataset_info = load_texts_and_labels(dataset_root, args.csv_path)
-    train_idx, test_idx = build_splits(labels, args.test_size, args.seed)
     tokenizer = AutoTokenizer.from_pretrained(args.model_path, trust_remote_code=True)
     collate_fn = collate_fn_builder(tokenizer, args.max_length)
-    train_texts = [texts[i] for i in train_idx]
-    train_labels = labels[train_idx]
-    test_texts = [texts[i] for i in test_idx]
-    test_labels = labels[test_idx]
-    train_loader = DataLoader(
-        EmotionTextDataset(train_texts, train_labels),
-        batch_size=args.batch_size,
-        shuffle=True,
-        collate_fn=collate_fn,
-    )
-    eval_loader = DataLoader(
-        EmotionTextDataset(test_texts, test_labels),
-        batch_size=args.batch_size,
-        shuffle=False,
-        collate_fn=collate_fn,
-    )
-    model = EmotionEmbeddingClassifier(
-        str(args.model_path),
-        num_labels=len(dataset_info.label_to_id),
-        freeze_backbone=args.freeze_backbone,
-    )
-    device = torch.device(args.device)
-    model.to(device)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
     run_name = args.run_name or get_default_run_name(args)
     run_config = create_run_config(args.run_root, args.archive_root, run_name)
-    metrics_history: list[dict[str, object]] = []
-    for epoch in range(1, args.num_epochs + 1):
-        loss = train_epoch(model, train_loader, optimizer, device)
-        eval_output = evaluate(model, eval_loader, device)
-        metrics_history.append({"epoch": epoch, "loss": loss, "accuracy": eval_output["accuracy"]})
-        print(f"Epoch {epoch}: loss={loss:.4f} acc={eval_output['accuracy']:.4f}")
-    with run_config.train_metrics_path.open("w", encoding="utf-8") as fh:
-        json.dump(metrics_history, fh, indent=2)
-    save_checkpoint(model, run_config)
-    final_eval = evaluate(model, eval_loader, device)
-    metrics = save_evaluation_artifacts(run_config, final_eval)
-    run_config.archive_tokenizer_dir.mkdir(parents=True, exist_ok=True)
-    tokenizer.save_pretrained(run_config.archive_tokenizer_dir)
-    create_directory_symlink(run_config.model_dir, run_config.archive_model_dir)
-    create_directory_symlink(run_config.tokenizer_dir, run_config.archive_tokenizer_dir)
+    device = torch.device(args.device)
+    if args.mode == "extract-only":
+        texts, labels, dataset_info = load_texts_and_labels(args.data_root, None, args.data_split)
+        extract_loader = DataLoader(
+            EmotionTextDataset(texts, labels),
+            batch_size=args.batch_size,
+            shuffle=False,
+            collate_fn=collate_fn,
+        )
+        model = PretrainedEmbeddingExtractor(str(args.model_path))
+        model.to(device)
+        extraction_output = extract_embeddings(model, extract_loader, device)
+        metrics = save_extraction_artifacts(
+            run_config,
+            extraction_output,
+            split_name=args.data_split,
+            model_path=str(args.model_path),
+        )
+    else:
+        texts, labels, dataset_info = load_texts_and_labels(args.data_root, args.csv_path, args.data_split)
+        train_idx, test_idx = build_splits(labels, args.test_size, args.seed)
+        train_texts = [texts[i] for i in train_idx]
+        train_labels = labels[train_idx]
+        test_texts = [texts[i] for i in test_idx]
+        test_labels = labels[test_idx]
+        train_loader = DataLoader(
+            EmotionTextDataset(train_texts, train_labels),
+            batch_size=args.batch_size,
+            shuffle=True,
+            collate_fn=collate_fn,
+        )
+        eval_loader = DataLoader(
+            EmotionTextDataset(test_texts, test_labels),
+            batch_size=args.batch_size,
+            shuffle=False,
+            collate_fn=collate_fn,
+        )
+        model = EmotionEmbeddingClassifier(
+            str(args.model_path),
+            num_labels=len(dataset_info.label_to_id),
+            freeze_backbone=args.freeze_backbone,
+        )
+        model.to(device)
+        optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
+        metrics_history: list[dict[str, object]] = []
+        for epoch in range(1, args.num_epochs + 1):
+            loss = train_epoch(model, train_loader, optimizer, device)
+            eval_output = evaluate(model, eval_loader, device)
+            metrics_history.append({"epoch": epoch, "loss": loss, "accuracy": eval_output["accuracy"]})
+            print(f"Epoch {epoch}: loss={loss:.4f} acc={eval_output['accuracy']:.4f}")
+        with run_config.train_metrics_path.open("w", encoding="utf-8") as fh:
+            json.dump(metrics_history, fh, indent=2)
+        save_checkpoint(model, run_config)
+        final_eval = evaluate(model, eval_loader, device)
+        metrics = save_evaluation_artifacts(run_config, final_eval)
+        run_config.archive_tokenizer_dir.mkdir(parents=True, exist_ok=True)
+        tokenizer.save_pretrained(run_config.archive_tokenizer_dir)
+        create_directory_symlink(run_config.model_dir, run_config.archive_model_dir)
+        create_directory_symlink(run_config.tokenizer_dir, run_config.archive_tokenizer_dir)
     save_run_metadata(run_config, args, dataset_info)
     print(
         f"Run completed. metrics={metrics}. local artifacts stored under {run_config.root}; "
-        f"archived model artifacts stored under {run_config.archive_root}"
+        f"archived model artifacts stored under {run_config.archive_root if args.mode == 'train' else 'not_applicable'}"
     )
 
 
