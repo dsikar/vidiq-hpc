@@ -176,3 +176,18 @@
   - appends all output to `tests.log`
 - The run was launched with `nohup ./tests.sh &` and is being monitored with `tail -f tests.log`.
 - This manual `gpu04` run is ongoing and is explicitly being used to jump the normal queue for immediate debugging feedback. The next review point is Saturday, 2026-04-25, after returning to the HPC results.
+
+## 2026-04-29
+
+- Created `meetings/2026-04-28_minutes_aimee.md` from the `2026-04-28_transcript_aimee.docx` (1 h 45 m meeting, 28 April 2026).
+- Meeting introduced Aimee Bottrill-Frost (Biomedical Science) to the project; she has independently run statistical analysis on a brain fMRI dataset and compared it with Pritish's LLM embedding geometry results.
+- Key dataset: OpenNeuro DS005700 "Neural MO fMRI Dataset for Emotion Recognition" — 40 subjects × 5 emotions (afraid, calm, delighted, depressed, excited), 48 ROI activation features. Source notebook at `video_understanding/human_brain_emotion_exports/untitled_1_2.HTML` line 8.
+- Key file paths recorded in minutes:
+  - Cross-system comparison stats: `video_understanding/human_brain_emotion_exports/global_behavior_comparison/comparison_results.txt`
+  - Phase 1 geometry report: `experiments/understanding_text_embeddings/reports/phase_one_summary_of_all.HTML`
+  - Phase 2 linear probing report: `experiments/understanding_text_embeddings/reports/phase_2_1_score_summary.HTML`
+  - Phase 3 signal decay report: `experiments/understanding_text_embeddings/reports/phase_3_summary.HTML`
+  - Aimee's results PDF (on her laptop, to be pushed): `emotion_geometry_and_score_4_square_explorer_square_report_score_v2.pdf`
+- **Ambiguity gradient**: core novel finding — emotional uncertainty increases geometrically with distance from the emotion centroid in both brain and LLM space. Cross-system correlation ≈ 0.56, permutation p ≈ 10⁻⁵⁴.
+- **Brain statistical validation** (Aimee): LOSO decoding accuracy 0.56 (chance 0.20), 95% CI 0.49–0.63, permutation p < 0.001. Reconciles negative silhouette score with real decodability.
+- **Critical action**: Aimee's statistical treatment (LOSO, bootstrap CI, permutation test, ambiguity gradient correlation) must be applied to all previous LLM text embedding results. Exact test selection subject to Aimee's advice; Pritish and Josh to implement once advised.
