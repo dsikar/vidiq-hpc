@@ -1,0 +1,8 @@
+{
+  "dataset_size": 2000,
+  "embedding_dim": 2048,
+  "source_split": "validation",
+  "model_name": "Qwen/Qwen3-1.7B",
+  "mode": "extract-only",
+  "pretrained_only": true
+}
