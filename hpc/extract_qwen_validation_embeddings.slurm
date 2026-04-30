@@ -3,13 +3,13 @@
 #SBATCH --job-name qpreval
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=daniel.sikar@city.ac.uk
-#SBATCH --partition=gpu-a100
+#SBATCH --partition=preemptgpu # gpu-a100
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=6
 #SBATCH --mem=24GB
-#SBATCH --time=02:00:00
-#SBATCH --gres=gpu:a100:1
+#SBATCH --time=02:23:59
+#SBATCH --gres=gpu:a100_80g:1 #pu:1 # gpu:a100:1
 #SBATCH -e outputs/%x_%j.e
 #SBATCH -o outputs/%x_%j.o
 
