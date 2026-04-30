@@ -1,0 +1,41 @@
+{
+    "emotion_triplet": [
+        "fear",
+        "happiness",
+        "sadness"
+    ],
+    "pairwise_order": [
+        "Fear-Happiness",
+        "Fear-Sadness",
+        "Happiness-Sadness"
+    ],
+    "raw_vectors": {
+        "brain": [
+            1.136777631589509,
+            1.5674595574322612,
+            0.7200807237324833
+        ],
+        "qwen": [
+            1.5352057734133422,
+            0.9700326117904641,
+            1.3303982276361777
+        ],
+        "mpnet": [
+            0.5266013641741067,
+            0.3412979314926977,
+            0.36022268239967103
+        ]
+    },
+    "comparisons": {
+        "brain_vs_qwen": {
+            "pearson_r": -0.6370915301831788,
+            "spearman_rho": -0.5,
+            "normalized_error": 0.42847556480185695
+        },
+        "brain_vs_mpnet": {
+            "pearson_r": -0.10228579345144045,
+            "spearman_rho": -0.5,
+            "normalized_error": 0.36905109867012975
+        }
+    }
+}

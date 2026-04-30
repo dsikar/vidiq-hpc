@@ -1,0 +1,35 @@
+[
+    {
+        "name": "MPNet-Balanced",
+        "valence_r": 0.9655146273842043,
+        "arousal_r": 0.7326275811075826,
+        "procrustes_disparity": 0.19490377901827388,
+        "permutation_p": 0.009,
+        "bootstrap_ci": [
+            0.9227071412384421,
+            0.9999878511380227
+        ]
+    },
+    {
+        "name": "Qwen-768",
+        "valence_r": 0.9822021826837926,
+        "arousal_r": 0.8249015943947244,
+        "procrustes_disparity": 0.1822833125830164,
+        "permutation_p": 0.013,
+        "bootstrap_ci": [
+            NaN,
+            NaN
+        ]
+    },
+    {
+        "name": "Brain-fMRI",
+        "valence_r": 0.31413429184374764,
+        "arousal_r": 0.9564730424729848,
+        "procrustes_disparity": 0.8032527323655934,
+        "permutation_p": 0.033,
+        "bootstrap_ci": [
+            0.20803802349448863,
+            1.0
+        ]
+    }
+]

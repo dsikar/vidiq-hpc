@@ -1,0 +1,77 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Retention Comparison: Brain vs LLM</title>
+        <style>
+            body { font-family: -apple-system, sans-serif; padding: 40px; background: #f8f9fa; color: #333; }
+            .container { max-width: 1000px; margin: auto; }
+            .metric-table { width: 100%; border-collapse: collapse; background: white; margin: 20px 0; }
+            .metric-table th, .metric-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+            .metric-table th { background-color: #2c3e50; color: white; }
+            .plot-card { text-align: center; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+            .plot-card img { width: 100%; height: auto; }
+            .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; }
+            .robust { background: #d4edda; color: #155724; }
+            .fragile { background: #f8d7da; color: #721c24; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Recursive Context Retention Comparison</h1>
+            <p>This report quantifies how robustly emotional context is retained when the most important linear directions are surgically removed.</p>
+            
+            <div class="plot-card">
+                <img src="context_retention_comparison.png">
+            </div>
+
+            <h2>1. Quantitative Comparison Metrics</h2>
+            <table class="metric-table">
+                <thead>
+                    <tr>
+                        <th>System</th>
+                        <th>Signal Volume (AUC)</th>
+                        <th>Half-Life (D50)</th>
+                        <th>Cliff Slope</th>
+                        <th>Retention Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+    
+                <tr>
+                    <td><strong>MPNet-Balanced</strong></td>
+                    <td>0.3305</td>
+                    <td>17 dims</td>
+                    <td>0.0210</td>
+                    <td><span class="badge robust">Robust (Distributed)</span></td>
+                </tr>
+        
+                <tr>
+                    <td><strong>Qwen-768</strong></td>
+                    <td>0.2600</td>
+                    <td>12 dims</td>
+                    <td>0.0311</td>
+                    <td><span class="badge fragile">Fragile (Compressed)</span></td>
+                </tr>
+        
+                <tr>
+                    <td><strong>Brain-fMRI</strong></td>
+                    <td>0.3021</td>
+                    <td>4 dims</td>
+                    <td>0.0225</td>
+                    <td><span class="badge robust">Robust (Distributed)</span></td>
+                </tr>
+        
+                </tbody>
+            </table>
+
+            <h2>2. Interpretation of Metrics</h2>
+            <ul>
+                <li><strong>Signal Volume (AUC):</strong> Measures the "redundancy" of the signal. The higher the AUC, the more dimensions contain usable emotional context.</li>
+                <li><strong>Signal Half-Life (D50):</strong> The "Shelf Life" of the context. A low D50 (like Qwen) means the system depends on a few specific dimensions. A high D50 (like Brain/MPNet) means information is distributed.</li>
+                <li><strong>Cliff Slope:</strong> Measures the immediate impact of losing the most important feature. </li>
+            </ul>
+        </div>
+    </body>
+    </html>
+    

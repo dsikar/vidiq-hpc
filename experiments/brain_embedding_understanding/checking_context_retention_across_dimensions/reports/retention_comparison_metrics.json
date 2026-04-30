@@ -1,0 +1,23 @@
+[
+    {
+        "name": "MPNet-Balanced",
+        "auc_signal_volume": 0.33052748885586924,
+        "signal_half_life_d50": 17,
+        "cliff_slope": 0.021025260029717684,
+        "baseline_accuracy": 0.9559187716691432
+    },
+    {
+        "name": "Qwen-768",
+        "auc_signal_volume": 0.2600247524752475,
+        "signal_half_life_d50": 12,
+        "cliff_slope": 0.031064356435643557,
+        "baseline_accuracy": 0.9777227722772277
+    },
+    {
+        "name": "Brain-fMRI",
+        "auc_signal_volume": 0.30208333333333326,
+        "signal_half_life_d50": 4,
+        "cliff_slope": 0.022500000000000003,
+        "baseline_accuracy": 0.55
+    }
+]
