@@ -168,13 +168,15 @@ Nature of the work:
 - Investigating cross-modal geometry alignment between text and image sentiments
 
 Target Datasets:
-- **EmoSet-118K** (Primary for Phase 1): Large-scale (118K labeled images), balanced 8-class Mikels emotion taxonomy, includes object and action attributes.
-- **EmoVerse** (Primary for Phase 2): Features Background-Attribute-Subject (B-A-S) triplets and SAM/DINO segmentation masks for part-whole geometric analysis.
+- **Emotion6** (Immediate sanity benchmark): Small 6-class image-emotion dataset for checking whether the current embedding pipeline produces any clean separation at all on a lower-noise surface.
+- **FI** (Immediate main smaller benchmark): 8-class Mikels-style image-emotion dataset used as the next primary benchmark after EmoSet proved too noisy for the current separation goal.
+- **OASIS** (Later validation/control): Normative valence/arousal set reserved for later manifold validation rather than the first operational pivot.
+- **EmoVerse** (Later segmented comparison stage): Background-Attribute-Subject (B-A-S) triplets and SAM/DINO segmentation masks for part-whole geometric analysis after the smaller full-image benchmarks are working.
 
 Status:
-- Dataset research and selection is complete.
-- Six survey reports and a ranked synthesis are checked into the repository.
-- Implementation of the Phase 1 embedding generation is pending.
+- Dataset research is complete, but the operational priority has shifted away from EmoSet-first runs.
+- The repo now contains initial dedicated configs / SLURM entrypoints for `Emotion6` and `FI`.
+- The next Hyperion run should be `Emotion6` first, then `FI`.
 
 ### 6. Supporting planning and reporting work
 

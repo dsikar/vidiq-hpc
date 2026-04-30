@@ -21,7 +21,7 @@ _bootstrap_repo_src()
 
 from image_experiments.config import load_config
 from image_experiments.io_utils import ensure_dir, write_json, get_timestamp, format_duration
-from image_experiments.datasets import EmoSetDataset
+from image_experiments.datasets import build_image_dataset
 from image_experiments.embeddings import ImageEmbedder
 from image_experiments.geometry import calculate_centroids, calculate_radial_density
 from image_experiments.training import LinearProbeConfig, run_linear_probe
@@ -48,11 +48,14 @@ def main() -> None:
 
     print(f"{'='*60}")
     print(f"EXPERIMENT: {config.run_name}")
+    print(f"BASE RUN:   {config.base_run_name}")
+    print(f"DATASET:    {config.dataset_name}")
     print(f"STARTED:    {start_timestamp}")
     print(f"BACKBONE:   {config.backbone}")
     print(f"DEVICE:     {config.device}")
     print(f"DATA ROOT:  {config.data_root}")
     print(f"HF DATASET: {config.hf_dataset_id} [{config.dataset_split}]")
+    print(f"SLURM JOB:  {config.slurm_job_name} [{config.slurm_job_id}]")
     if config.hf_cache_dir is not None:
         print(f"HF CACHE:   {config.hf_cache_dir}")
     # Infrastructure TBC
@@ -66,9 +69,9 @@ def main() -> None:
         transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
     ])
     
-    # Using EmoSet as default for Phase 1
-    dataset = EmoSetDataset(
-        config.data_root,
+    dataset = build_image_dataset(
+        dataset_name=config.dataset_name,
+        data_root=config.data_root,
         transform=transform,
         download=config.allow_hf_download,
         dataset_id=config.hf_dataset_id,
@@ -108,6 +111,14 @@ def main() -> None:
     centroid_serializable = {k: v.tolist() for k, v in centroids.items()}
     write_json(config.artifact_dir / "centroids.json", centroid_serializable)
     write_json(config.artifact_dir / "density.json", density_results)
+    write_json(
+        config.artifact_dir / "label_map.json",
+        {
+            "dataset_name": config.dataset_name,
+            "label_to_id": getattr(dataset, "label_to_id", {}),
+            "class_names": getattr(dataset, "class_names", []),
+        },
+    )
 
     eval_summary = None
     if config.enable_eval:
@@ -146,6 +157,10 @@ def main() -> None:
     
     metadata = {
         "run_name": config.run_name,
+        "base_run_name": config.base_run_name,
+        "dataset_name": config.dataset_name,
+        "slurm_job_name": config.slurm_job_name,
+        "slurm_job_id": config.slurm_job_id,
         "start_timestamp": start_timestamp,
         "end_timestamp": get_timestamp(),
         "duration_seconds": duration,
@@ -153,6 +168,8 @@ def main() -> None:
         "backbone": config.backbone,
         "config": vars(config),
         "dataset_backend": getattr(dataset, "backend", "unknown"),
+        "dataset_size": len(dataset),
+        "dataset_label_to_id": getattr(dataset, "label_to_id", {}),
         "evaluation_summary": eval_summary,
         "infra": "TBC"
     }
