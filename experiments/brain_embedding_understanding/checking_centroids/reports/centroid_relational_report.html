@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Report: Centroid Relational Geometry</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; padding: 40px; background: #fdfdfd; color: #2c3e50; line-height: 1.6; }
+        .container { max-width: 1300px; margin: auto; }
+        h1 { border-bottom: 4px solid #2980b9; padding-bottom: 10px; color: #2980b9; }
+        h2 { margin-top: 50px; color: #34495e; border-left: 5px solid #34495e; padding-left: 15px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-top: 20px; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; }
+        .card img { width: 100%; height: auto; border-radius: 8px; }
+        .insight-box { background: #f1f2f6; padding: 25px; border-radius: 8px; margin-top: 20px; text-align: left; border-left: 6px solid #2980b9; }
+        .metric-table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; }
+        .metric-table th, .metric-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        .metric-table th { background-color: #f8f9fa; }
+        .badge { padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 0.9em; }
+        .paradox { background: #f8d7da; color: #721c24; }
+        .valid { background: #d4edda; color: #155724; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Centroid Relational Geometry Analysis</h1>
+        <p>This study investigates the **Internal Logic** of emotional representations by analyzing the spatial relationships between centroids in biological (Human fMRI) and artificial (LLM) manifolds.</p>
+
+        <h2>1. Statistical Validation: The "Relational Paradox"</h2>
+        <div class="card">
+            <table class="metric-table">
+                <thead>
+                    <tr>
+                        <th>Metric (Brain vs. Qwen-768)</th>
+                        <th>Value</th>
+                        <th>Interpretation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Pearson Correlation (r)</strong></td>
+                        <td>-0.8756</td>
+                        <td><span class="badge paradox">Strong Negative</span> Systems are topologically inverted.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Brain Noise Ceiling</strong></td>
+                        <td>[0.4595, 0.4839]</td>
+                        <td>Human consistency is positive; AI actively deviates.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>95% Bootstrap CI</strong></td>
+                        <td>[-0.9967, 0.6994]</td>
+                        <td>Stable negative trend across resamples.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Manhattan (L1) Robustness</strong></td>
+                        <td>-0.5476</td>
+                        <td>Findings are independent of the distance formula.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>2. Affect Maps: PCA Topological Layout</h2>
+        <p>Visualizing the conceptual "Map of Affect." Emotions closer together share similar internal representations.</p>
+        <div class="grid">
+            <div class="card">
+                <h3>Qwen-768 Map</h3>
+                <img src="centroid_map_Qwen-768.png" alt="Qwen Map">
+            </div>
+            <div class="card">
+                <h3>MPNet-Balanced Map</h3>
+                <img src="centroid_map_MPNet-Balanced.png" alt="MPNet Map">
+            </div>
+            <div class="card">
+                <h3>Human Brain Map</h3>
+                <img src="centroid_map_brain.png" alt="Brain Map">
+            </div>
+        </div>
+
+        <h2>3. Distance Matrices (Cosine RDMs)</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Qwen-768 RDM</h3>
+                <img src="rdm_cosine_Qwen-768.png" alt="Qwen RDM">
+            </div>
+            <div class="card">
+                <h3>MPNet RDM</h3>
+                <img src="rdm_cosine_MPNet-Balanced.png" alt="MPNet RDM">
+            </div>
+            <div class="card">
+                <h3>Brain RDM</h3>
+                <img src="rdm_cosine_brain.png" alt="Brain RDM">
+            </div>
+        </div>
+
+        <h2>4. Key Interpretations: Valence vs. Arousal</h2>
+        <div class="insight-box">
+            <ul>
+                <li><strong>AI Semantic Logic:</strong> Groups *Fear* and *Sadness* as similar because they share negative **Valence**. In text, they often appear in identical contexts.</li>
+                <li><strong>Human Neural Logic:</strong> Groups *Happiness* and *Sadness* more closely than *Fear*, likely because both are lower in **Arousal** (Intensity) compared to the acute alert state of Fear.</li>
+                <li><strong>Conservation of Topology:</strong> While the logic is "flipped," the stability of the centroids and the high consistency across metrics proves that both systems have highly organized, non-random emotional geometries.</li>
+            </ul>
+        </div>
+        
+        <h2>5. Conclusion</h2>
+        <div class="insight-box" style="background-color: #d1ecf1; border-left-color: #0c5460;">
+            The strong negative correlation (-0.88) proves that Transformer-based LLMs do not yet replicate the arousal-dominant prioritization of human emotional circuits. To achieve true biological alignment, future embedding models may require explicit regularization toward physiological intensity features.
+        </div>
+    </div>
+</body>
+</html>

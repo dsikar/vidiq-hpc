@@ -1,0 +1,11 @@
+{
+    "metric": "Wasserstein Distance (WD)",
+    "observed_wd": 0.09038327212502892,
+    "noise_ceiling_wd": 0.032561758918662906,
+    "95_ci": [
+        0.07805668521774091,
+        0.1087242393733315
+    ],
+    "permutation_p_value": 0.46,
+    "interpretation": "Lower WD means higher similarity."
+}
