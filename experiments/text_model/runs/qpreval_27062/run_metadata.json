@@ -1,0 +1,52 @@
+{
+  "run_name": "qpreval_27062",
+  "timestamp_utc": "2026-04-29T20:07:39.713799+00:00",
+  "git_commit": "1ff591adba09024b261a4fd2279385e20eaa0b14",
+  "slurm_job_name": "qpreval",
+  "slurm_job_id": "27062",
+  "mode": "extract-only",
+  "fine_tuning_performed": false,
+  "pretrained_only": true,
+  "args": {
+    "mode": "extract-only",
+    "data_root": "experiments/text/multiclass/dair-ai-emotion",
+    "data_split": "validation",
+    "csv_path": null,
+    "model_path": "Qwen/Qwen3-1.7B",
+    "run_root": "experiments/text_model/runs",
+    "archive_root": "/users/aczd097/archive/vidiq-hpc/text_model",
+    "run_name": "qpreval_27062",
+    "batch_size": 8,
+    "num_epochs": 3,
+    "learning_rate": 5e-05,
+    "max_length": 256,
+    "test_size": 0.2,
+    "seed": 42,
+    "device": "cuda",
+    "freeze_backbone": false
+  },
+  "dataset": {
+    "source_type": "jsonl",
+    "source_path": "/users/aczd097/git/vidiq-hpc/experiments/text/multiclass/dair-ai-emotion/data/processed/validation/texts.jsonl",
+    "processed_split_path": "experiments/text/multiclass/dair-ai-emotion/data/processed/validation",
+    "data_split": "validation",
+    "text_column": "text",
+    "label_column": "label",
+    "num_labels": 6,
+    "label_to_id": {
+      "0": 0,
+      "1": 1,
+      "2": 2,
+      "3": 3,
+      "4": 4,
+      "5": 5
+    }
+  },
+  "local_run_root": "/users/aczd097/git/vidiq-hpc/experiments/text_model/runs/qpreval_27062",
+  "archive_run_root": null,
+  "analysis_dir": "/users/aczd097/git/vidiq-hpc/experiments/text_model/runs/qpreval_27062/analysis",
+  "model_symlink": null,
+  "model_target": null,
+  "tokenizer_symlink": null,
+  "tokenizer_target": null
+}
