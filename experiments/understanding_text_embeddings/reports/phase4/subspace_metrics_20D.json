@@ -1,0 +1,42 @@
+{
+    "BGE-Base-Final": {
+        "baseline_768D": {
+            "silhouette": 0.05696795880794525
+        },
+        "isolated_20D": {
+            "silhouette_20D": 0.41458136455977107,
+            "accuracy_20D": 0.951213392714736,
+            "accuracy_std_20D": 0.005228388800848426
+        }
+    },
+    "MPNet-Base-Final": {
+        "baseline_768D": {
+            "silhouette": 0.04714944213628769
+        },
+        "isolated_20D": {
+            "silhouette_20D": 0.40746949583885733,
+            "accuracy_20D": 0.9564132528494487,
+            "accuracy_std_20D": 0.0024169271154001574
+        }
+    },
+    "BGE-FT-Final": {
+        "baseline_768D": {
+            "silhouette": 0.6846539974212646
+        },
+        "isolated_20D": {
+            "silhouette_20D": 0.8353434333311991,
+            "accuracy_20D": 0.9809332327284773,
+            "accuracy_std_20D": 0.0038742975167734535
+        }
+    },
+    "MPNet-FT-Final": {
+        "baseline_768D": {
+            "silhouette": 0.8597372770309448
+        },
+        "isolated_20D": {
+            "silhouette_20D": 0.9068115423246721,
+            "accuracy_20D": 0.9826655992736821,
+            "accuracy_std_20D": 0.005131830694764333
+        }
+    }
+}

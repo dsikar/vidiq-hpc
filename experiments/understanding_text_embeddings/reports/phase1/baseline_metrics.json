@@ -1,0 +1,26 @@
+{
+    "BGE-Base-Final": {
+        "silhouette": 0.05696795880794525
+    },
+    "MPNet-Base-Final": {
+        "silhouette": 0.04714944213628769
+    },
+    "BGE-Base-Mid": {
+        "silhouette": 0.020081011578440666
+    },
+    "MPNet-Base-Mid": {
+        "silhouette": 0.036617398262023926
+    },
+    "BGE-FT-Final": {
+        "silhouette": 0.6846539974212646
+    },
+    "MPNet-FT-Final": {
+        "silhouette": 0.8597372770309448
+    },
+    "BGE-FT-Mid": {
+        "silhouette": 0.04863979294896126
+    },
+    "MPNet-FT-Mid": {
+        "silhouette": 0.1434420794248581
+    }
+}
