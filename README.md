@@ -24,6 +24,11 @@ This repo currently covers two main workstreams:
 - `prompts/`
   reusable research prompts, including the image-dataset search prompt
 
+## Workflow Notes
+
+- [pritish-meeting-workflow.md](pritish-meeting-workflow.md)
+  structured meeting workflow note for the embedding-understanding and brain-comparison workstreams
+
 ## Text-Model Training
 
 The main multiclass training entrypoint is:
