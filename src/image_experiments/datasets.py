@@ -3,18 +3,167 @@ from __future__ import annotations
 import csv
 import json
 from pathlib import Path
+
 from PIL import Image
 from torch.utils.data import Dataset
 
 from image_experiments.io_utils import ensure_dir
 
 
-class EmoSetDataset(Dataset):
+class BaseStagedImageDataset(Dataset):
+    IMAGE_PATH_COLUMNS = ("image_path", "filepath", "path", "image", "filename")
+    LABEL_COLUMNS = ("emotion", "label_name", "label", "class", "category")
+
+    def __init__(
+        self,
+        data_root: Path,
+        class_names: list[str],
+        dataset_name: str,
+        transform=None,
+        download: bool = False,
+    ):
+        self.data_root = data_root
+        self.transform = transform
+        self.dataset_name = dataset_name
+        self.image_dir = data_root / "images"
+        self.annotation_file = data_root / "metadata.csv"
+        self.source_manifest = data_root / "source_manifest.json"
+        self.backend = "local"
+        self.class_names = class_names
+        self.label_to_id = {label: idx for idx, label in enumerate(class_names)}
+        self.samples: list[dict[str, str]] = []
+
+        if self.annotation_file.exists():
+            self._load_local_samples()
+        elif download:
+            self._download()
+        else:
+            raise FileNotFoundError(self._missing_data_message())
+
+        if not self.samples:
+            raise RuntimeError(
+                f"No {self.dataset_name} samples were loaded from {self.annotation_file}."
+            )
+
+    def _load_local_samples(self) -> None:
+        self.backend = "local"
+        with self.annotation_file.open(mode="r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            self.samples = list(reader)
+
+    def _download(self) -> None:
+        raise FileNotFoundError(self._missing_data_message())
+
+    @staticmethod
+    def _detach_rgb_image(image: Image.Image) -> Image.Image:
+        converted = image.convert("RGB")
+        detached = converted.copy()
+        try:
+            image.close()
+        except Exception:
+            pass
+        try:
+            converted.close()
+        except Exception:
+            pass
+        return detached
+
+    def _canonicalize_label(self, value: str) -> str:
+        return value.strip().lower()
+
+    def _resolve_image_path(self, row: dict[str, str]) -> Path:
+        for column in self.IMAGE_PATH_COLUMNS:
+            raw_value = row.get(column)
+            if raw_value:
+                candidate = Path(raw_value)
+                if candidate.is_absolute():
+                    return candidate
+                return self.image_dir / candidate
+        raise KeyError(
+            f"{self.dataset_name} metadata must contain one of {self.IMAGE_PATH_COLUMNS}."
+        )
+
+    def _resolve_label(self, row: dict[str, str]) -> int:
+        for column in self.LABEL_COLUMNS:
+            raw_value = row.get(column)
+            if raw_value is None or raw_value == "":
+                continue
+            normalized = raw_value.strip()
+            if normalized.isdigit():
+                label_id = int(normalized)
+                if 0 <= label_id < len(self.class_names):
+                    return label_id
+                raise ValueError(
+                    f"{self.dataset_name} label id {label_id} is outside the expected range "
+                    f"[0, {len(self.class_names) - 1}]."
+                )
+            canonical = self._canonicalize_label(normalized)
+            if canonical in self.label_to_id:
+                return self.label_to_id[canonical]
+            raise KeyError(
+                f"Unsupported {self.dataset_name} label `{normalized}` in {self.annotation_file}. "
+                f"Expected one of {sorted(self.label_to_id)} or a 0-based integer id."
+            )
+        raise KeyError(
+            f"{self.dataset_name} metadata must contain one of {self.LABEL_COLUMNS}."
+        )
+
+    def _recommended_hyperion_storage(self) -> list[str]:
+        return [f"- /users/aczd097/archive/vidiq-hpc/data/image/{self.dataset_name}"]
+
+    def _missing_data_message(self, extra_note: str | None = None) -> str:
+        lines = [
+            f"{self.dataset_name} staged metadata was not found at {self.annotation_file}.",
+            f"Expected staged image directory: {self.image_dir}",
+            "This dataset currently expects a staged local dataset root with:",
+            "- `metadata.csv`",
+            "- an `images/` directory containing the referenced files",
+            f"Configured data root: {self.data_root}",
+            "Recommended Hyperion storage:",
+            *self._recommended_hyperion_storage(),
+            "Metadata should preferably use canonical label names rather than integer ids.",
+        ]
+        if extra_note is not None:
+            lines.append(extra_note)
+        return "\n".join(lines)
+
+    def __len__(self) -> int:
+        return len(self.samples)
+
+    def __getitem__(self, idx: int):
+        row = self.samples[idx]
+        img_path = self._resolve_image_path(row)
+        if not img_path.exists():
+            raise FileNotFoundError(
+                f"{self.dataset_name} staged image is missing: {img_path}. "
+                f"Check that `data_root` points at the correct staged dataset root."
+            )
+        with Image.open(img_path) as image_file:
+            image = image_file.convert("RGB").copy()
+        label = self._resolve_label(row)
+
+        if self.transform:
+            image = self.transform(image)
+
+        return image, label
+
+
+class EmoSetDataset(BaseStagedImageDataset):
     """
     EmoSet-118K Dataset implementation.
     Reference: https://vcc.tech/EmoSet
     """
-    EMOTIONS = ["amusement", "anger", "awe", "contentment", "disgust", "excitement", "fear", "sadness"]
+
+    EMOTIONS = [
+        "amusement",
+        "anger",
+        "awe",
+        "contentment",
+        "disgust",
+        "excitement",
+        "fear",
+        "sadness",
+    ]
 
     def __init__(
         self,
@@ -25,36 +174,23 @@ class EmoSetDataset(Dataset):
         split: str = "train",
         hf_cache_dir: Path | None = None,
     ):
-        self.data_root = data_root
-        self.transform = transform
-        self.image_dir = data_root / "images"
-        self.annotation_file = data_root / "metadata.csv"
         self.dataset_id = dataset_id
         self.split = split
         self.hf_cache_dir = hf_cache_dir
-        self.source_manifest = data_root / "source_manifest.json"
-        self.backend = "local"
         self.hf_dataset = None
+        super().__init__(
+            data_root=data_root,
+            class_names=self.EMOTIONS,
+            dataset_name="emoset",
+            transform=transform,
+            download=download,
+        )
 
-        self.label_to_id = {emotion: i for i, emotion in enumerate(self.EMOTIONS)}
-        self.samples = []
-
-        if self.annotation_file.exists():
-            self._load_local_samples()
-        elif download:
-            self._download()
-        else:
-            raise FileNotFoundError(self._missing_data_message())
-
-        if self.backend == "local" and not self.samples:
-            raise RuntimeError(f"No EmoSet samples were loaded from {self.annotation_file}.")
-
-    def _load_local_samples(self) -> None:
-        self.backend = "local"
-        with open(self.annotation_file, mode="r", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                self.samples.append(row)
+    def _recommended_hyperion_storage(self) -> list[str]:
+        return [
+            "- /users/aczd097/archive/vidiq-hpc/data/image/emoset for staged dataset manifests or copied assets",
+            "- /users/aczd097/sharedscratch/huggingface/datasets for Hugging Face cache data",
+        ]
 
     def _load_hf_samples(self) -> None:
         try:
@@ -82,54 +218,7 @@ class EmoSetDataset(Dataset):
                 indent=2,
             )
 
-    @staticmethod
-    def _detach_rgb_image(image: Image.Image) -> Image.Image:
-        converted = image.convert("RGB")
-        detached = converted.copy()
-        try:
-            image.close()
-        except Exception:
-            pass
-        try:
-            converted.close()
-        except Exception:
-            pass
-        return detached
-
-    def _missing_data_message(self, hf_error: Exception | None = None) -> str:
-        lines = [
-            f"EmoSet staged metadata was not found at {self.annotation_file}.",
-            f"Expected staged image directory: {self.image_dir}",
-            "The image pipeline now supports two valid sources:",
-            "1. A staged local dataset root with `metadata.csv` and an `images/` tree.",
-            f"2. A Hugging Face-backed dataset load from `{self.dataset_id}` split `{self.split}`.",
-        ]
-        if self.hf_cache_dir is not None:
-            lines.append(f"Hugging Face cache directory: {self.hf_cache_dir}")
-        lines.extend(
-            [
-                f"Configured data root: {self.data_root}",
-                "Recommended Hyperion storage:",
-                "- /users/aczd097/archive/vidiq-hpc/data/image/emoset for staged dataset manifests or copied assets",
-                "- /users/aczd097/sharedscratch/huggingface/datasets for Hugging Face cache data",
-            ]
-        )
-        if hf_error is not None:
-            lines.extend(
-                [
-                    "The fallback Hugging Face load also failed.",
-                    f"Underlying error: {hf_error}",
-                ]
-            )
-        lines.extend(
-            [
-                "If you already have EmoSet assets elsewhere, point `data_root` at that staged location.",
-                "If you intend to rely on the public Hugging Face mirror, ensure the `datasets` package is installed and outbound access is available, then retry.",
-            ]
-        )
-        return "\n".join(lines)
-
-    def _download(self):
+    def _download(self) -> None:
         ensure_dir(self.data_root)
 
         if self.annotation_file.exists():
@@ -140,14 +229,14 @@ class EmoSetDataset(Dataset):
         try:
             self._load_hf_samples()
         except Exception as exc:
-            raise FileNotFoundError(self._missing_data_message(exc)) from exc
+            raise FileNotFoundError(self._missing_data_message(str(exc))) from exc
 
-    def __len__(self):
+    def __len__(self) -> int:
         if self.backend == "huggingface":
             return len(self.hf_dataset)
-        return len(self.samples)
+        return super().__len__()
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int):
         if self.backend == "huggingface":
             row = self.hf_dataset[idx]
             image = row["image"]
@@ -158,7 +247,9 @@ class EmoSetDataset(Dataset):
                         with Image.open(image_path) as image_file:
                             image = image_file.convert("RGB").copy()
                     else:
-                        raise RuntimeError("Hugging Face EmoSet row did not provide a usable image payload.")
+                        raise RuntimeError(
+                            "Hugging Face EmoSet row did not provide a usable image payload."
+                        )
                 else:
                     raise RuntimeError("Unsupported Hugging Face image payload type.")
             else:
@@ -167,28 +258,85 @@ class EmoSetDataset(Dataset):
             if "label" in row and isinstance(row["label"], int):
                 label = int(row["label"])
             else:
-                label = self.label_to_id[str(row["emotion"])]
+                label = self.label_to_id[str(row["emotion"]).strip().lower()]
 
             if self.transform:
                 image = self.transform(image)
 
             return image, label
 
-        row = self.samples[idx]
-        img_path = self.image_dir / row["image_path"]
-        if not img_path.exists():
-            raise FileNotFoundError(
-                f"EmoSet staged image is missing: {img_path}. "
-                f"Check that `data_root` points at the correct staged dataset root."
-            )
-        with Image.open(img_path) as image_file:
-            image = image_file.convert("RGB").copy()
-        label = self.label_to_id[row["emotion"]]
+        return super().__getitem__(idx)
 
-        if self.transform:
-            image = self.transform(image)
 
-        return image, label
+class Emotion6Dataset(BaseStagedImageDataset):
+    CLASS_NAMES = ["anger", "disgust", "fear", "joy", "sadness", "surprise"]
+
+    def __init__(self, data_root: Path, transform=None, download: bool = False):
+        super().__init__(
+            data_root=data_root,
+            class_names=self.CLASS_NAMES,
+            dataset_name="emotion6",
+            transform=transform,
+            download=download,
+        )
+
+    def _canonicalize_label(self, value: str) -> str:
+        aliases = {
+            "happy": "joy",
+            "happiness": "joy",
+        }
+        canonical = value.strip().lower()
+        return aliases.get(canonical, canonical)
+
+    def _missing_data_message(self, extra_note: str | None = None) -> str:
+        note = (
+            "Expected canonical labels: anger, disgust, fear, joy, sadness, surprise. "
+            "If your staged metadata uses an alternative naming scheme, normalize it in metadata.csv."
+        )
+        if extra_note:
+            note = f"{note} {extra_note}"
+        return super()._missing_data_message(note)
+
+
+class FIDataset(BaseStagedImageDataset):
+    CLASS_NAMES = [
+        "amusement",
+        "anger",
+        "awe",
+        "contentment",
+        "disgust",
+        "excitement",
+        "fear",
+        "sadness",
+    ]
+
+    def __init__(self, data_root: Path, transform=None, download: bool = False):
+        super().__init__(
+            data_root=data_root,
+            class_names=self.CLASS_NAMES,
+            dataset_name="fi",
+            transform=transform,
+            download=download,
+        )
+
+    def _canonicalize_label(self, value: str) -> str:
+        aliases = {
+            "pleasure": "amusement",
+            "satisfaction": "contentment",
+            "content": "contentment",
+            "surprise": "awe",
+        }
+        canonical = value.strip().lower()
+        return aliases.get(canonical, canonical)
+
+    def _missing_data_message(self, extra_note: str | None = None) -> str:
+        note = (
+            "FI access is request-based in the survey reports, so this repo only supports staged local data. "
+            "Expected canonical labels: amusement, anger, awe, contentment, disgust, excitement, fear, sadness."
+        )
+        if extra_note:
+            note = f"{note} {extra_note}"
+        return super()._missing_data_message(note)
 
 
 class EmoVerseDataset(Dataset):
@@ -196,33 +344,69 @@ class EmoVerseDataset(Dataset):
     EmoVerse Dataset implementation with Background-Attribute-Subject (B-A-S) triplets.
     Reference: https://arxiv.org/html/2511.12554v1
     """
+
     def __init__(self, data_root: Path, transform=None, download: bool = False, mode: str = "full"):
         self.data_root = data_root
         self.transform = transform
-        self.mode = mode # 'full', 'subject', 'background'
-        
+        self.mode = mode
+
         if download:
             self._download()
-            
-        self.samples = [] 
+
+        self.samples = []
 
     def _download(self):
         print("Downloading EmoVerse B-A-S data...")
-        pass
 
     def __len__(self):
         return len(self.samples)
 
     def __getitem__(self, idx):
         sample = self.samples[idx]
-        image = Image.open(sample['image_path']).convert("RGB")
-        
+        image = Image.open(sample["image_path"]).convert("RGB")
+
         if self.mode == "subject":
             pass
         elif self.mode == "background":
             pass
-            
+
         if self.transform:
             image = self.transform(image)
-            
-        return image, sample['label']
+
+        return image, sample["label"]
+
+
+def build_image_dataset(
+    dataset_name: str,
+    data_root: Path,
+    transform=None,
+    download: bool = False,
+    dataset_id: str | None = None,
+    split: str = "train",
+    hf_cache_dir: Path | None = None,
+) -> Dataset:
+    normalized = dataset_name.strip().lower()
+    if normalized == "emoset":
+        return EmoSetDataset(
+            data_root=data_root,
+            transform=transform,
+            download=download,
+            dataset_id=dataset_id or "Woleek/EmoSet-118K",
+            split=split,
+            hf_cache_dir=hf_cache_dir,
+        )
+    if normalized == "emotion6":
+        return Emotion6Dataset(
+            data_root=data_root,
+            transform=transform,
+            download=download,
+        )
+    if normalized == "fi":
+        return FIDataset(
+            data_root=data_root,
+            transform=transform,
+            download=download,
+        )
+    raise ValueError(
+        f"Unsupported image dataset `{dataset_name}`. Expected one of: emoset, emotion6, fi."
+    )

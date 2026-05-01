@@ -191,3 +191,36 @@
 - **Ambiguity gradient**: core novel finding — emotional uncertainty increases geometrically with distance from the emotion centroid in both brain and LLM space. Cross-system correlation ≈ 0.56, permutation p ≈ 10⁻⁵⁴.
 - **Brain statistical validation** (Aimee): LOSO decoding accuracy 0.56 (chance 0.20), 95% CI 0.49–0.63, permutation p < 0.001. Reconciles negative silhouette score with real decodability.
 - **Critical action**: Aimee's statistical treatment (LOSO, bootstrap CI, permutation test, ambiguity gradient correlation) must be applied to all previous LLM text embedding results. Exact test selection subject to Aimee's advice; Pritish and Josh to implement once advised.
+
+## 2026-04-30
+
+- Executed `prompts/16-smaller-image-datasets-plan-and-setup.md` to pivot the image experiment surface away from an EmoSet-first assumption after weak cluster separation.
+- Added config-level dataset selection to the image pipeline and generalized `scripts/run_image_embeddings.py` so it is no longer effectively hardwired to EmoSet.
+- Extended `src/image_experiments/datasets.py` with staged-local support for:
+  - `Emotion6`
+  - `FI`
+  while keeping the existing Hugging Face-backed EmoSet path intact.
+- Added `configs/emotion6_phase1.json` and `configs/fi_phase1.json` as the first dedicated smaller-dataset image configs.
+- Added dedicated Hyperion batch files:
+  - `hpc/image_embedding_emotion6.slurm`
+  - `hpc/image_embedding_fi.slurm`
+  both aligned to the same `gpu-a100` class of setup as the recent `qpreval` Qwen extraction job.
+- Updated the image config/runtime so Hyperion image runs now append `SLURM_JOB_ID` to the base run name, preventing reruns from overwriting the same `experiments/image/runs/<run_name>/` directory.
+- Added `scripts/prepare_image_dataset.py` as a separate staged-data preparation / validation surface for the smaller image datasets.
+- Added `hpc/prepare_image_dataset.slurm` so Hyperion can run the dataset-preparation step before the main `Emotion6` or `FI` image jobs.
+- Updated the repo docs so the operational order is now explicit:
+  1. prepare the dataset
+  2. verify the staged root
+  3. run the main image embedding job
+- Executed `prompts/18-fi-archive-analytics-report.md` against the real Hyperion FI archive at `/users/aczd097/archive/vidiq-hpc/data/image/fi/emotion_dataset.tar` and wrote `reports/18-fi-archive-analytics-report.md`.
+- The FI archive analysis confirmed:
+  - the tar contains only `.jpg` images
+  - the label folders exactly match the canonical FI labels
+  - there is no metadata file inside the archive
+  - the next engineering task should be tar-based FI staging that extracts the archive and generates `metadata.csv` for the repo’s staged `images/` layout.
+- Wrote `reports/16-smaller-image-datasets-plan.md` to document:
+  - why EmoSet is being deprioritized
+  - why `Emotion6` and `FI` are the next operational targets
+  - the exact next `sbatch` command to run
+  - which resulting image run files should be pushed back to remote
+- Updated `README.md` and `experiments.md` so the smaller-dataset pivot, per-dataset SLURM separation, staged data layout, and image result push guidance are all documented in the repo’s main source-of-truth docs.

@@ -1,0 +1,22 @@
+{
+  "dataset_name": "emotion6",
+  "data_root": "${VIDIQ_IMAGE_DATA_ROOT_EMOTION6:-/users/aczd097/archive/vidiq-hpc/data/image/emotion6}",
+  "run_root": "experiments/image/runs",
+  "run_name": "emotion6_phase1_clip",
+  "backbone": "openai/clip-vit-base-patch32",
+  "batch_size": 32,
+  "num_workers": 0,
+  "image_size": 224,
+  "device": "cuda",
+  "hf_dataset_id": "",
+  "dataset_split": "train",
+  "hf_cache_dir": "${HF_DATASETS_CACHE:-/users/aczd097/sharedscratch/huggingface/datasets}",
+  "allow_hf_download": false,
+  "enable_eval": true,
+  "eval_test_size": 0.2,
+  "eval_seed": 42,
+  "eval_epochs": 20,
+  "eval_learning_rate": 0.001,
+  "eval_weight_decay": 0.0,
+  "eval_batch_size": 128
+}
