@@ -212,6 +212,12 @@
   1. prepare the dataset
   2. verify the staged root
   3. run the main image embedding job
+- Executed `prompts/18-fi-archive-analytics-report.md` against the real Hyperion FI archive at `/users/aczd097/archive/vidiq-hpc/data/image/fi/emotion_dataset.tar` and wrote `reports/18-fi-archive-analytics-report.md`.
+- The FI archive analysis confirmed:
+  - the tar contains only `.jpg` images
+  - the label folders exactly match the canonical FI labels
+  - there is no metadata file inside the archive
+  - the next engineering task should be tar-based FI staging that extracts the archive and generates `metadata.csv` for the repo’s staged `images/` layout.
 - Wrote `reports/16-smaller-image-datasets-plan.md` to document:
   - why EmoSet is being deprioritized
   - why `Emotion6` and `FI` are the next operational targets
