@@ -3,13 +3,13 @@
 #SBATCH --job-name iefip1
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=daniel.sikar@city.ac.uk
-#SBATCH --partition=gpu-a100
+#SBATCH --partition=preemptgpu #gpu-a100
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=6
 #SBATCH --mem=24GB
 #SBATCH --time=08:00:00
-#SBATCH --gres=gpu:a100:1
+#SBATCH --gres=gpu:a100_80g:1
 #SBATCH -e outputs/%x_%j.e
 #SBATCH -o outputs/%x_%j.o
 
@@ -17,7 +17,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
-cd "${REPO_ROOT}"
+# cd "${REPO_ROOT}"
 
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export CUDA_VISIBLE_DEVICES=0
@@ -29,7 +29,7 @@ source /users/aczd097/sharedscratch/venvs/main/bin/activate
 export PYTHONPATH="${REPO_ROOT}/src:${PYTHONPATH:-}"
 
 start=$(date +%s)
-mkdir -p outputs
+# mkdir -p outputs
 mkdir -p "${VIDIQ_IMAGE_DATA_ROOT_FI}"
 mkdir -p "${HF_DATASETS_CACHE}"
 echo "Job started at $(date)"
