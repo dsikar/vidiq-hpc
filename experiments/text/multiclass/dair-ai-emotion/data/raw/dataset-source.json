@@ -1,8 +1,0 @@
-{
-  "dataset_path": "dair-ai/emotion",
-  "splits": [
-    "train",
-    "validation",
-    "test"
-  ]
-}
