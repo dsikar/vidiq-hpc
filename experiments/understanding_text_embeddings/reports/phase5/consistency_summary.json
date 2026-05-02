@@ -1,0 +1,22 @@
+[
+    {
+        "model_name": "BGE-FT-Final",
+        "total_samples": 4038,
+        "overlap_count": 76,
+        "overlap_pct": 0.018821198613174838,
+        "logit_agreement_rate": 0.9342105263157895,
+        "avg_logit_diff_overlap": -3.3244644591682837,
+        "dist_logit_correlation": 0.9571571003912462,
+        "correlation_p_value": 0.0
+    },
+    {
+        "model_name": "MPNet-FT-Final",
+        "total_samples": 4038,
+        "overlap_count": 71,
+        "overlap_pct": 0.017582961862308073,
+        "logit_agreement_rate": 1.0,
+        "avg_logit_diff_overlap": -3.417413743448929,
+        "dist_logit_correlation": 0.988382933065328,
+        "correlation_p_value": 0.0
+    }
+]
