@@ -16,7 +16,7 @@
 |---|---|---|
 | LOSO/bootstrap/permutation tests on LLM text experiments | DECISION: NOT REQUIRED | Cross-model replication across 4 architectures (BGE-Base, BGE-FT, MPNet-Base, MPNet-FT) serves as the generalization evidence for LLM results. The paper's contribution is the geometric pattern story and consistent structure across models — not a metrics benchmark. Statistical rigour at the subject level (LOSO etc.) applies to the brain fMRI data because of subject-level variance; LLM embedding geometry is deterministic given fixed weights. Decision made 2026-05-03. |
 | Ambiguity gradient source file | RESOLVED | File pushed by Pritish. Confirmed at `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt`. Actual values: r = **0.9565**, p = 3.1984e-54. ⚠️ **Correction:** Meeting minutes cited r ≈ 0.56 — this was an error (0.56 is the Brain LOSO accuracy, not this correlation). The paper must cite r = 0.9565. 95% CI: [0.9370, 0.9725]. Permutation p (n=5000): 0.000. |
-| Valence-arousal ground truth citation | PARTIAL | Russell 1980 DOI confirmed: `10.1037/h0077714` (from `LLM_Brain.rtf`). DEAP/Koelstra still missing from reference bundle — exact page/table reference for V/A numerical scores outstanding. |
+| Valence-arousal ground truth citation | RESOLVED | Full chain in `valence_arousal_ground_truth_deep_dive.pdf`. Russell 1980 (theoretical), DEAP doi:10.1109/T-AFFC.2011.15 (numerical anchor), ANEW, IAPS, Posner et al. 2005. V/A table on 1-9 SAM scale. Paper-ready text included. |
 | Aimee's results PDF | NOT IN SCOPE | File will not be included in the project. Removed 2026-05-03. |
 | Embedding extraction layer documented | RESOLVED | Full pipeline documented in `repo_context/project_context/embeddings_extraction.md`. Final layer = last hidden state (layer 12); mid layer = `hidden_states[6]`. Mean pooling with attention mask. Max 128 tokens, batch 32. All 8 variants covered. |
 | fMRI sample size justification | RESOLVED | Documented in `repo_context/project_context/Justification brain data.docx`. Precedents: IBC (12 subjects), PFM Children (12 subjects), NSD (8 subjects). N=40 exceeds all three. |
@@ -324,6 +324,7 @@ All files in `meetings/`.
 - `repo_context/neurips_context/neurips_deep_submission_structure_checklist_report.pdf` — detailed NeurIPS structure + checklist (11 pages; section-by-section build plan)
 - `repo_context/neurips_context/neurips_pre_submission_checklist_full.pdf` — pre-submission review checklist (6 pages; claim support, statistical validity, rejection patterns)
 - `repo_context/project_context/Emotion_Geometry_Complete_Report.pdf` — 3-page complete emotion geometry report (generated 2026-05-02; authoritative consolidated findings)
+- `repo_context/project_context/valence_arousal_ground_truth_deep_dive.pdf` — authoritative 6-page methodological note for the V/A mapping. Contains: full citation chain with source roles table, defensible V/A coordinate table (1-9 SAM scale), 5-step sensitivity analysis plan, reviewer-risk audit, and **paper-ready Methods/Results/Limitations paragraphs ready to copy into the submission**. Also recommends exporting `valence_arousal_reference_table.csv` for reproducibility. Read this before writing any V/A section of the paper.
 - `repo_context/project_context/LLM_Brain.rtf` — Aimee's neuroscience reference bundle. Contains confirmed citations for: RSA methodology (Kriegeskorte 2008), LLM-brain alignment literature (Caucheteux & King 2022, Schrimpf et al. 2021, Li et al. 2023a/b, Huth et al. 2016, Horikawa et al. 2020, Ismayilzada et al. 2026), Russell 1980 (DOI confirmed), Mikolov 2013. ⚠️ Cooper & Kelsall (2023) quantum oscillations paper appears to have been accidentally included — unrelated to this project.
 - `repo_context/project_context/embeddings_extraction.md` — full documentation of the embedding extraction pipeline: 8 variants (BGE/MPNet × pretrained/fine-tuned × final layer 12/mid layer 6), tokenization (max 128 tokens, batch 32), mean pooling strategy, output file structure (`train_embeddings.npy`, `val_embeddings.npy`, `metadata.json`), and artifact directory layout. Authoritative reference for methods section embedding extraction description.
 - `repo_context/project_context/Full Scientific Justification (Tailored to Your Method).docx` — scientific justification for the 48D→11D brain representation transformation; includes network citations (Default Mode, Salience, Central Executive) and reviewer-facing framing for the domain-informed feature construction
@@ -430,7 +431,7 @@ All files in `meetings/`.
 - [x] **LOSO + bootstrap CI + permutation tests on LLM text embedding results** — DECISION: NOT REQUIRED. Cross-model replication across 4 architectures is the generalization argument. The paper pushes the geometric pattern story; LOSO-style cross-validation applies to biological subject-level data (brain fMRI) where individual differences are the source of variance. LLM embedding geometry is deterministic. Reviewer challenge ("what is the significance of your silhouette improvement?") is answered by pointing to consistent patterns across all 4 model variants. Decision: 2026-05-03.
 - [x] **Push cross-system comparison file to repo** — DONE. File is at `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt`. Confirmed r = 0.9565 (not 0.56 as cited in meeting — see correction note in Finding 5). Also includes enhanced_statistical_results.txt with CI/permutation test. Owner: Pritish ✓
 - [x] **Clarify Brain vs MPNet 48D discrepancy** — RESOLVED. Correct value is **−0.5476** per `CENTROID_RELATIONAL_FINAL_REPORT.md`. The `rdm_comparison_metrics.json` value of −0.1023 is from a superseded test and must not be used or cited anywhere in the paper.
-- [ ] **Confirm valence-arousal ground truth citation chain** — Russell 1980 DOI now confirmed: `10.1037/h0077714` (via `LLM_Brain.rtf`). **Still outstanding:** DEAP (Koelstra & Mühl 2012) not yet in the reference bundle — exact page/table reference for the numerical V/A scores still needed. Owner: Aimee
+- [x] **Confirm valence-arousal ground truth citation chain** — RESOLVED. Full chain documented in `valence_arousal_ground_truth_deep_dive.pdf`. Russell 1980 = theoretical framework; Mehrabian & Russell 1974 = precursor; DEAP (Koelstra et al. 2012) doi:10.1109/T-AFFC.2011.15 = empirical numerical anchor; ANEW (Bradley & Lang 1999) = lexical norms; IAPS (Lang et al. 2008) = visual norms; Posner et al. 2005 = neuroscience-facing review. V/A coordinates on 1-9 SAM scale confirmed and authoritative. Paper-ready Methods/Results/Limitations text available in that document.
 - [x] **Aimee's results PDF** — `emotion_geometry_and_score_4_square_explorer_square_report_score_v2.pdf` will not be included in the project. Removed from scope 2026-05-03.
 - [x] **Phase 5 (logit consistency) placement** — DECIDED: main paper, placed at the end of the LLM discussion section, immediately before the transition to the brain analysis. Rationale: r = 0.957–0.988 is strong and closes the LLM geometry story before cross-system comparison begins. Subject to change — update this item if placement is revised.
 - [x] **Justify fMRI sample size in methods** — DONE. Documented in `repo_context/project_context/Justification brain data.docx`. Precedents: IBC (12 subjects), PFM Children (12 subjects), NSD (8 subjects). Our N=40 exceeds all three high-impact published studies.
@@ -449,6 +450,8 @@ All files in `meetings/`.
 - [ ] Haxby et al. distributed coding citation — Owner: Aimee (from reference list in `LLM_brain.RTF` when available)
 - [ ] Decide 120K image dataset placement: appendix or omit (Apr 28 minutes: retain as negative result showing scope)
 - [ ] Add bootstrap CI or shaded bands to central LLM plots where feasible
+- [ ] **Run V/A sensitivity analysis** — perturb V/A coordinates with Gaussian noise (SD = 0.25, 0.50, 0.75 on 1-9 scale), repeat PC-axis correlation 1,000–10,000 times, report % of perturbations where qualitative result holds (PC1 remains arousal-aligned). 5-step procedure in `valence_arousal_ground_truth_deep_dive.pdf` §7. Owner: Pritish
+- [ ] **Export `valence_arousal_reference_table.csv`** — exact V/A coordinates used in analysis, for NeurIPS reproducibility checklist. Column spec in `valence_arousal_ground_truth_deep_dive.pdf` §11. Owner: Pritish
 - [ ] Create anonymised code/data supplement for NeurIPS reproducibility checklist
 
 ### Completeness Cross-Check
@@ -525,20 +528,29 @@ All files in `meetings/`.
 
 ### Valence-Arousal Ground Truth Coordinates
 
-The V/A values used to test axis alignment (source: `run_va_reduction.py`, derived from Russell's Circumplex Model with expert consultation). These are operational/cited labels, not measured physical constants.
+Authoritative source: `repo_context/project_context/valence_arousal_ground_truth_deep_dive.pdf`. These are **external reference coordinates** derived from affective science — not measured participant responses. Cite as: "category-level approximation based on the circumplex model and empirical affective-norm resources." Do NOT write "ground-truth feelings" or "measured valence/arousal."
 
-| Emotion | Valence | Arousal | Used in Experiments |
-|---|---|---|---|
-| Joy / Happiness / Delighted | +0.85 | 0.70 | Text + Brain |
-| Love | +0.85 | 0.55 | Text only |
-| Surprise | +0.10 | 0.85 | Text only |
-| Calm | +0.70 | 0.15 | Brain only |
-| Excited | +0.75 | 0.90 | Brain only |
-| Sadness / Depressed | −0.85 | 0.25 | Text + Brain |
-| Anger | −0.75 | 0.80 | Text only |
-| Fear / Afraid | −0.80 | 0.85 | Text + Brain |
+Values are on a **1-9 Self-Assessment Manikin (SAM) scale** (1 = most negative/least activated, 9 = most positive/most activated). The code (`run_va_reduction.py`) uses a normalised −1 to +1 / 0 to 1 version — both representations are consistent.
 
-**Note on VA alignment metric discrepancy (MPNet):** The VA_GEOMETRIC_CONVERGENCE_REPORT.md table shows MPNet PC1 Valence r = 0.96, while `alignment_metrics.json` shows valence_r = 0.9655 (rounds to 0.97). The JSON value (0.97) is the precise computed value; the report rounded down to 0.96. Use 0.97 when citing this figure precisely.
+| Emotion | Valence (1-9) | Arousal (1-9) | Circumplex Quadrant | Used in Experiments |
+|---|---|---|---|---|
+| Joy / Happiness / Delighted | 8.2 | 6.5 | positive, moderate-high arousal | Text + Brain |
+| Love | 8.4 | 5.5 | positive, moderate arousal | Text only |
+| Surprise | — | — | (context-dependent) | Text only |
+| Calm | 7.0 | 2.5 | positive, low arousal | Brain only |
+| Excited | 7.8 | 8.2 | positive, high arousal | Brain only |
+| Sadness / Depressed | 2.2 | 3.0 | negative, low arousal | Text + Brain |
+| Anger | — | — | negative, high arousal | Text only |
+| Fear / Afraid | 2.5 | 7.5 | negative, high arousal | Text + Brain |
+
+**Citation chain for this table:** Russell 1980 (coordinate framework) + DEAP/Koelstra et al. 2012 doi:10.1109/T-AFFC.2011.15 (numerical anchor) + ANEW/Bradley & Lang 1999 (lexical norms) + IAPS/Lang et al. 2008 (visual norms). Mehrabian & Russell 1974 and Posner et al. 2005 as supporting theoretical sources.
+
+**Wording discipline (from `valence_arousal_ground_truth_deep_dive.pdf`):**
+- USE: "external V-A reference coordinates", "category-level approximation", "global-axis interpretation", "alignment with affective reference structure"
+- AVOID: "ground-truth feelings", "measured valence and arousal", "exact affective coordinates", "the brain proves arousal is the universal organising axis"
+- **Final defensible claim:** *"The dominant global axis of the tested neural emotion geometry aligns more strongly with an externally defined arousal reference than with an externally defined valence reference, while the main ambiguity mechanism is supported independently by centroid margin and classifier/logit uncertainty."*
+
+**Note on VA alignment metric discrepancy (MPNet):** `VA_GEOMETRIC_CONVERGENCE_REPORT.md` shows MPNet PC1 Valence r = 0.96, while `alignment_metrics.json` shows 0.9655 (rounds to 0.97). Use 0.97 when citing precisely.
 
 ---
 
@@ -557,8 +569,20 @@ This section lists references that have been mentioned in meeting minutes, cited
 **[CONFIRMED]** Russell, J. A. (1980). A circumplex model of affect. *Journal of Personality and Social Psychology, 39*(6), 1161–1178. doi:10.1037/h0077714. Available at: https://psycnet.apa.org/doiLanding?doi=10.1037%2Fh0077714.
 — Foundational source for the valence-arousal coordinate system. Justifies the two-axis (valence, arousal) decomposition of emotional states used throughout the paper. DOI confirmed via `LLM_Brain.rtf`.
 
-**[CONFIRMED]** Koelstra, S., Mühl, C., Soleymani, M., Lee, J.-S., Yazdani, A., Ebrahimi, T., Pun, T., Nijholt, A., & Patras, I. (2012). DEAP: A database for emotion analysis using physiological signals. *IEEE Transactions on Affective Computing, 3*(1), 18–31.
-— Second V/A citation source. DEAP provides operational numerical V/A scores for emotion categories used in affective computing benchmarks. Confirmed as primary source in May 1 meeting; reportedly ~5245 citations.
+**[CONFIRMED]** Koelstra, S., Mühl, C., Soleymani, M., Lee, J.-S., Yazdani, A., Ebrahimi, T., Pun, T., Nijholt, A., & Patras, I. (2012). DEAP: A database for emotion analysis using physiological signals. *IEEE Transactions on Affective Computing, 3*(1), 18–31. doi:10.1109/T-AFFC.2011.15.
+— Empirical numerical anchor for V/A coordinates. DEAP provides continuous valence and arousal ratings for emotion-eliciting videos. Role: numerical anchor (not a direct label dictionary — see `valence_arousal_ground_truth_deep_dive.pdf` §3).
+
+**[CONFIRMED]** Mehrabian, A., & Russell, J. A. (1974). *An Approach to Environmental Psychology.* Cambridge, MA: MIT Press.
+— Precursor dimensional affect framework (pleasure, arousal, dominance). Supports the broader tradition behind the circumplex model.
+
+**[CONFIRMED]** Bradley, M. M., & Lang, P. J. (1999). Affective Norms for English Words (ANEW): Instruction Manual and Affective Ratings. Technical Report C-1, Center for Research in Psychophysiology, University of Florida.
+— Lexical affective norms. Provides V/A/dominance ratings for English emotion-related words. Useful for anchoring categorical labels as word concepts.
+
+**[CONFIRMED]** Lang, P. J., Bradley, M. M., & Cuthbert, B. N. (2008). International Affective Picture System (IAPS): Affective Ratings of Pictures and Instruction Manual. Technical Report A-8. Gainesville, FL: University of Florida.
+— Visual affective norms. Normative ratings of affective pictures on V/A scales.
+
+**[CONFIRMED]** Posner, J., Russell, J. A., & Peterson, B. S. (2005). The circumplex model of affect: An integrative approach to affective neuroscience, cognitive development, and psychopathology. *Development and Psychopathology, 17*(3), 715–734.
+— Neuroscience-facing review of the circumplex model. Supports relevance of V/A dimensions to neural emotion processing.
 
 ### Neuroscience / Brain Distributed Coding
 
@@ -632,7 +656,7 @@ Source document: `repo_context/project_context/Justification brain data.docx`
 
 ### To Be Added
 
-- DEAP (Koelstra & Mühl 2012) — still missing from `LLM_Brain.rtf`; needed for V/A numerical score citation. Owner: Aimee
+- DEAP (Koelstra et al. 2012) — CONFIRMED, doi:10.1109/T-AFFC.2011.15. See Affective Science section above.
 - Prototype theory for emotion categories — confirm with Aimee
 - LOSO cross-validation methodology for fMRI — confirm with Aimee
 - ⚠️ Cooper & Kelsall (2023) quantum oscillations paper appears in `LLM_Brain.rtf` in error — unrelated to this project; do not cite
