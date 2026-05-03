@@ -6,7 +6,7 @@
 >
 > **What this file contains:** Project identity · Six key findings with verified numeric anchors · NeurIPS abstract (248 words) · Full repository map with current meeting file naming convention · Work diary (8 sessions) · Open items checklist · Glossary with V/A coordinates · Potential references section
 >
-> **Known data quality issues flagged in this file:** (1) Brain vs MPNet 48D RDM discrepancy (−0.5476 vs −0.1023) in Finding 6b — needs Pritish clarification. (2) Cross-system ambiguity gradient RESOLVED — confirmed r = 0.9565, p = 3.20e-54 from `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt` (note: meeting minutes cited r ≈ 0.56, which was an error — the confirmed value is 0.9565). (3) Statistical tests (LOSO/bootstrap/permutation) not yet applied to LLM text experiments.
+> **Known data quality issues flagged in this file:** (1) Brain vs MPNet 48D RDM discrepancy (−0.5476 vs −0.1023) in Finding 6b — needs Pritish clarification. (2) Cross-system ambiguity gradient RESOLVED — confirmed r = 0.9565, p = 3.20e-54 from `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt` (note: meeting minutes cited r ≈ 0.56 in error — confirmed value is 0.9565). (3) LOSO/bootstrap/permutation for LLM text experiments — DECISION NOT REQUIRED: cross-model replication across 4 architectures is the generalization argument; paper pushes pattern story not metrics benchmark.
 
 ---
 
@@ -14,7 +14,7 @@
 
 | Blocking Item | Status | Evidence / Note |
 |---|---|---|
-| LOSO/bootstrap/permutation tests on LLM text experiments | UNRESOLVED | No matching terms found in `experiments/understanding_text_embeddings/reports/` — currently only brain data has these tests applied |
+| LOSO/bootstrap/permutation tests on LLM text experiments | DECISION: NOT REQUIRED | Cross-model replication across 4 architectures (BGE-Base, BGE-FT, MPNet-Base, MPNet-FT) serves as the generalization evidence for LLM results. The paper's contribution is the geometric pattern story and consistent structure across models — not a metrics benchmark. Statistical rigour at the subject level (LOSO etc.) applies to the brain fMRI data because of subject-level variance; LLM embedding geometry is deterministic given fixed weights. Decision made 2026-05-03. |
 | Ambiguity gradient source file | RESOLVED | File pushed by Pritish. Confirmed at `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt`. Actual values: r = **0.9565**, p = 3.1984e-54. ⚠️ **Correction:** Meeting minutes cited r ≈ 0.56 — this was an error (0.56 is the Brain LOSO accuracy, not this correlation). The paper must cite r = 0.9565. 95% CI: [0.9370, 0.9725]. Permutation p (n=5000): 0.000. |
 | Valence-arousal ground truth citation | PARTIAL | `PLAN.md` and `run_va_reduction.py` reference Russell's Circumplex and DEAP/Koelstra; May 1 meeting confirms Russell 1980 + DEAP as citations — exact numerical table not yet formally cited in a paper-facing document |
 | Aimee's results PDF | UNRESOLVED | `emotion_geometry_and_score_4_square_explorer_square_report_score_v2.pdf` not found in repo; noted in Apr 28 minutes as on Aimee's laptop |
@@ -424,7 +424,7 @@ All files in `meetings/`.
 
 ### Must-Do (Blocking Submission)
 
-- [ ] **LOSO + bootstrap CI + permutation tests on all LLM text embedding results** — currently only brain data has these. If reviewers ask "what is the statistical significance of your silhouette improvement?", there is no answer yet. **Severity: HIGH — this is the single biggest methodological gap.** Owner: Pritish/Josh; advised by Aimee
+- [x] **LOSO + bootstrap CI + permutation tests on LLM text embedding results** — DECISION: NOT REQUIRED. Cross-model replication across 4 architectures is the generalization argument. The paper pushes the geometric pattern story; LOSO-style cross-validation applies to biological subject-level data (brain fMRI) where individual differences are the source of variance. LLM embedding geometry is deterministic. Reviewer challenge ("what is the significance of your silhouette improvement?") is answered by pointing to consistent patterns across all 4 model variants. Decision: 2026-05-03.
 - [x] **Push cross-system comparison file to repo** — DONE. File is at `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt`. Confirmed r = 0.9565 (not 0.56 as cited in meeting — see correction note in Finding 5). Also includes enhanced_statistical_results.txt with CI/permutation test. Owner: Pritish ✓
 - [ ] **Clarify Brain vs MPNet 48D discrepancy** — CENTROID_RELATIONAL_FINAL_REPORT.md Table 3.2 shows Brain vs MPNet Pearson r = −0.5476, but `rdm_comparison_metrics.json` shows brain_vs_mpnet cosine = −0.1023. These cannot both be correct cosine correlations. Determine whether the −0.5476 in the report was computed with Manhattan distance (matching the relational_validation.json manhattan_correlation value). Correct the report if wrong. Owner: Pritish
 - [ ] **Confirm valence-arousal ground truth citation chain** — Russell 1980 circumplex + DEAP (Koelstra & Mühl) are confirmed as primary sources. Exact numerical V/A values for the 5/6 emotions need to be formally cited in a paper-facing document with page/table reference. Owner: Aimee
