@@ -435,7 +435,7 @@ All files in `meetings/`.
 - [ ] **Decide Phase 5 (logit consistency) scope: main paper vs. appendix** — r = 0.957–0.988 is a strong result. Daniel to confirm placement. Owner: Daniel
 - [ ] **Justify fMRI sample size in methods** — add sentence citing typical fMRI studies use 8–10 subjects; 40 is above field standard. Specific precedents now available: IBC (12 subjects), PFM Children (12 subjects), NSD (8 subjects with ~40 sessions/person for dense sampling). Strategy: cite these high-impact studies to show 40 is well above field standard. Aimee to draft. Owner: Aimee/Daniel
 - [x] **Document embedding extraction layer per model** — DONE. Full pipeline documented in `repo_context/project_context/embeddings_extraction.md`. Covers all 8 variants, layer extraction logic (final = last hidden state layer 12; mid = `hidden_states[6]`), mean pooling implementation, tokenization params, and artifact directory layout. Use this as the methods section source. Owner: Daniel/Pritish ✓
-- [ ] **Confirm cross-system ambiguity p-value from source data file** — Owner: Pritish
+- [x] **Confirm cross-system ambiguity p-value from source data file** — RESOLVED. Confirmed p = 3.1984e-54 from `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt`. Full stats: r = 0.9565, p = 3.1984e-54, 95% CI [0.9370, 0.9725], permutation p (n=5000) = 0.000.
 
 ### Paper Drafting
 
