@@ -1,28 +1,53 @@
 # vidiq-hpc
 
-High-performance computing experiments for the `vidiq` embedding-geometry project.
+This repository contains a NeurIPS 2026 research project investigating the geometric structure of emotional representations in large language models (LLMs) and comparing that structure to human fMRI brain activations. The central question is whether measurable universal laws — a hollow void near emotion prototypes, a dense belt of real instances, and a competitive boundary where classes overlap — appear in both artificial and biological systems. We find that local geometric logic is shared (ambiguity as centroid competition predicts uncertainty in both LLMs and brain), while global organisation is inverted (LLMs sort by valence, brains sort by arousal). For the full project map and scientific context, see [`repo_context/PROJECT_OVERVIEW.md`](repo_context/PROJECT_OVERVIEW.md).
 
-This repo currently covers two main workstreams:
+## Research Overview
 
-- text experiments for embedding-geometry analysis on sentiment and emotion datasets
-- HPC fine-tuning runs for a Qwen-based multiclass emotion classifier
+**Hypothesis:** LLM embeddings encode emotional context geometrically via measurable universal laws (centroid distance + cluster density). If the same laws appear in human fMRI activations, this constitutes evidence of a universal representational principle shared across artificial and biological systems.
+
+Two workstreams:
+- **Text embedding geometry** — 5-phase study across 8 LLM variants (BGE and MPNet, pretrained and fine-tuned, middle and final layers): [`experiments/understanding_text_embeddings/`](experiments/understanding_text_embeddings/)
+- **Brain fMRI alignment** — 6 sub-experiments comparing LLM embedding geometry to human fMRI activations (40 subjects, 5 emotions, 48 ROIs): [`experiments/brain_embedding_understanding/`](experiments/brain_embedding_understanding/)
+
+**Team:** Joshua Bhawanlall (ML/coordination), Daniel Sikar (lead researcher/maths), Pritish Ranjan (experiments/HPC), Aimee Bottrill-Frost (neuroscience/brain fMRI)
+
+**Datasets:** `dair-ai/emotion` (6-class text, 4038 validation samples) + OpenNeuro DS005700 (40 subjects, brain fMRI)
+
+Key findings and work diary: [`repo_context/PROJECT_OVERVIEW.md`](repo_context/PROJECT_OVERVIEW.md)
+
+## Navigate the Repository
+
+Start with the compass file: [`repo_context/PROJECT_OVERVIEW.md`](repo_context/PROJECT_OVERVIEW.md) contains the full scientific story, all key numeric anchors, open items, and a complete repository map. If you are unfamiliar with the project, read that file before opening any experiment directory.
+
+The text embedding experiments live in [`experiments/understanding_text_embeddings/`](experiments/understanding_text_embeddings/). The [`plan.md`](experiments/understanding_text_embeddings/plan.md) file gives the experimental context. The five phases are best read via their HTML summaries, which include inline plots: [`phase1_summary.html`](experiments/understanding_text_embeddings/reports/phase1_summary.html) covers baseline cluster geometry across all 8 model variants; [`phase2_summary.html`](experiments/understanding_text_embeddings/reports/phase2_summary.html) shows the density belt, The Void, and inter-class overlap; [`phase3_summary.html`](experiments/understanding_text_embeddings/reports/phase3_summary.html) shows the signal retention ablation (where information lives in the dimensions); [`phase4_summary.html`](experiments/understanding_text_embeddings/reports/phase4_summary.html) covers the isolated emotional subspace and valence-arousal structure; [`phase5_summary.html`](experiments/understanding_text_embeddings/reports/phase5_summary.html) covers logit consistency and the geometry-decision relationship.
+
+The brain fMRI experiments live in [`experiments/brain_embedding_understanding/`](experiments/brain_embedding_understanding/). The most important entry points: [`BRAIN_11D_SYSTEMS_REPORT.md`](experiments/brain_embedding_understanding/adding_spatial_context/outputs/BRAIN_11D_SYSTEMS_REPORT.md) explains how the 48 ROIs are compressed to an interpretable 11-dimensional system representation. [`CONTEXT_RETENTION_FINAL_REPORT.md`](experiments/brain_embedding_understanding/checking_context_retention_across_dimensions/reports/CONTEXT_RETENTION_FINAL_REPORT.md) shows the first cross-system alignment signal — fine-tuned LLMs compress signal into a cliff, pretrained LLMs and the brain distribute it across dimensions. [`VA_GEOMETRIC_CONVERGENCE_REPORT.md`](experiments/brain_embedding_understanding/valence-arousal-dimensional_reduction/reports/VA_GEOMETRIC_CONVERGENCE_REPORT.md) shows which affective axis each system prioritises. The culminating finding — the relational paradox — is in [`CENTROID_RELATIONAL_FINAL_REPORT.md`](experiments/brain_embedding_understanding/checking_centroids/reports/CENTROID_RELATIONAL_FINAL_REPORT.md): LLMs sort emotions by valence, the brain sorts by arousal, and the resulting RDMs are near-opposite (r = −0.88 to −0.99).
+
+Meeting minutes are in [`meetings/`](meetings/). The best single entry point for a newcomer is [`20260501_Phase_1_to_5_results_transcrition.md`](meetings/20260501_Phase_1_to_5_results_transcrition.md) — the May 1 session where all 5 phases and the brain experiments were reviewed together. The brain integration context and statistical rigour requirements are in [`2026-04-28_minutes_aimee.md`](meetings/2026-04-28_minutes_aimee.md).
+
+NeurIPS submission materials are in [`repo_context/neurips_context/`](repo_context/neurips_context/). The guide file [`neurips-guide.md`](repo_context/neurips_context/neurips-guide.md) maps the study's findings to NeurIPS paper sections and includes the pre-submission checklist. The two PDFs in that folder are detailed strategy documents tailored to this specific paper.
+
+Data preparation scripts: [`scripts/prepare_balanced6_dataset.py`](scripts/prepare_balanced6_dataset.py) combines per-emotion raw embeddings into the unified training dataset; [`scripts/embed_balanced_6_emotions_raw.py`](scripts/embed_balanced_6_emotions_raw.py) generates raw mean-pooled embeddings from CSV via HuggingFace models.
 
 ## Main Areas
 
-- `experiments.md`
-  repo-level map of experiment families, models, datasets, and output locations
-- `experiments/text/`
-  dataset-specific text experiment pipelines, reports, configs, and outputs
-- `experiments/text_model/`
-  Qwen-based multiclass classifier training code and requirements
-- `hpc/`
-  SLURM batch scripts for Hyperion runs, including smoke tests and long-run jobs
-- `reports/`
-  survey reports and research notes, including the current image-dataset survey reports
+- `repo_context/`
+  compass file (`PROJECT_OVERVIEW.md`) and NeurIPS submission context (`neurips_context/`)
+- `experiments/understanding_text_embeddings/`
+  5-phase text embedding geometry study: baseline topology, overlap/density, signal retention, isolated subspace, logit consistency
+- `experiments/brain_embedding_understanding/`
+  6 sub-experiments comparing LLM embedding geometry to human fMRI activations
 - `meetings/`
-  meeting minutes and transcripts
-- `prompts/`
-  reusable research prompts, including the image-dataset search prompt
+  meeting minutes and transcripts (April–May 2026)
+- `scripts/`
+  data preparation utilities for embedding extraction and dataset balancing
+- `reports/`
+  background research notes and image-dataset survey reports (image experiments explored but not included in paper)
+- `hpc/`
+  SLURM batch scripts for Hyperion HPC runs (operational infrastructure)
+- `configs/`
+  experiment configuration files including image experiment configs (retained for reference)
 
 ## Text-Model Training
 

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(pip3 install *)",
+      "Bash(python3 -c \"import pypdf; r=pypdf.PdfReader\\('/Users/joshuabhawanlall/vidiq-hpc/repo_context/project_context/Emotion_Geometry_Complete_Report.pdf'\\); [print\\(p.extract_text\\(\\)\\) for p in r.pages]\")"
+    ]
+  }
+}
