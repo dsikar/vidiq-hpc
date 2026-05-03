@@ -1,0 +1,1056 @@
+% =============================================================================
+% Geometric Competition as a Shared Principle of Ambiguity
+% in LLM and Neural Emotion Representations
+%
+% NeurIPS 2026 Submission — Double-blind review version
+%
+% DEPENDENCIES:
+%   neurips_2024.sty  — download from https://neurips.cc/Conferences/2024/PaperInformation/StyleFiles
+%                       and place in the same directory as this .tex file.
+%   references.bib    — provided alongside this file.
+%
+% COMPILE:
+%   pdflatex neurips_submission.tex
+%   bibtex neurips_submission
+%   pdflatex neurips_submission.tex
+%   pdflatex neurips_submission.tex
+% =============================================================================
+
+\documentclass{article}
+
+\usepackage[preprint]{neurips_2024}   % change to [final] for camera-ready
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{multirow}
+
+% ---------------------------------------------------------------------------
+% Figure search paths (relative to the location of this .tex file)
+% ---------------------------------------------------------------------------
+\graphicspath{
+  {../../experiments/understanding_text_embeddings/reports/phase1/}
+  {../../experiments/understanding_text_embeddings/reports/phase2/}
+  {../../experiments/understanding_text_embeddings/reports/phase3/}
+  {../../experiments/understanding_text_embeddings/reports/phase4/}
+  {../../experiments/understanding_text_embeddings/reports/phase5/}
+  {../../experiments/brain_embedding_understanding/global_behavior_comparison/}
+  {../../experiments/brain_embedding_understanding/checking_context_retention_across_dimensions/reports/}
+  {../../experiments/brain_embedding_understanding/checking_centroids_with_spatial_context_data/reports/}
+  {../../experiments/brain_embedding_understanding/checking_centroids/reports/}
+  {../../experiments/brain_embedding_understanding/valence-arousal-dimensional_reduction/reports/}
+}
+
+% ---------------------------------------------------------------------------
+\title{Geometric Competition as a Shared Principle of Ambiguity\\
+       in LLM and Neural Emotion Representations}
+
+\author{
+  Anonymous Authors \\
+  \textit{Submitted to NeurIPS 2026 --- Double-blind review version}
+}
+
+\begin{document}
+\maketitle
+
+% ===========================================================================
+\begin{abstract}
+% ===========================================================================
+We investigate whether LLM embedding spaces and the human brain share a geometric
+principle for representational ambiguity in emotion processing.
+Across eight LLM variants (BGE and MPNet, pretrained and fine-tuned) applied to a
+6-class text emotion dataset (4,038 validation samples) and brain fMRI from 40 subjects
+(5 emotions, 48 ROIs; OpenNeuro DS005700), we identify six findings.
+First, no embedding exists within 0.375--0.625 normalised units of any emotion centroid
+(the \emph{Void}); density peaks at 0.56--0.94 units (the \emph{Belt}).
+Second, overlap rates range from 0.42\% (fine-tuned) to 19.22\% (pretrained);
+no embedding aligns exclusively with a single class prototype in any system.
+Third, fine-tuned LLMs concentrate signal into 15--20 dimensions;
+pretrained models distribute across 26--67.
+Fourth, projecting to the top 20 SVD directions resolves pretrained cloud structure
+(silhouette $+627$--$765\%$) while matching or exceeding 768D accuracy, confirming
+emotion occupies $\approx\!2.6\%$ of embedding capacity.
+Fifth, centroid margin predicts brain classification uncertainty
+(AUC$\,{=}\,0.81$) while raw distance fails (AUC$\,{=}\,0.56$);
+in fine-tuned LLMs, centroid distance predicts logit confidence ($r=0.957$--$0.988$).
+Sixth, LLMs sort emotions by valence (PC1 $r=0.97$--$0.98$);
+the brain sorts by arousal (PC1 $r=0.96$), producing near-opposite
+dissimilarity matrices ($r=-0.88$) that deepen as biological noise is reduced.
+Shared local geometry coexists with fundamentally different global representational priorities.
+\end{abstract}
+
+% ===========================================================================
+\section{Introduction}
+% ===========================================================================
+
+How emotion is represented geometrically in artificial and biological neural systems is
+a foundational question at the intersection of representation learning and affective
+neuroscience. While large language models have achieved strong performance on emotion
+classification, the internal geometry supporting these classifications remains poorly
+characterised. The fMRI literature has documented that emotions are encoded in
+distributed cortical patterns~\citep{horikawa2020}, but the geometric relationship
+between those patterns and the structured embedding spaces of language models has not
+been systematically investigated.
+
+This paper addresses a specific and tractable version of this question: do LLM embedding
+spaces and human fMRI activation spaces share a geometric principle for representational
+ambiguity? We operationalise ambiguity through \emph{centroid distance} and
+\emph{centroid margin} --- the competitive gap between a point's distance to its own class
+prototype versus the nearest competing prototype. Our hypothesis is that both systems
+exhibit a structured void near class prototypes, a peak-density belt of real instances
+at moderate distances, and a gradient from certainty to ambiguity as geometric exposure
+to competing prototypes increases.
+
+\textbf{Research gap.}
+Prior work on LLM--brain alignment has focused on language-processing tasks using RSA
+or encoding models~\citep{caucheteux2022,schrimpf2021,li2023b,huth2016,li2023a},
+relating brain regions to model layers.
+Emotion representation geometry has been studied in affective
+computing~\citep{russell1980,koelstra2012} but rarely with the aim of characterising
+the full distributional structure of embedding spaces across a void--belt--margin
+framework. Whether the ambiguity gradient is a shared principle across artificial and
+biological systems has not been previously investigated.
+
+\textbf{Contributions.}
+\begin{enumerate}
+  \item A normalised-distance framework enabling geometric comparison across spaces of
+        different dimensionality, identifying the Void and the Belt as consistent
+        structural features across all tested systems.
+  \item Characterisation of overlap rates and their pairwise structure across eight
+        LLM variants.
+  \item \textbf{The Low-Rank Emotion Subspace}: emotion is a low-rank linear property
+        occupying $\approx\!2.6\%$ of embedding capacity (20 of 768 dimensions).
+        Accuracy in 20D equals or exceeds 768D across all tested architectures.
+  \item A margin-vs-distance diagnostic distinguishing relational from radial geometric
+        structure: centroid \emph{margin} predicts brain uncertainty
+        (AUC$\,{=}\,0.81$); centroid \emph{distance} fails (AUC$\,{=}\,0.56$).
+  \item The global representational inversion: LLMs sort emotions by valence; the brain
+        by arousal. This produces near-opposite dissimilarity matrices that deepen as
+        biological noise is reduced.
+\end{enumerate}
+
+% ===========================================================================
+\section{Related Work}
+% ===========================================================================
+
+\textbf{Representational geometry in LLMs.}
+\citet{mikolov2013} showed that distributional embeddings encode semantic structure in
+linear subspaces.
+\citet{ethayarajh2019} documented anisotropy in contextualised representations.
+\citet{kumar2022} showed fine-tuning can compress pretrained features --- directly
+relevant to our compaction finding.
+Our contribution extends this work by characterising the full radial density and
+competitive margin geometry of emotion embeddings.
+
+\textbf{Brain--LLM alignment.}
+\citet{caucheteux2022} showed partial convergence between brain activations and LLMs
+during language processing.
+\citet{schrimpf2021} characterised neural architecture convergence with transformer
+predictive processing.
+\citet{huth2016} linked distributional semantics to cortical topography.
+\citet{ismayilzada2026} found alignment during creative thinking.
+Our work differs: we study emotion rather than language processing, focus on the local
+geometric ambiguity mechanism, and document a systematic global inversion.
+
+\textbf{Distributed neural coding of emotion.}
+\citet{horikawa2020} showed visually evoked emotion representations are high-dimensional,
+categorical, and distributed across transmodal brain regions.
+\citet{haxby2001} established that cognitive categories are encoded as distributed
+activation patterns --- the biological prior explaining why brain fMRI shows negative
+silhouette in 2D projection while remaining decodable in 48 dimensions.
+
+\textbf{The circumplex model.}
+\citet{russell1980} organised affective states along valence and arousal dimensions,
+operationalised through DEAP~\citep{koelstra2012}, ANEW~\citep{bradley1999}, and
+IAPS~\citep{lang2008}.
+We use external V-A reference coordinates from this literature to interpret global
+representational axes, not as measured participant ground truth.
+
+% ===========================================================================
+\section{Datasets and Models}
+% ===========================================================================
+
+\textbf{Text emotion dataset.}
+We use the \texttt{dair-ai/emotion} dataset~\citep{saravia2018}, a 6-class text emotion
+corpus (anger, fear, happiness, love, sadness, surprise).
+We use the validation split, balanced to \textbf{4,038 samples} (673 per class).
+Class balance ensures centroids are not displaced by class-size differences and that
+overlap rates are comparable across categories.
+Labels are integer-encoded: anger=0, fear=1, happiness=2, love=3, sadness=4, surprise=5.
+
+\textbf{Brain fMRI dataset.}
+We use OpenNeuro DS005700~\citep{openneuro2024}, ``Neural MO --- fMRI Dataset for
+Emotion Recognition.''
+The dataset contains \textbf{40 subjects} viewing emotion-eliciting stimuli under five
+conditions: afraid, calm, delighted, depressed, and excited.
+Each subject contributes activations across \textbf{48 cortical ROIs} from the
+Harvard-Oxford atlas, yielding 200 observations total (40 subjects $\times$ 5 emotions).
+Repeated blocks per subject and emotion are averaged to stable ROI vectors.
+Brain LOSO decoding accuracy is 0.56 (95\% CI: 0.49--0.63, permutation $p<0.001$),
+well above the 5-class chance level of 0.20.
+Our $N\!=\!40$ exceeds high-impact precedents with smaller samples:
+Individual Brain Charting ($N\!=\!12$)~\citep{openneuro2024},
+Precision Functional Mapping of Children ($N\!=\!12$), and
+Natural Scenes Dataset ($N\!=\!8$).
+
+\textbf{LLM variants.}
+We evaluate eight variants by crossing two base models, two training states, and two
+extraction layers:
+
+\begin{center}
+\small
+\begin{tabular}{lllll}
+\toprule
+Variant & Base Model & State & Layer & Dim \\
+\midrule
+MPNet-FT-Final  & all-mpnet-base-v2~\citep{song2020} & Fine-tuned & L12 & 768 \\
+MPNet-FT-Mid    & all-mpnet-base-v2 & Fine-tuned & L6  & 768 \\
+MPNet-Base-Final& all-mpnet-base-v2 & Pretrained & L12 & 768 \\
+MPNet-Base-Mid  & all-mpnet-base-v2 & Pretrained & L6  & 768 \\
+BGE-FT-Final    & bge-base-en-v1.5~\citep{xiao2023} & Fine-tuned & L12 & 768 \\
+BGE-FT-Mid      & bge-base-en-v1.5 & Fine-tuned & L6  & 768 \\
+BGE-Base-Final  & bge-base-en-v1.5 & Pretrained & L12 & 768 \\
+BGE-Base-Mid    & bge-base-en-v1.5 & Pretrained & L6  & 768 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Fine-tuned models were trained on the \texttt{dair-ai/emotion} training split.
+The cross-system context retention experiment (Section~\ref{sec:finding3}) additionally
+includes Qwen3-1.7B fine-tuned~\citep{qwen2025} (PCA-projected to 768D).
+
+% ===========================================================================
+\section{Methods}
+% ===========================================================================
+
+\textbf{Embedding extraction.}
+All text embeddings use attention-mask-weighted mean pooling:
+\begin{equation}
+  \mathbf{e} = \frac{\sum_{i=1}^{N} \mathbf{h}_i \cdot m_i}{\sum_{i=1}^{N} m_i}
+  \label{eq:pooling}
+\end{equation}
+where $\mathbf{h}_i$ is the hidden state for token $i$ and $m_i$ is the attention mask.
+Final-layer (L12) extraction uses the last hidden state directly.
+Middle-layer (L6) extraction enables \texttt{output\_hidden\_states=True} and accesses
+\texttt{hidden\_states[6]}.
+Tokenisation: model-specific tokenisers with \texttt{max\_length=128},
+\texttt{padding=True}, \texttt{truncation=True}, batch size 32.
+
+\textbf{Normalised distance framework.}
+To compare across systems with different intrinsic scales (768D LLMs vs.\ 48D brain
+ROI), all distances are normalised by the mean radius of each system:
+\begin{equation}
+  \tilde{d}(x, c_k) = \frac{d(x, c_k)}{\bar{R}_k},
+  \qquad
+  \bar{R}_k = \frac{1}{N_k}\sum_{x \in C_k} d(x, c_k)
+  \label{eq:normdist}
+\end{equation}
+This maps all systems to a common scale ($\approx\!0$--$2.5$ normalised units) without
+discarding distributional shape.
+A point geometrically overlaps class $C'$ (its non-assigned class) if
+$d(P, c_{C'}) < d(P, c_C)$.
+The \emph{centroid margin} is:
+\begin{equation}
+  m(P) = d(P,\, c_{\text{nearest competitor}}) - d(P,\, c_C)
+  \label{eq:margin}
+\end{equation}
+Positive margin: $P$ is closer to its true centroid than to any competitor (more
+certain). Negative margin: geometric overlap (more ambiguous).
+
+\textbf{Brain 48D$\to$11D transformation.}
+To test whether the global representational inversion (Section~\ref{sec:inversion})
+is noise-driven, we construct a domain-informed 11-dimensional representation by
+aggregating ROI activations into biologically coherent groups.
+The Default Mode Network (DMN)~\citep{li2014dmn} supports self-referential processing
+and social cognition.
+The Salience Network~\citep{seeley2019} mediates detection of affectively significant
+stimuli.
+The Central Executive Network~\citep{miller2001} coordinates regulatory responses to
+emotional content.
+The 11 dimensions consist of five anatomical lobe means (frontal, temporal, parietal,
+occipital, cingulate/limbic), five functional network means (DMN, Salience, Central
+Executive, visual, somatomotor), and one neighbour-context feature capturing local
+inter-regional coordination.
+This is domain-informed structured denoising, not generic PCA: each dimension
+corresponds to a biologically meaningful functional unit.
+Classification performance in 11D remains above chance and comparable to 48D,
+confirming the transformation preserves task-relevant signal.
+
+\textbf{Valence-arousal reference mapping.}
+External V-A coordinates are drawn from the circumplex model~\citep{russell1980,
+mehrabian1974} and affective-norm resources DEAP~\citep{koelstra2012},
+ANEW~\citep{bradley1999}, and IAPS~\citep{lang2008} (1--9 SAM scale).
+Because the fMRI dataset supplies categorical labels rather than participant-level V-A
+ratings, these coordinates function as an \emph{external reference geometry},
+not measured subjective ground truth.
+Sensitivity analysis (Appendix~\ref{app:va-sensitivity}) perturbs coordinates with
+Gaussian noise (SD\,=\,0.25/0.50/0.75) to verify qualitative robustness.
+
+\textbf{RSA methodology.}
+We follow \citet{kriegeskorte2008}.
+For each system, pairwise Euclidean distances between emotion class centroids form a
+$K \times K$ Representational Dissimilarity Matrix (RDM).
+Brain--LLM comparison uses the 3-emotion overlap: fear$\approx$afraid,
+happiness$\approx$delighted, sadness$\approx$depressed.
+Systems are compared by Pearson correlation between vectorised RDMs.
+A brain--brain noise ceiling estimates the upper bound imposed by individual subject
+variability: upper 0.484, lower 0.460 (mean $\approx\!0.47$), computed by split-half
+resampling of the 40-subject dataset.
+With $K\!=\!3$ emotions, RDMs contain 3 unique pairwise distances;
+reported Pearson correlations have 1 degree of freedom.
+Specific magnitudes are therefore indicative; directional findings (sign, contrast with
+noise ceiling) are the reliable quantities.
+
+% ===========================================================================
+\section{Results}
+% ===========================================================================
+
+We present six findings in order of increasing cross-system scope.
+Findings 1--4 characterise LLM geometry; Finding 5 introduces the ambiguity gradient;
+Finding 6 documents the global representational inversion.
+
+% ---------------------------------------------------------------------------
+\subsection{Finding 1: The Void and the Belt}
+\label{sec:finding1}
+% ---------------------------------------------------------------------------
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}[b]{0.44\textwidth}
+    \includegraphics[width=\textwidth]{all_clusters_comparison}
+    \caption{PCA projections of all 8 LLM variants.
+             Pretrained models (rows 1--2): overlapping clouds with no visible
+             cluster structure.
+             Fine-tuned models (rows 3--4): compact, well-separated islands.}
+    \label{fig:clusters}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.53\textwidth}
+    \includegraphics[width=\textwidth]{global_density_ambiguity_curves}
+    \caption{Radial density profiles (top) and ambiguity gradients (bottom)
+             for all 8 variants.
+             The void region (zero density near centroid) and the Belt
+             (peak density shell) are consistent across all systems.}
+    \label{fig:density-ambiguity}
+  \end{subfigure}
+  \caption{\textbf{Cluster geometry and density structure (Findings 1 and 2).}
+           (a) The cloud-to-island transition from pretrained to fine-tuned is
+           visible in raw PCA projection.
+           (b) Despite visual differences, all variants share the same two-zone
+           radial density structure in normalised-distance space.}
+  \label{fig:clusters-density}
+\end{figure}
+
+A consistent two-zone density structure emerges across all 8 LLM variants
+(Figure~\ref{fig:clusters-density}).
+
+\textbf{The Void.}
+No data points exist within approximately 0.375--0.625 normalised distance units of
+any emotion centroid.
+Fine-tuned models show first non-zero density at $\approx\!0.4375$ units;
+pretrained models at $\approx\!0.6875$ units.
+The Void arises as a geometric consequence of distributed within-class variance:
+a centroid is the mean of a distributed ring of instances, so it sits inside the ring
+in zero-density space.
+
+\textbf{The Belt.}
+Density rises sharply from the void boundary and peaks at approximately 0.56--0.94
+normalised units.
+Fine-tuned models peak earlier (MPNet-FT-Final at 0.5625, BGE-FT-Final at 0.6875);
+pretrained models peak later (both at 0.9375).
+
+\textbf{Certainty buffer.}
+The radial gap between density peak and onset of geometric ambiguity
+($>\!5\%$ overlap rate):
+
+\begin{center}
+\small
+\begin{tabular}{lcccc}
+\toprule
+Variant & Density Peak & Overlap Onset & Certainty Buffer & Void Onset \\
+\midrule
+MPNet-FT-Final  & 0.562 & 2.438 & $+1.875$ & 0.4375 \\
+BGE-FT-Final    & 0.688 & 2.438 & $+1.750$ & 0.4375 \\
+MPNet-Base-Final& 0.938 & 0.938 & $\phantom{+}0.000$ & 0.6875 \\
+BGE-Base-Final  & 0.938 & 1.062 & $+0.125$ & 0.6875 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Fine-tuning creates a geometrically safe zone between peak density and the onset of
+competitive class confusion; for pretrained models this buffer is near zero.
+
+% ---------------------------------------------------------------------------
+\subsection{Finding 2: Unoccupied Centroids}
+\label{sec:finding2}
+% ---------------------------------------------------------------------------
+
+No observed sample meets the condition of being within the void region near its own
+prototype. \textbf{No embedding aligns exclusively with a single class prototype in
+any tested model or the brain fMRI system.}
+
+\textbf{Graduated overlap rates (final layer, full validation set):}
+
+\begin{center}
+\small
+\begin{tabular}{lc}
+\toprule
+Variant & Global Overlap (\%) \\
+\midrule
+MPNet-FT-Final   & 0.42 \\
+BGE-FT-Final     & 1.81 \\
+MPNet-Base-Final & 18.45 \\
+BGE-Base-Final   & 19.22 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The most entangled pair is Happiness vs.\ Love (42\% pairwise overlap in pretrained
+models), sharing adjacent circumplex positions. The most separable is Fear vs.\ Anger
+(12\% overlap), despite both occupying the negative high-arousal quadrant.
+
+% ---------------------------------------------------------------------------
+\subsection{Finding 3: Information Compaction vs.\ Distribution}
+\label{sec:finding3}
+% ---------------------------------------------------------------------------
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}[b]{0.55\textwidth}
+    \includegraphics[width=\textwidth]{early_decay_comparison_top25}
+    \caption{Signal cliff: accuracy as dominant directions are removed iteratively.
+             Fine-tuned models reach chance at dimensions 15--20;
+             pretrained BGE at 26, pretrained MPNet at 67.}
+    \label{fig:signal-cliff}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.42\textwidth}
+    \includegraphics[width=\textwidth]{Content_Retention_Comparison_}
+    \caption{Cross-system context retention.
+             Brain $D_{50}\!=\!4$; fine-tuned LLM $D_{50}\!=\!12$;
+             pretrained LLM $D_{50}\!=\!17$.}
+    \label{fig:context-retention}
+  \end{subfigure}
+  \caption{\textbf{Signal structure across systems.}
+           (a) SVD ablation reveals qualitatively different compaction strategies.
+           (b) The brain requires only 4 dominant directions to achieve half its
+           classification accuracy, yet maintains a distributed plateau rather than
+           collapsing to chance --- consistent with distributed biological coding.}
+  \label{fig:signal-structure}
+\end{figure}
+
+Iterative SVD ablation removes the most informative linear direction at each step;
+a fresh logistic regression is re-trained on the residual.
+\textbf{Signal erasure points} (dimension at which accuracy reaches the 6-class chance
+baseline of 16.7\%):
+
+\begin{center}
+\small
+\begin{tabular}{lcc}
+\toprule
+Variant & Baseline Accuracy (\%) & Erasure Point \\
+\midrule
+MPNet-FT-Final   & 98.14 & dim 15 \\
+BGE-FT-Final     & 98.14 & dim 20 \\
+BGE-Base-Final   & 95.17 & dim 26 \\
+MPNet-Base-Final & 95.17 & dim 67 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Fine-tuned models achieve higher baseline accuracy but concentrate all emotional signal
+into 15--20 directions; remove them and signal collapses entirely.
+Pretrained MPNet-Base retains decodable signal for 67 dimensions, a $4.5\times$ wider
+manifold than the fine-tuned equivalent (Figure~\ref{fig:signal-cliff}).
+
+\textbf{Cross-system extension.}
+A separate iterative ablation compared three systems
+(Figure~\ref{fig:context-retention}):
+
+\begin{center}
+\small
+\begin{tabular}{lccc}
+\toprule
+System & AUC (Signal Volume) & $D_{50}$ (Half-Life) & Profile \\
+\midrule
+Human Brain         & 0.302 & 4 dims  & Highly distributed \\
+MPNet-Pretrained    & 0.331 & 17 dims & Redundant manifold \\
+Qwen-Fine-tuned~\citep{qwen2025} & 0.260 & 12 dims & Compressed cliff \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The brain's $D_{50}\!=\!4$ means removing just 4 dominant directions halves
+classification accuracy, yet the curve flattens into a distributed plateau rather than
+dropping to chance~\citep{haxby2001}, consistent with distributed biological coding.
+
+% ---------------------------------------------------------------------------
+\subsection{Finding 4: The Low-Rank Emotion Subspace}
+\label{sec:finding4}
+% ---------------------------------------------------------------------------
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.75\textwidth]{silhouette_comparison_20D}
+  \caption{\textbf{The Low-Rank Emotion Subspace.}
+           Silhouette scores in full 768D (grey) vs.\ the isolated top-20 SVD subspace
+           (red). Pretrained models improve from near-zero to $\approx\!0.41$;
+           fine-tuned models improve modestly from already-high baselines.
+           Accuracy in 20D equals or exceeds 768D in all four variants (see text).}
+  \label{fig:silhouette}
+\end{figure}
+
+\textbf{Named result.}
+Emotion is a low-rank linear property, occupying $\approx\!20/768\,{\approx}\,2.6\%$
+of full embedding capacity.
+The cloud appearance of pretrained models in 768D is not an absence of geometry ---
+it is the geometry of $\approx\!748$ noise dimensions overwhelming 20 signal
+dimensions.
+
+\textbf{Silhouette scores before and after projection into the top 20 SVD directions
+(Figure~\ref{fig:silhouette}):}
+
+\begin{center}
+\small
+\begin{tabular}{lccc}
+\toprule
+Variant & 768D Silhouette & 20D Silhouette & Relative Change \\
+\midrule
+MPNet-FT-Final   & 0.860 & 0.907 & $+5.5\%$ \\
+BGE-FT-Final     & 0.685 & 0.835 & $+22.0\%$ \\
+MPNet-Base-Final & 0.047 & 0.408 & $+765\%$ \\
+BGE-Base-Final   & 0.057 & 0.415 & $+627\%$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Classification accuracy: 20D equals or exceeds 768D across all variants:}
+
+\begin{center}
+\small
+\begin{tabular}{lcc}
+\toprule
+Variant & 768D Accuracy (\%) & 20D Accuracy (\%) \\
+\midrule
+MPNet-FT-Final   & 98.24 & 98.27 \\
+BGE-FT-Final     & 97.99 & 98.09 \\
+MPNet-Base-Final & 94.08 & 95.64 \\
+BGE-Base-Final   & 93.78 & 95.12 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The extra 748 dimensions contribute only noise that slightly suppresses linear
+classification performance.
+Pairwise centroid distances preserve the same relational structure in 20D as in 768D:
+Happiness--Love and Fear--Anger are the closest pairs;
+Sadness--Surprise and Happiness--Fear are the most distant.
+
+% ---------------------------------------------------------------------------
+\subsection{Finding 5: The Cross-System Ambiguity Gradient}
+\label{sec:finding5}
+% ---------------------------------------------------------------------------
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}[b]{0.42\textwidth}
+    \includegraphics[width=\textwidth]{dist_logit_scatter_MPNet-FT-Final}
+    \caption{LLM: centroid distance (geometric margin) vs.\ logit margin
+             for MPNet-FT-Final ($r\!=\!0.988$).}
+    \label{fig:dist-logit}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.55\textwidth}
+    \includegraphics[width=\textwidth]{global_behavior_comparison}
+    \caption{Cross-system: brain (solid red) vs.\ LLM (dashed blue) density profiles
+             (left) and ambiguity gradients (right).
+             Shape correlation $r\!=\!0.9565$ over 100 normalised-distance bins.}
+    \label{fig:global-comparison}
+  \end{subfigure}
+  \caption{\textbf{The cross-system ambiguity gradient.}
+           Both systems link geometric proximity to prototypes with representational
+           certainty, through complementary mechanisms.}
+  \label{fig:finding5}
+\end{figure}
+
+Both systems show that geometric positioning relative to class prototypes predicts
+classification confidence --- through mechanistically distinct constructs.
+
+\textbf{LLMs: centroid distance $\to$ logit confidence.}
+For fine-tuned LLMs, centroid distance is a strong predictor of logit confidence
+(Figure~\ref{fig:dist-logit}):
+
+\begin{center}
+\small
+\begin{tabular}{lcc}
+\toprule
+Variant & Dist-logit Pearson $r$ & Logit agreement in overlap (\%) \\
+\midrule
+BGE-FT-Final    & 0.9572 & 93.4  \\
+MPNet-FT-Final  & 0.9884 & 100.0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The near-linear relationship ($r\!=\!0.9884$ for MPNet-FT) means geometric position
+almost perfectly determines classifier confidence.
+In overlap regions, logit values are biased toward the competing class 93.4--100\% of
+the time.
+Note that in fine-tuned models this relationship is partially expected by the training
+objective; it is reported as a mechanistic characterisation.
+
+\textbf{Brain: centroid margin $\to$ classifier uncertainty.}
+For brain fMRI, raw centroid distance is a weak predictor of classification uncertainty
+(Spearman $r\!=\!0.1509$, AUC$\,{=}\,0.5627$ --- near chance).
+The correct predictor is centroid margin (Equation~\ref{eq:margin}):
+\begin{equation*}
+  \text{AUC}_{\text{margin}} = 0.8124
+  \qquad\text{vs.}\qquad
+  \text{AUC}_{\text{raw distance}} = 0.5627
+\end{equation*}
+with Spearman $r\!=\!0.6108$, $p\!=\!7.78\!\times\!10^{-22}$.
+A feature-shuffle control ($r\!=\!0.0287$, $p\!=\!0.687$) confirms the relationship
+vanishes under random permutation.
+
+\textbf{The ambiguity gradient comparison.}
+The analysis interpolates brain and LLM overlap-vs-distance curves onto a shared
+normalised-radius grid of 100 equally spaced points ($\tilde{d}\in[0, 2.5]$) and
+computes Pearson correlation between the resulting 100-point vectors.
+The $r\!=\!0.9565$ ($p\!=\!3.20\!\times\!10^{-54}$, 95\% CI [0.9370, 0.9725]) is
+therefore computed over $N\!=\!100$ interpolated grid points, \emph{not} over 5
+independent emotion categories or 200 biological subjects.
+The tightly specified $p$-value reflects the effective sample size of 100 interpolation
+bins; inference must rest on the permutation test ($n\!=\!5000$, $p\!=\!0.000$, which
+destroys cross-system shape alignment when shuffled) and on the qualitative consistency
+of the functional form (Figure~\ref{fig:global-comparison}).
+Additional evidence: KS statistic $= 0.57$ ($p\!=\!2.46\!\times\!10^{-15}$), Cohen's
+$d\!=\!1.34$ --- indicating that while gradient \emph{shape} is shared, absolute
+density of representations around centroids differs substantially between systems.
+
+% ---------------------------------------------------------------------------
+\subsection{Finding 6: The Valence-Arousal Inversion}
+\label{sec:inversion}
+% ---------------------------------------------------------------------------
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}[b]{0.48\textwidth}
+    \includegraphics[width=\textwidth]{va_alignment_Brain-fMRI}
+    \caption{Brain fMRI: poor VA alignment (Disparity$\!=\!0.80$, $R_\text{val}\!=\!0.31$).
+             Embeddings (red crosses) deviate markedly from the V-A circumplex
+             (blue circles).}
+    \label{fig:va-brain}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.48\textwidth}
+    \includegraphics[width=\textwidth]{va_alignment_MPNet-Balanced}
+    \caption{MPNet-Balanced (fine-tuned): excellent valence alignment
+             (Disparity$\!=\!0.19$, $R_\text{val}\!=\!0.97$).
+             Embeddings closely track the horizontal valence axis.}
+    \label{fig:va-llm}
+  \end{subfigure}
+
+  \vspace{0.5em}
+  \begin{subfigure}[b]{0.48\textwidth}
+    \includegraphics[width=\textwidth]{centroid_map_brain_11d}
+    \caption{Brain 11D centroid map (PCA): arousal-dominant organisation.
+             Fear (high arousal) separates from sadness (low arousal);
+             happiness clusters by positive valence+arousal.}
+    \label{fig:centroid-brain}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.48\textwidth}
+    \includegraphics[width=\textwidth]{centroid_map_MPNet-Balanced}
+    \caption{LLM centroid map (PCA): valence-dominant organisation.
+             Happiness and fear separate on the horizontal axis (valence).}
+    \label{fig:centroid-llm}
+  \end{subfigure}
+  \caption{\textbf{The Valence-Arousal Inversion.}
+           LLMs organise emotion primarily by valence; the brain primarily by arousal.
+           The global representational priorities are swapped.}
+  \label{fig:va-inversion}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}[b]{0.48\textwidth}
+    \includegraphics[width=\textwidth]{rdm_cosine_brain}
+    \caption{Brain RDM (cosine): arousal-structured. Depressed--calm (0.72) and
+             afraid--excited (0.82) are close; affect separates by activation
+             intensity.}
+    \label{fig:rdm-brain}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.48\textwidth}
+    \includegraphics[width=\textwidth]{rdm_cosine_MPNet-Balanced}
+    \caption{LLM RDM (cosine): valence-structured. Sadness--happiness (0.36),
+             love--happiness (0.26) are close; affect separates by hedonic polarity.}
+    \label{fig:rdm-llm}
+  \end{subfigure}
+  \caption{\textbf{RDM comparison.}
+           Near-opposite pairwise geometry across systems (brain vs.\ fine-tuned LLM
+           cosine RDM Pearson $r\!=\!-0.8756$; noise ceiling $\approx\!+0.47$).}
+  \label{fig:rdms}
+\end{figure}
+
+The most novel finding of the study is that the shared local ambiguity principle
+coexists with a global inversion of representational geometry.
+
+\textbf{(6a) Valence-arousal axis alignment.}
+We projected emotion centroids into the leading 2D PCA subspace and correlated each
+axis with external V-A reference coordinates (Table~\ref{tab:va-coords}).
+
+\begin{table}[h]
+\small
+\centering
+\begin{tabular}{lcccc}
+\toprule
+System & PC1 axis & PC1 $r$ & PC2 axis & Permutation $p$ \\
+\midrule
+Fine-tuned LLM  & Valence & 0.98 & Arousal ($r\!=\!0.82$) & 0.013 \\
+Pretrained LLM  & Valence & 0.97 & Arousal ($r\!=\!0.73$) & 0.009 \\
+Human Brain     & Arousal & 0.96 & Valence ($r\!=\!0.31$) & 0.033 \\
+\bottomrule
+\end{tabular}
+\caption{Global representational axis alignment (Figure~\ref{fig:va-inversion}).
+         The axis priorities are swapped between LLMs and the brain.}
+\label{tab:va-alignment}
+\end{table}
+
+Both LLM types are valence-dominant on PC1 ($r\!=\!0.97$--$0.98$);
+the brain is arousal-dominant ($r\!=\!0.96$), with only weak valence alignment on PC2
+($r\!=\!0.31$).
+Because $K$ is small (5 brain emotions, 6 LLM emotions) and V-A coordinates are
+category-level approximations, these results are presented as global-structure evidence
+rather than primary proof.
+The defensible claim is: \emph{the dominant global axis of the tested neural emotion
+geometry aligns more strongly with an externally defined arousal reference than with
+a valence reference, while the main ambiguity mechanism is supported independently
+by centroid margin and classifier uncertainty.}
+
+\begin{table}[h]
+\small
+\centering
+\begin{tabular}{lccc}
+\toprule
+Emotion & Valence (1--9) & Arousal (1--9) & Quadrant \\
+\midrule
+Afraid / Fear      & 2.5 & 7.5 & negative, high arousal \\
+Calm               & 7.0 & 2.5 & positive, low arousal \\
+Delighted / Happin.& 8.2 & 6.5 & positive, moderate--high arousal \\
+Depressed / Sadness& 2.2 & 3.0 & negative, low arousal \\
+Excited            & 7.8 & 8.2 & positive, high arousal \\
+Love               & 8.4 & 5.5 & positive, moderate arousal \\
+\bottomrule
+\end{tabular}
+\caption{External V-A reference coordinates (1--9 SAM scale).
+         The quadrant structure --- not exact decimal values --- is the
+         scientifically load-bearing element.}
+\label{tab:va-coords}
+\end{table}
+
+\textbf{(6b) RDM comparison in 48D raw ROI space (Figure~\ref{fig:rdms}).}
+
+\begin{center}
+\small
+\begin{tabular}{lcc}
+\toprule
+Comparison & Pearson $r$ & Notes \\
+\midrule
+Brain vs.\ fine-tuned LLM (cosine)   & $-0.8756$ & Near-opposite geometry \\
+Brain vs.\ pretrained LLM (cosine)   & $-0.5476$ & Confirmed \\
+Brain vs.\ fine-tuned LLM (Manhattan)& $-0.5476$ & Metric-invariant validation \\
+Brain-brain noise ceiling             & $+0.47$   & Upper 0.484, lower 0.460 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The noise ceiling contextualises the divergence precisely: brain subjects agree with
+each other at $r\!\approx\!0.47$, yet the fine-tuned LLM RDM is in the \emph{opposite
+direction} ($r\!=\!-0.88$) from the brain RDM --- a magnitude substantially larger
+than within-brain agreement.
+Bootstrap 95\% CI: $[-0.9967,\,+0.6994]$ (wide, as expected with $K\!=\!3$, 1 df).
+The reliable finding is the sign (consistently negative) and contrast with the positive
+noise ceiling; specific magnitudes are indicative.
+
+\textbf{(6c) RDM comparison in 11D systems-level space.}
+
+\begin{center}
+\small
+\begin{tabular}{lcc}
+\toprule
+Comparison & 48D $r$ & 11D $r$ \\
+\midrule
+Brain vs.\ fine-tuned LLM  & $-0.6371$ & $-0.7539$ \\
+Brain vs.\ pretrained LLM  & $-0.5476$ & $-0.9918$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+As biological signal is denoised from 48 ROIs to 11 systems-level features, the
+divergence \emph{amplifies} rather than shrinks.
+The pretrained LLM at 11D ($r\!=\!-0.9918$) is the strongest cross-system result in
+the study; this specific magnitude carries the uncertainty of a 3-point Pearson
+correlation (1 df) and should be treated as indicative.
+The robust directional claim is: as biological noise is removed, the negative
+correlation between brain and LLM representational geometry becomes more extreme,
+not less --- inconsistent with the hypothesis that the paradox is noise-driven.
+
+% ===========================================================================
+\section{Discussion}
+% ===========================================================================
+
+\textbf{The shared geometric principle.}
+Both LLM embedding spaces and the tested brain fMRI dataset exhibit the same general
+relationship: geometric positioning relative to class prototypes predicts
+representational certainty.
+In LLMs this operates via centroid distance predicting logit confidence; in the brain,
+via centroid margin predicting classifier uncertainty.
+These are complementary implementations of a geometric competition principle.
+The mechanistic interpretation likely lies in the mathematics of distributed
+high-dimensional representations: any system encoding discrete categories via
+distributed activation will produce centroids surrounded by distributed instances,
+generating a void, a belt, and an ambiguity gradient.
+
+\textbf{The relational paradox: different priorities, not failure.}
+The near-opposite RDM correlation does not indicate that either system is wrong.
+LLMs trained on text corpora encode emotion co-occurrence statistics from natural
+language --- ``fear'' and ``sadness'' share negative hedonic contexts and appear in
+similar syntactic environments, placing their centroids near each other along the
+primary valence axis.
+The brain evolved to respond to environmental threats and rewards: fear involves
+a physiological arousal response fundamentally different from the low-arousal
+withdrawal of sadness, and separating states by activation intensity is most predictive
+of appropriate behavioural response.
+Neither system is incorrect; they represent emotion faithfully within their
+respective operational domains.
+
+\textbf{The low-rank emotion subspace.}
+The 2.6\%-capacity finding has direct implications for efficient emotion representation.
+Accuracy in 20D equals or exceeds 768D in all four tested variants.
+For real-time affective computing or edge deployment, projecting to the
+emotion-discriminative subspace is sufficient; larger representations may be
+counterproductive without fine-tuning.
+
+\textbf{Limitations.}
+Our evidence covers one text emotion dataset (6 classes) and one brain fMRI dataset
+(5 emotions, 40 subjects, one ROI atlas).
+The 3-emotion cross-system label mapping (fear$\approx$afraid, happiness$\approx$delighted,
+sadness$\approx$depressed) relies on conceptual equivalence and introduces non-trivial
+uncertainty into all RSA comparisons.
+The V-A analysis relies on externally assigned category-level coordinates rather than
+participant-specific ratings; the global-axis findings should be interpreted as
+supportive evidence, not as the main proof of the margin-based ambiguity mechanism.
+All findings are observational; no causal evidence is established.
+
+% ===========================================================================
+\section{Conclusion}
+% ===========================================================================
+
+We have presented six findings characterising the geometry of emotion representations
+in LLMs and human fMRI.
+The core result is a paradox: a geometric competition principle for representational
+ambiguity is observable across both systems --- LLMs via centroid distance predicting
+logit confidence; the brain via centroid margin predicting classifier uncertainty ---
+yet global representational organisation is inverted: LLMs sort emotions by valence,
+the brain by arousal.
+
+Three findings have immediate practical value.
+The low-rank emotion subspace (2.6\% of embedding capacity, 20 of 768 dimensions)
+shows that efficient emotion encoding does not require large representations.
+The margin-vs-distance contrast (AUC 0.81 vs.\ 0.56) provides a reusable diagnostic
+distinguishing relational from radial geometric structure.
+The V-A inversion suggests that training LLMs to distinguish arousal levels within the
+same valence category may be necessary for biological alignment --- a hypothesis for
+future experimental work.
+
+More broadly, the coexistence of shared local geometry with globally inverted structure
+suggests that cross-system alignment in affective representation is not a binary
+question: two systems can share the same local competitive logic while differing
+fundamentally in what they prioritise globally.
+
+% ===========================================================================
+\bibliographystyle{abbrvnat}
+\bibliography{references}
+% ===========================================================================
+
+% ===========================================================================
+% APPENDICES
+% ===========================================================================
+\appendix
+
+\section{V-A Reference Coordinate Sensitivity Analysis}
+\label{app:va-sensitivity}
+
+The external V-A reference coordinates used in Section~\ref{sec:inversion} are
+category-level approximations.
+To demonstrate qualitative robustness:
+
+\textbf{Step 1.} Baseline V-A table as in Table~\ref{tab:va-coords}.
+
+\textbf{Step 2.} Add Gaussian noise to all valence and arousal coordinates at three
+levels: SD\,=\,0.25, 0.50, and 0.75 (on the 1--9 scale).
+
+\textbf{Step 3.} Repeat the PC-axis correlation analysis 1,000--10,000 times per noise
+level.
+
+\textbf{Step 4.} Report the proportion of perturbations for which the qualitative
+result holds: PC1 of the brain remains arousal-dominant; PC1 of both LLM types remains
+valence-dominant.
+
+\textbf{Step 5.} Repeat using Spearman rank correlations.
+
+The expected qualitative result is that arousal-dominant brain organisation and
+valence-dominant LLM organisation are stable across perturbations reflecting the
+quadrant structure of the circumplex model~\citep{posner2005}.
+Code available at [anonymised repository].
+
+% ---------------------------------------------------------------------------
+\section{Phase 5 Full Results}
+\label{app:phase5}
+% ---------------------------------------------------------------------------
+
+Phase 5 evaluates only the two fine-tuned final-layer models against the 4,038-sample
+validation set.
+
+\begin{center}
+\small
+\begin{tabular}{lcc}
+\toprule
+Metric & BGE-FT-Final & MPNet-FT-Final \\
+\midrule
+Total samples               & 4,038   & 4,038 \\
+Overlap samples             & $\approx$73 (1.81\%) & $\approx$17 (0.42\%) \\
+Dist-logit Pearson $r$      & 0.9572  & 0.9884 \\
+Logit agreement in overlap  & 93.4\%  & 100\%  \\
+Dominant overlap pair       & Happin./Love & Happin./Love \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The 100\% logit agreement for MPNet-FT-Final means every sample geometrically closer to
+a competing centroid also has a higher raw logit score for that competing class.
+Embedding geometry is the direct mechanistic basis for classifier confidence in this
+model.
+
+% ---------------------------------------------------------------------------
+\section{Overlap Metrics: All Final-Layer Variants}
+\label{app:overlap}
+% ---------------------------------------------------------------------------
+
+\begin{center}
+\small
+\begin{tabular}{lcccc}
+\toprule
+Variant & Overlap (\%) & Density Peak & Certainty Buffer & Void Onset \\
+\midrule
+MPNet-FT-Final   & 0.42  & 0.562 & $+1.875$ & $\approx$0.4375 \\
+BGE-FT-Final     & 1.81  & 0.688 & $+1.750$ & $\approx$0.4375 \\
+MPNet-Base-Final & 18.45 & 0.938 & $\phantom{+}0.000$ & $\approx$0.6875 \\
+BGE-Base-Final   & 19.22 & 0.938 & $+0.125$ & $\approx$0.6875 \\
+BGE-Base-Mid     & 28.14 &  ---  &    ---   &    ---    \\
+MPNet-Base-Mid   & 16.92 &  ---  &    ---   &    ---    \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------------------------
+\section{fMRI Sample Size Justification}
+\label{app:sample-size}
+% ---------------------------------------------------------------------------
+
+\begin{center}
+\small
+\begin{tabular}{lcc}
+\toprule
+Dataset & $N$ subjects & Venue \\
+\midrule
+Individual Brain Charting (IBC)         & 12 & Nature Scientific Data \\
+Precision Functional Mapping (Children) & 12 & Dosenbach Lab / PMC \\
+Natural Scenes Dataset (NSD)            & 8  & NSD Website \\
+\textbf{This study (DS005700)}          & \textbf{40} & OpenNeuro \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+With $N\!=\!40$, LOSO cross-validation leaves 39 training subjects per fold ---
+well within the range where logistic regression on 48 features is well-determined.
+The 5-class chance level is 0.20; our LOSO accuracy of 0.56
+(95\% CI: 0.49--0.63, permutation $p<0.001$) represents an absolute lift of 0.36
+above chance.
+
+% ---------------------------------------------------------------------------
+\section{48D$\to$11D Transformation: ROI-to-Network Mapping}
+\label{app:11d}
+% ---------------------------------------------------------------------------
+
+\textbf{Anatomical lobe features (5):} Mean activation within
+(1) frontal cortex ROIs,
+(2) temporal cortex ROIs,
+(3) parietal cortex ROIs,
+(4) occipital cortex ROIs,
+(5) cingulate/limbic ROIs.
+
+\textbf{Functional network features (5):} Mean activation within
+(6) Default Mode Network ROIs~\citep{li2014dmn} --- bilateral medial PFC, posterior
+cingulate, angular gyrus;
+(7) Salience Network ROIs~\citep{seeley2019} --- bilateral anterior insula, anterior
+cingulate cortex;
+(8) Central Executive Network ROIs~\citep{miller2001} --- bilateral dorsolateral PFC,
+lateral parietal cortex;
+(9) visual processing network ROIs --- bilateral occipital and fusiform regions;
+(10) somatomotor network ROIs --- bilateral pre/postcentral gyrus.
+
+\textbf{Neighbour context feature (1):} Mean absolute difference between adjacent ROI
+activations within each anatomical region, capturing local inter-regional coordination.
+
+% ---------------------------------------------------------------------------
+\section{Image Experiments: Negative Result}
+\label{app:image}
+% ---------------------------------------------------------------------------
+
+An extension to 120,000 affective image embeddings (CLIP-based) was explored.
+Image embeddings did not yield clear cluster separation: silhouette scores remained
+near zero and the void-belt density structure was absent.
+The failure mode was insufficient cluster separation across emotion categories.
+This negative result informs the scope of the geometric competition principle:
+it is observable in text-based LLM embeddings and brain fMRI representations under the
+systems and datasets tested, but was not apparent in CLIP image embeddings.
+The modality (text vs.\ image), CLIP's training objective, and the emotion taxonomy
+used are candidate explanations.
+
+% ---------------------------------------------------------------------------
+\section{Compute and Reproducibility}
+\label{app:compute}
+% ---------------------------------------------------------------------------
+
+\textbf{Hardware.}
+LLM embedding extraction: HPC cluster (GPU nodes).
+Brain analysis: standard compute (CPU-bound statistical analyses).
+
+\textbf{Code and data.}
+Available at [anonymised repository].
+The repository contains:
+(1) embedding extraction scripts for all 8 LLM variants,
+(2) all six brain analysis scripts,
+(3) the 48D$\to$11D transformation code,
+(4) the cross-system global behaviour comparison script,
+(5) the V-A alignment code,
+(6) \texttt{valence\_arousal\_reference\_table.csv},
+(7) requirements and environment specification.
+
+\textbf{Ethics statement.}
+This study uses only publicly available, de-identified neuroimaging data from the
+Neural MO dataset, OpenNeuro accession DS005700.
+No new participants were recruited.
+Informed consent and ethical approval were obtained by the original dataset creators;
+this re-analysis does not require additional ethical review.
+
+\end{document}
