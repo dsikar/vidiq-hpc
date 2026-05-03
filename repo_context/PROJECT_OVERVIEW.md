@@ -19,7 +19,7 @@
 | Valence-arousal ground truth citation | PARTIAL | `PLAN.md` and `run_va_reduction.py` reference Russell's Circumplex and DEAP/Koelstra; May 1 meeting confirms Russell 1980 + DEAP as citations — exact numerical table not yet formally cited in a paper-facing document |
 | Aimee's results PDF | UNRESOLVED | `emotion_geometry_and_score_4_square_explorer_square_report_score_v2.pdf` not found in repo; noted in Apr 28 minutes as on Aimee's laptop |
 | Embedding extraction layer documented | PARTIAL | `loader_text.py` confirms L2-normalised mean-pooled embeddings from pre-saved `.npy` files; the specific transformer layer (final layer 12 vs middle layer 6) is encoded in the folder names (`bge`, `bge-mid`, etc.) but is not stated in prose in any methods document |
-| fMRI sample size justification | PARTIAL | Apr 28 minutes contain Aimee's oral statement ("most published fMRI studies use 8–10 subjects; 40 is above field standard") but this has not been written into any methods section or report |
+| fMRI sample size justification | PARTIAL | Apr 28 minutes contain Aimee's oral statement ("most published fMRI studies use 8–10 subjects; 40 is above field standard"). Precedent studies confirmed: IBC dataset (12 subjects, Nature Scientific Data), PFM Children (12 subjects, Dosenbach Lab), NSD (8 subjects, ~40 sessions/person). These are high-impact published studies — our 40 subjects exceed all three. Statement now has citable comparison points, but still needs writing into a methods section. |
 
 ---
 
@@ -270,8 +270,9 @@ All paths relative to `experiments/brain_embedding_understanding/`.
 1. **`checking_centroids/`** — RDMs + centroid relational geometry (Brain vs fine-tuned LLM vs pretrained LLM in 48D raw ROI space). The Relational Paradox is first discovered here.
    - Output: `reports/CENTROID_RELATIONAL_FINAL_REPORT.md`, `reports/relational_validation.json`, `reports/rdm_comparison_metrics.json`
 
-2. **`adding_spatial_context/`** — Compresses 48D ROI space to 11D (5 anatomical lobes + 5 functional networks + 1 neighbour context). Rationale: reduce ROI noise while preserving interpretable biological organisation.
+2. **`adding_spatial_context/`** — Compresses 48D ROI space to 11D (5 anatomical lobes + 5 functional networks + 1 neighbour context). Rationale: domain-informed feature construction — not generic PCA — where each dimension corresponds to a biologically meaningful unit. The 5 functional network dimensions correspond to established large-scale brain systems: Default Mode Network, Salience Network, Central Executive Network, and related functional systems. The neighbour-context feature captures local spatial interaction between ROIs (inter-regional coordination). Aggregating within anatomically/functionally coherent groups acts as structured denoising, suppressing high-frequency noise while preserving distributed emotional representation patterns.
    - Output: `outputs/BRAIN_11D_SYSTEMS_REPORT.md`
+   - Justification document: `repo_context/project_context/Full Scientific Justification (Tailored to Your Method).docx`
 
 3. **`checking_centroids_with_spatial_context_data/`** — Repeats RDM analysis on the 11D brain representation. The paradox amplifies — pretrained LLM r = −0.9918.
    - Output: `reports/SYSTEMS_LEVEL_PARADOX_REPORT.md`, `reports/rdm_results_11d.json`
@@ -318,6 +319,8 @@ All files in `meetings/`.
 - `repo_context/neurips_context/neurips_deep_submission_structure_checklist_report.pdf` — detailed NeurIPS structure + checklist (11 pages; section-by-section build plan)
 - `repo_context/neurips_context/neurips_pre_submission_checklist_full.pdf` — pre-submission review checklist (6 pages; claim support, statistical validity, rejection patterns)
 - `repo_context/project_context/Emotion_Geometry_Complete_Report.pdf` — 3-page complete emotion geometry report (generated 2026-05-02; authoritative consolidated findings)
+- `repo_context/project_context/Full Scientific Justification (Tailored to Your Method).docx` — scientific justification for the 48D→11D brain representation transformation; includes network citations (Default Mode, Salience, Central Executive) and reviewer-facing framing for the domain-informed feature construction
+- `repo_context/project_context/Justification brain data.docx` — fMRI sample size justification with precedent studies: IBC (N=12), PFM (N=12), NSD (N=8) all published in high-impact venues; confirms our N=40 is above field standard
 - `repo_context/project_context/PLAN_COMPASS_GENERATION.md` — agent plan used to generate this compass (not the compass itself)
 
 ---
@@ -423,7 +426,7 @@ All files in `meetings/`.
 - [ ] **Confirm valence-arousal ground truth citation chain** — Russell 1980 circumplex + DEAP (Koelstra & Mühl) are confirmed as primary sources. Exact numerical V/A values for the 5/6 emotions need to be formally cited in a paper-facing document with page/table reference. Owner: Aimee
 - [ ] **Push Aimee's results PDF to repo** — `emotion_geometry_and_score_4_square_explorer_square_report_score_v2.pdf` currently on Aimee's laptop; may contain additional statistical validation. Owner: Aimee
 - [ ] **Decide Phase 5 (logit consistency) scope: main paper vs. appendix** — r = 0.957–0.988 is a strong result. Daniel to confirm placement. Owner: Daniel
-- [ ] **Justify fMRI sample size in methods** — add sentence citing typical fMRI studies use 8–10 subjects; 40 is above field standard. Aimee to draft. Owner: Aimee/Daniel
+- [ ] **Justify fMRI sample size in methods** — add sentence citing typical fMRI studies use 8–10 subjects; 40 is above field standard. Specific precedents now available: IBC (12 subjects), PFM Children (12 subjects), NSD (8 subjects with ~40 sessions/person for dense sampling). Strategy: cite these high-impact studies to show 40 is well above field standard. Aimee to draft. Owner: Aimee/Daniel
 - [ ] **Document embedding extraction layer per model** — NeurIPS methods section requires explicit statement. The `loader_text.py` loads from pre-saved `.npy` files in folders named `bge`, `bge-mid`, etc. This needs to be stated as: BGE final layer 12 (mean pooled), BGE middle layer 6, MPNet final layer 12, MPNet middle layer 6. Owner: Daniel/Pritish
 - [ ] **Confirm cross-system ambiguity p-value from source data file** — Owner: Pritish
 
@@ -547,6 +550,15 @@ This section lists references that have been mentioned in meeting minutes, cited
 
 ### Neuroscience / Brain Distributed Coding
 
+**[CONFIRMED — from justification doc]** Li, W., Mai, X., & Liu, C. (2014). The default mode network and social understanding of others: what do brain connectivity studies tell us. *Frontiers in Human Neuroscience, 8*. doi:10.3389/fnhum.2014.00074.
+— Supports the Default Mode Network as one of the 5 functional network dimensions in the 11D brain representation. Justifies grouping ROIs into functional systems for the 48D→11D transformation.
+
+**[CONFIRMED — from justification doc]** Seeley, W. W. (2019). The Salience Network: A Neural System for Perceiving and Responding to Homeostatic Demands. *Journal of Neuroscience, 39*(50), 9878–9882. Available at: https://www.jneurosci.org/content/39/50/9878.
+— Supports the Salience Network dimension in the 11D representation. The Salience Network is one of the 5 established large-scale functional systems used in the brain dimensionality reduction.
+
+**[CONFIRMED — from justification doc]** Seung Schik, Y. Central Executive Network. ScienceDirect Topics. Available at: https://www.sciencedirect.com/topics/psychology/central-executive-network.
+— Supports the Central Executive Network dimension in the 11D representation. Together with Li et al. (2014) and Seeley (2019), these three references anchor the functional network grouping strategy to published neurobiological principles.
+
 **[REQUIRED — confirm citation]** Haxby, J. V. et al. — Referenced in Apr 28 meeting minutes as support for the claim that "emotional states are encoded as distributed patterns rather than in single regions" and that negative silhouette in brain fMRI is not a failure. Aimee Bottrill-Frost has been tasked with providing the exact citation. Most likely reference: Haxby, J.V., Gobbini, M.I., Furey, M.L., Ishai, A., Schouten, J.L., & Pietrini, P. (2001). Distributed and overlapping representations of faces and objects in ventral temporal cortex. *Science, 293*(5539), 2425–2430.
 — *Use with caution — exact paper not confirmed in transcript; verify with Aimee before submitting.*
 
@@ -556,6 +568,13 @@ This section lists references that have been mentioned in meeting minutes, cited
 — `dair-ai/emotion` dataset on HuggingFace (`dair-ai/emotion`). The 6-class balanced text emotion dataset used in all text embedding phases. *[Note: verify exact paper — the HuggingFace dataset card links to this paper, but confirm it is the correct citation before submitting.]*
 
 **[CONFIRMED]** OpenNeuro DS005700 — "Neural MO — fMRI Dataset for Emotion Recognition." Available at: https://openneuro.org/datasets/ds005700. Last updated approximately mid-2025. 40 subjects × 5 emotions × 48 ROI features. Download: `openneuro-py download dataset DS005700 target_directory` (from Apr 28 meeting minutes §7.2 / analysis notebook).
+
+**[CONFIRMED — fMRI N=40 precedent support, from justification doc]** The following high-impact fMRI studies use N < 40, confirming our 40-subject dataset is above field standard:
+- Individual Brain Charting (IBC): 12 subjects — a comprehensive functional atlas across dozens of cognitive tasks. Source: Nature Scientific Data / PMC.
+- Precision Functional Mapping (PFM) of Children: 12 children — dense sampling (1.5–6 hours/child); justifies small N via within-subject reliability. Source: Dosenbach Lab / PMC.
+- Natural Scenes Dataset (NSD): 8 participants — justified by ~40 sessions/person (thousands of trials per brain). Source: NSD Website.
+*Use these as comparison points when writing the sample size justification sentence in the methods section (see Open Items).*
+Source document: `repo_context/project_context/Justification brain data.docx`
 
 ### Pre-trained Models Used
 
