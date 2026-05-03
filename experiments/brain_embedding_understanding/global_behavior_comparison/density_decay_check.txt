@@ -1,0 +1,7 @@
+DENSITY DECAY BEHAVIORAL VERIFICATION
+======================================
+
+Correlation of Density Shapes (PDF): 0.7335
+Correlation of Decay Rates (Slope):  0.4361
+
+RESULT: PARTIAL SIMILARITY. The general trend holds but the rates of decay differ significantly.

@@ -1,0 +1,12 @@
+CROSS-SYSTEM EMOTION GEOMETRY: GLOBAL COMPARISON
+==============================================
+
+1. AMBIGUITY GRADIENT SIMILARITY
+   Pearson Correlation: 0.9565
+   P-value: 3.1984e-54
+   Insight: High correlation indicates both systems represent 'certainty' similarly relative to the category center.
+
+2. DENSITY DISTRIBUTION SIMILARITY
+   KS Statistic: 0.5700
+   KS P-value: 0.0000
+   Insight: Systems differ in their precise packing density, though trends may be similar.

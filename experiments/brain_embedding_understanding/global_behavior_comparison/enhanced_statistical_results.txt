@@ -1,0 +1,18 @@
+ENHANCED CROSS-SYSTEM STATISTICAL ANALYSIS
+==========================================
+
+1. AMBIGUITY GRADIENT (OVERLAP) VALIDATION
+   - Pearson Correlation (r): 0.9565
+   - R-squared (Effect Size): 0.9148
+   - 95% Confidence Interval: [0.9370, 0.9725]
+   - Permutation P-value (n=5000): 0.0000e+00
+   - Interpretation: Very strong evidence of shared geometric principles in ambiguity representation.
+
+2. DENSITY DISTRIBUTION VALIDATION
+   - KS Statistic: 0.5700 (p=2.4582e-15)
+   - Cohen's d (Effect Size): 1.3398
+   - Interpretation: High KS and Cohen's d suggests structural differences in point packing density despite trend similarity.
+
+3. SYSTEM RELIABILITY
+   - Number of Brain Samples (Emotions): 5
+   - Number of LLM Samples (Pairs): 15
