@@ -6,7 +6,7 @@
 >
 > **What this file contains:** Project identity · Six key findings with verified numeric anchors · NeurIPS abstract (248 words) · Full repository map with current meeting file naming convention · Work diary (8 sessions) · Open items checklist · Glossary with V/A coordinates · Potential references section
 >
-> **Known data quality issues flagged in this file:** (1) Brain vs MPNet 48D RDM discrepancy (−0.5476 vs −0.1023) in Finding 6b — needs Pritish clarification. (2) Cross-system r ≈ 0.56 source file not in repo — file path known, push required. (3) Statistical tests (LOSO/bootstrap/permutation) not yet applied to LLM text experiments.
+> **Known data quality issues flagged in this file:** (1) Brain vs MPNet 48D RDM discrepancy (−0.5476 vs −0.1023) in Finding 6b — needs Pritish clarification. (2) Cross-system ambiguity gradient RESOLVED — confirmed r = 0.9565, p = 3.20e-54 from `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt` (note: meeting minutes cited r ≈ 0.56, which was an error — the confirmed value is 0.9565). (3) Statistical tests (LOSO/bootstrap/permutation) not yet applied to LLM text experiments.
 
 ---
 
@@ -15,7 +15,7 @@
 | Blocking Item | Status | Evidence / Note |
 |---|---|---|
 | LOSO/bootstrap/permutation tests on LLM text experiments | UNRESOLVED | No matching terms found in `experiments/understanding_text_embeddings/reports/` — currently only brain data has these tests applied |
-| Ambiguity gradient source file (cross-system r≈0.56, p≈10⁻⁵⁴) | UNRESOLVED | Apr 28 minutes (§5.4) explicitly name the file as `video_understanding/human_brain_emotion_exports/global_behavior_comparison/comparison_results.txt`, but this folder/file does NOT exist in the current repo (it is on Pritish's MacBook and has not been pushed). Confirmed cross-system value therefore has no repo source file. |
+| Ambiguity gradient source file | RESOLVED | File pushed by Pritish. Confirmed at `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt`. Actual values: r = **0.9565**, p = 3.1984e-54. ⚠️ **Correction:** Meeting minutes cited r ≈ 0.56 — this was an error (0.56 is the Brain LOSO accuracy, not this correlation). The paper must cite r = 0.9565. 95% CI: [0.9370, 0.9725]. Permutation p (n=5000): 0.000. |
 | Valence-arousal ground truth citation | PARTIAL | `PLAN.md` and `run_va_reduction.py` reference Russell's Circumplex and DEAP/Koelstra; May 1 meeting confirms Russell 1980 + DEAP as citations — exact numerical table not yet formally cited in a paper-facing document |
 | Aimee's results PDF | UNRESOLVED | `emotion_geometry_and_score_4_square_explorer_square_report_score_v2.pdf` not found in repo; noted in Apr 28 minutes as on Aimee's laptop |
 | Embedding extraction layer documented | PARTIAL | `loader_text.py` confirms L2-normalised mean-pooled embeddings from pre-saved `.npy` files; the specific transformer layer (final layer 12 vs middle layer 6) is encoded in the folder names (`bge`, `bge-mid`, etc.) but is not stated in prose in any methods document |
@@ -130,7 +130,7 @@ The brain LOSO decoding accuracy is 0.56 (95% CI: 0.49–0.63), well above the 5
 
 **LLM side** (source: `experiments/understanding_text_embeddings/reports/phase5/consistency_summary.json`): Centroid distance predicts logit confidence in fine-tuned LLMs — BGE-FT r = 0.9572 (p ≈ 0), MPNet-FT r = 0.9884 (p ≈ 0). Logit agreement rate in overlap regions: BGE-FT 93.4%, MPNet-FT 100%. Phase 5 covers only the two fine-tuned final-layer models.
 
-**Cross-system r ≈ 0.56, p ≈ 10⁻⁵⁴:** [SOURCE FILE UNCONFIRMED — from Apr 28 meeting minutes only. No repo file with these exact values has been located. The brain margin result (r = 0.6108) and the LLM dist-logit result (r = 0.957–0.988) are confirmed from source files. The cross-system unified figure must either be located or dropped in favour of the per-system confirmed metrics.]
+**Cross-system ambiguity gradient r = 0.9565, p = 3.1984e-54:** [SOURCE CONFIRMED — `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt`]. Pearson r = 0.9565, p = 3.1984e-54. Enhanced validation: R² = 0.9148, 95% CI [0.9370, 0.9725], permutation p (n=5000) = 0.0000. ⚠️ **Note on prior discrepancy:** Apr 28 meeting minutes cited r ≈ 0.56, which was an error — 0.56 is the Brain LOSO decoding accuracy, not the cross-system correlation. The correct and confirmed cross-system Pearson r is **0.9565**. Use this value in the paper. Additional finding from the same folder: density distribution similarity KS statistic = 0.57 (p = 2.46e-15), Cohen's d = 1.34 — systems differ in point packing density despite shared ambiguity gradient trend.
 
 ---
 
@@ -231,7 +231,8 @@ The paradox amplifies as the biological signal is denoised. The pretrained LLM a
 | Brain-brain noise ceiling | upper 0.484 / lower 0.460 | Brain fMRI | `relational_validation.json` |
 | Brain vs pretrained LLM — 11D Pearson r | **−0.9918** | Brain vs Pretrained LLM | `rdm_results_11d.json` |
 | Brain vs fine-tuned LLM — 11D Pearson r | −0.7539 | Brain vs Fine-tuned LLM | `rdm_results_11d.json` |
-| Cross-system ambiguity r ≈ 0.56, p ≈ 10⁻⁵⁴ | [SOURCE FILE UNCONFIRMED — file path known from Apr 28 minutes but not in repo] | Cross-system | `video_understanding/human_brain_emotion_exports/global_behavior_comparison/comparison_results.txt` (not pushed) |
+| Cross-system ambiguity gradient r | **0.9565** (p = 3.1984e-54; 95% CI [0.9370, 0.9725]; permutation p = 0.000) | Cross-system | `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt` ✓ CONFIRMED |
+| Cross-system density KS statistic | 0.5700 (p = 2.46e-15; Cohen's d = 1.34) | Cross-system | `experiments/brain_embedding_understanding/global_behavior_comparison/enhanced_statistical_results.txt` ✓ CONFIRMED |
 
 ---
 
@@ -285,6 +286,9 @@ All paths relative to `experiments/brain_embedding_understanding/`.
 
 6. **`checking_context_retention_across_dimensions/`** — Iterative SVD ablation comparing Brain, MPNet pretrained, and Qwen fine-tuned. Extends Finding 3 cross-system.
    - Output: `reports/CONTEXT_RETENTION_FINAL_REPORT.md`
+
+7. **`global_behavior_comparison/`** — Cross-system ambiguity gradient comparison (Finding 5 unified figure). Computes Pearson correlation between brain and LLM centroid-margin/distance signals across emotion categories.
+   - Output: `comparison_results.txt` (r = 0.9565, p = 3.20e-54), `enhanced_statistical_results.txt` (CI, permutation test, Cohen's d), `Density_Decay_Comparison_Report.pdf`, `global_behavior_comparison.png`
 
 ---
 
@@ -421,7 +425,7 @@ All files in `meetings/`.
 ### Must-Do (Blocking Submission)
 
 - [ ] **LOSO + bootstrap CI + permutation tests on all LLM text embedding results** — currently only brain data has these. If reviewers ask "what is the statistical significance of your silhouette improvement?", there is no answer yet. **Severity: HIGH — this is the single biggest methodological gap.** Owner: Pritish/Josh; advised by Aimee
-- [ ] **Push cross-system comparison file to repo** — the Apr 28 meeting minutes (§5.4) explicitly name the file as `video_understanding/human_brain_emotion_exports/global_behavior_comparison/comparison_results.txt` and state it contains "Pearson correlation coefficient, P-values, permutation test results, and bootstrap test results" for the density-decay cross-system comparison. This file currently lives on Pritish's MacBook only. Push it (and the `video_understanding/human_brain_emotion_exports/` folder) to the repo, or provide the r ≈ 0.56 value from an alternative source. Until this is done, the cross-system unified figure must be dropped in favour of confirmed per-system metrics. Owner: Pritish
+- [x] **Push cross-system comparison file to repo** — DONE. File is at `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt`. Confirmed r = 0.9565 (not 0.56 as cited in meeting — see correction note in Finding 5). Also includes enhanced_statistical_results.txt with CI/permutation test. Owner: Pritish ✓
 - [ ] **Clarify Brain vs MPNet 48D discrepancy** — CENTROID_RELATIONAL_FINAL_REPORT.md Table 3.2 shows Brain vs MPNet Pearson r = −0.5476, but `rdm_comparison_metrics.json` shows brain_vs_mpnet cosine = −0.1023. These cannot both be correct cosine correlations. Determine whether the −0.5476 in the report was computed with Manhattan distance (matching the relational_validation.json manhattan_correlation value). Correct the report if wrong. Owner: Pritish
 - [ ] **Confirm valence-arousal ground truth citation chain** — Russell 1980 circumplex + DEAP (Koelstra & Mühl) are confirmed as primary sources. Exact numerical V/A values for the 5/6 emotions need to be formally cited in a paper-facing document with page/table reference. Owner: Aimee
 - [ ] **Push Aimee's results PDF to repo** — `emotion_geometry_and_score_4_square_explorer_square_report_score_v2.pdf` currently on Aimee's laptop; may contain additional statistical validation. Owner: Aimee
@@ -487,7 +491,7 @@ All files in `meetings/`.
 
 **Certainty Buffer:** The radial gap between the density peak (The Belt) and the onset of cross-class overlap (>5% overlap). Large for fine-tuned models (+1.75–1.875), near-zero for pretrained models. Fine-tuning creates a geometrically safe zone.
 
-**Ambiguity Gradient:** Geometric positioning predicts classifier uncertainty in both systems, but via different mechanisms. Brain: centroid *margin* (competitive distance) predicts uncertainty, Spearman r = 0.61, AUC = 0.81. LLMs: centroid *distance* predicts logit confidence, r = 0.957–0.988. Cross-system unified figure r ≈ 0.56 is [SOURCE UNCONFIRMED].
+**Ambiguity Gradient:** Geometric positioning predicts classifier uncertainty in both systems, but via different mechanisms. Brain: centroid *margin* (competitive distance) predicts uncertainty, Spearman r = 0.61, AUC = 0.81. LLMs: centroid *distance* predicts logit confidence, r = 0.957–0.988. Cross-system unified Pearson r = **0.9565**, p = 3.1984e-54 (95% CI [0.9370, 0.9725]; permutation p = 0.000) — source confirmed at `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt`. ⚠️ Meeting minutes cited r ≈ 0.56 in error; that value is the Brain LOSO decoding accuracy.
 
 **Relational Paradox:** Both LLM types sort emotions by valence (PC1); the brain sorts by arousal (PC1) — producing near-opposite RDMs. Fine-tuned LLM r = −0.88 (48D raw); pretrained LLM r = −0.99 (11D systems level). Not a failure of either system — each has optimised for different representational priorities.
 
