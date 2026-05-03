@@ -19,7 +19,7 @@
 | Valence-arousal ground truth citation | PARTIAL | `PLAN.md` and `run_va_reduction.py` reference Russell's Circumplex and DEAP/Koelstra; May 1 meeting confirms Russell 1980 + DEAP as citations — exact numerical table not yet formally cited in a paper-facing document |
 | Aimee's results PDF | NOT IN SCOPE | File will not be included in the project. Removed 2026-05-03. |
 | Embedding extraction layer documented | RESOLVED | Full pipeline documented in `repo_context/project_context/embeddings_extraction.md`. Final layer = last hidden state (layer 12); mid layer = `hidden_states[6]`. Mean pooling with attention mask. Max 128 tokens, batch 32. All 8 variants covered. |
-| fMRI sample size justification | PARTIAL | Apr 28 minutes contain Aimee's oral statement ("most published fMRI studies use 8–10 subjects; 40 is above field standard"). Precedent studies confirmed: IBC dataset (12 subjects, Nature Scientific Data), PFM Children (12 subjects, Dosenbach Lab), NSD (8 subjects, ~40 sessions/person). These are high-impact published studies — our 40 subjects exceed all three. Statement now has citable comparison points, but still needs writing into a methods section. |
+| fMRI sample size justification | RESOLVED | Documented in `repo_context/project_context/Justification brain data.docx`. Precedents: IBC (12 subjects), PFM Children (12 subjects), NSD (8 subjects). N=40 exceeds all three. |
 
 ---
 
@@ -433,7 +433,7 @@ All files in `meetings/`.
 - [ ] **Confirm valence-arousal ground truth citation chain** — Russell 1980 circumplex + DEAP (Koelstra & Mühl) are confirmed as primary sources. Exact numerical V/A values for the 5/6 emotions need to be formally cited in a paper-facing document with page/table reference. Owner: Aimee
 - [x] **Aimee's results PDF** — `emotion_geometry_and_score_4_square_explorer_square_report_score_v2.pdf` will not be included in the project. Removed from scope 2026-05-03.
 - [ ] **Decide Phase 5 (logit consistency) scope: main paper vs. appendix** — r = 0.957–0.988 is a strong result. Daniel to confirm placement. Owner: Daniel
-- [ ] **Justify fMRI sample size in methods** — add sentence citing typical fMRI studies use 8–10 subjects; 40 is above field standard. Specific precedents now available: IBC (12 subjects), PFM Children (12 subjects), NSD (8 subjects with ~40 sessions/person for dense sampling). Strategy: cite these high-impact studies to show 40 is well above field standard. Aimee to draft. Owner: Aimee/Daniel
+- [x] **Justify fMRI sample size in methods** — DONE. Documented in `repo_context/project_context/Justification brain data.docx`. Precedents: IBC (12 subjects), PFM Children (12 subjects), NSD (8 subjects). Our N=40 exceeds all three high-impact published studies.
 - [x] **Document embedding extraction layer per model** — DONE. Full pipeline documented in `repo_context/project_context/embeddings_extraction.md`. Covers all 8 variants, layer extraction logic (final = last hidden state layer 12; mid = `hidden_states[6]`), mean pooling implementation, tokenization params, and artifact directory layout. Use this as the methods section source. Owner: Daniel/Pritish ✓
 - [x] **Confirm cross-system ambiguity p-value from source data file** — RESOLVED. Confirmed p = 3.1984e-54 from `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt`. Full stats: r = 0.9565, p = 3.1984e-54, 95% CI [0.9370, 0.9725], permutation p (n=5000) = 0.000.
 
