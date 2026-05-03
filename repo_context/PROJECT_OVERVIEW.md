@@ -6,7 +6,7 @@
 >
 > **What this file contains:** Project identity · Six key findings with verified numeric anchors · NeurIPS abstract (248 words) · Full repository map with current meeting file naming convention · Work diary (8 sessions) · Open items checklist · Glossary with V/A coordinates · Potential references section
 >
-> **Known data quality issues flagged in this file:** (1) Brain vs MPNet 48D RDM discrepancy (−0.5476 vs −0.1023) in Finding 6b — needs Pritish clarification. (2) Cross-system ambiguity gradient RESOLVED — confirmed r = 0.9565, p = 3.20e-54 from `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt` (note: meeting minutes cited r ≈ 0.56 in error — confirmed value is 0.9565). (3) LOSO/bootstrap/permutation for LLM text experiments — DECISION NOT REQUIRED: cross-model replication across 4 architectures is the generalization argument; paper pushes pattern story not metrics benchmark.
+> **Known data quality issues flagged in this file:** (1) Brain vs MPNet 48D RDM — RESOLVED: correct value is **−0.5476**; the −0.1023 value came from `rdm_comparison_metrics.json` which is from a superseded test and must not be used. (2) Cross-system ambiguity gradient RESOLVED — confirmed r = 0.9565, p = 3.20e-54 from `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt` (note: meeting minutes cited r ≈ 0.56 in error — confirmed value is 0.9565). (3) LOSO/bootstrap/permutation for LLM text experiments — DECISION NOT REQUIRED: cross-model replication across 4 architectures is the generalization argument; paper pushes pattern story not metrics benchmark.
 
 ---
 
@@ -164,13 +164,12 @@ The analysis uses the 3-emotion triplet (Fear, Happiness, Sadness) — the overl
 |---|---|---|---|
 | Brain vs fine-tuned LLM (48D, cosine RDM) | **−0.8756** | `relational_validation.json` | Near-opposite centroid geometry |
 | Brain vs fine-tuned LLM (48D, Manhattan sensitivity) | −0.5476 | `relational_validation.json` | Metric-invariant confirmation |
-| Brain vs pretrained LLM (48D, cosine RDM) | −0.1023 | `rdm_comparison_metrics.json` | Weak negative alignment |
-| Brain vs pretrained LLM (48D, as per `CENTROID_RELATIONAL_FINAL_REPORT.md` table) | **−0.5476** ⚠️ | `checking_centroids/reports/` | **DISCREPANCY NOTE:** The CENTROID_RELATIONAL_FINAL_REPORT.md table lists −0.5476 under "Brain vs MPNet" but this value is identical to the Manhattan sensitivity correlation for brain vs fine-tuned LLM (Qwen). The `rdm_comparison_metrics.json` file shows brain_vs_mpnet cosine r = −0.1023. This discrepancy needs clarification from Pritish before citing in the paper. |
+| Brain vs pretrained LLM (48D, cosine RDM) | **−0.5476** | `checking_centroids/reports/CENTROID_RELATIONAL_FINAL_REPORT.md` | Correct value per Pritish. `rdm_comparison_metrics.json` (which showed −0.1023) is from a superseded test — do not use. |
 | Brain-brain (noise ceiling) | upper 0.484 / lower 0.460 | `relational_validation.json` | Human-human agreement ~0.47 |
 
 The fine-tuned LLM correlation with the brain (−0.88) is not just near-zero — it is actively opposed. The noise ceiling shows human-human agreement is only ~0.47, so the −0.88 divergence is striking. Bootstrap 95% CI: [−0.9967, +0.6994] — wide due to small triplet (3 emotions), but distribution is skewed negative.
 
-**⚠️ Action required:** Clarify whether the CENTROID_RELATIONAL_FINAL_REPORT.md Brain vs MPNet = −0.5476 was computed using Manhattan distance (matching the metric sensitivity test value) or cosine distance. The `rdm_comparison_metrics.json` cosine value (−0.1023) and the report value (−0.5476) cannot both be correct cosine correlations for the same data.
+**Resolved:** Correct Brain vs pretrained LLM 48D value is **−0.5476** per `CENTROID_RELATIONAL_FINAL_REPORT.md`. The −0.1023 value in `rdm_comparison_metrics.json` is from a superseded test and must not be cited.
 
 *Source: `experiments/brain_embedding_understanding/checking_centroids/reports/relational_validation.json`*
 
@@ -181,7 +180,7 @@ The fine-tuned LLM correlation with the brain (−0.88) is not just near-zero �
 | Comparison | 48D Pearson r | 11D Pearson r | Change |
 |---|---|---|---|
 | Brain vs fine-tuned LLM | −0.6371 | −0.7539 | Paradox deepened |
-| Brain vs pretrained LLM | −0.1023 | **−0.9918** | Near-perfect structural inversion |
+| Brain vs pretrained LLM | −0.5476 | **−0.9918** | Near-perfect structural inversion |
 
 The paradox amplifies as the biological signal is denoised. The pretrained LLM at 11D (r = −0.9918) is the strongest cross-system result in the entire study — a near-perfect structural mirror. The pretrained LLM and brain organise the same three emotions in almost perfectly opposite relational geometry. This confirms the divergence is a fundamental property of how biological functional networks are organised, not a noise artefact of raw ROI data.
 
@@ -226,8 +225,7 @@ The paradox amplifies as the biological signal is denoised. The pretrained LLM a
 | Brain V/A — PC2 valence r | 0.31 | Brain fMRI | `alignment_metrics.json` |
 | Brain vs fine-tuned LLM — 48D cosine Pearson r | −0.8756 | Brain vs Fine-tuned LLM | `relational_validation.json` |
 | Brain vs fine-tuned LLM — 48D Manhattan r (sensitivity) | −0.5476 | Brain vs Fine-tuned LLM | `relational_validation.json` |
-| Brain vs pretrained LLM — 48D cosine Pearson r | −0.1023 | Brain vs Pretrained LLM | `rdm_comparison_metrics.json` |
-| Brain vs pretrained LLM — 48D (per CENTROID_RELATIONAL_FINAL_REPORT.md) | −0.5476 ⚠️ DISCREPANCY — see Finding 6b note | Brain vs Pretrained LLM | `checking_centroids/reports/` |
+| Brain vs pretrained LLM — 48D cosine Pearson r | **−0.5476** | Brain vs Pretrained LLM | `checking_centroids/reports/CENTROID_RELATIONAL_FINAL_REPORT.md` ✓ CONFIRMED (−0.1023 from `rdm_comparison_metrics.json` is superseded — do not use) |
 | Brain-brain noise ceiling | upper 0.484 / lower 0.460 | Brain fMRI | `relational_validation.json` |
 | Brain vs pretrained LLM — 11D Pearson r | **−0.9918** | Brain vs Pretrained LLM | `rdm_results_11d.json` |
 | Brain vs fine-tuned LLM — 11D Pearson r | −0.7539 | Brain vs Fine-tuned LLM | `rdm_results_11d.json` |
@@ -269,7 +267,8 @@ HTML summaries (include inline plots): `reports/phase1_summary.html`, `reports/p
 All paths relative to `experiments/brain_embedding_understanding/`.
 
 1. **`checking_centroids/`** — RDMs + centroid relational geometry (Brain vs fine-tuned LLM vs pretrained LLM in 48D raw ROI space). The Relational Paradox is first discovered here.
-   - Output: `reports/CENTROID_RELATIONAL_FINAL_REPORT.md`, `reports/relational_validation.json`, `reports/rdm_comparison_metrics.json`
+   - Output: `reports/CENTROID_RELATIONAL_FINAL_REPORT.md`, `reports/relational_validation.json`
+   - ⚠️ `reports/rdm_comparison_metrics.json` — **DO NOT USE**: from a superseded test; contains stale Brain vs MPNet value of −0.1023 which is incorrect. Correct value is −0.5476 per the report above.
 
 2. **`adding_spatial_context/`** — Compresses 48D ROI space to 11D (5 anatomical lobes + 5 functional networks + 1 neighbour context). Rationale: domain-informed feature construction — not generic PCA — where each dimension corresponds to a biologically meaningful unit. The 5 functional network dimensions correspond to established large-scale brain systems: Default Mode Network, Salience Network, Central Executive Network, and related functional systems. The neighbour-context feature captures local spatial interaction between ROIs (inter-regional coordination). Aggregating within anatomically/functionally coherent groups acts as structured denoising, suppressing high-frequency noise while preserving distributed emotional representation patterns.
    - Output: `outputs/BRAIN_11D_SYSTEMS_REPORT.md`
@@ -429,7 +428,7 @@ All files in `meetings/`.
 
 - [x] **LOSO + bootstrap CI + permutation tests on LLM text embedding results** — DECISION: NOT REQUIRED. Cross-model replication across 4 architectures is the generalization argument. The paper pushes the geometric pattern story; LOSO-style cross-validation applies to biological subject-level data (brain fMRI) where individual differences are the source of variance. LLM embedding geometry is deterministic. Reviewer challenge ("what is the significance of your silhouette improvement?") is answered by pointing to consistent patterns across all 4 model variants. Decision: 2026-05-03.
 - [x] **Push cross-system comparison file to repo** — DONE. File is at `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt`. Confirmed r = 0.9565 (not 0.56 as cited in meeting — see correction note in Finding 5). Also includes enhanced_statistical_results.txt with CI/permutation test. Owner: Pritish ✓
-- [ ] **Clarify Brain vs MPNet 48D discrepancy** — CENTROID_RELATIONAL_FINAL_REPORT.md Table 3.2 shows Brain vs MPNet Pearson r = −0.5476, but `rdm_comparison_metrics.json` shows brain_vs_mpnet cosine = −0.1023. These cannot both be correct cosine correlations. Determine whether the −0.5476 in the report was computed with Manhattan distance (matching the relational_validation.json manhattan_correlation value). Correct the report if wrong. Owner: Pritish
+- [x] **Clarify Brain vs MPNet 48D discrepancy** — RESOLVED. Correct value is **−0.5476** per `CENTROID_RELATIONAL_FINAL_REPORT.md`. The `rdm_comparison_metrics.json` value of −0.1023 is from a superseded test and must not be used or cited anywhere in the paper.
 - [ ] **Confirm valence-arousal ground truth citation chain** — Russell 1980 circumplex + DEAP (Koelstra & Mühl) are confirmed as primary sources. Exact numerical V/A values for the 5/6 emotions need to be formally cited in a paper-facing document with page/table reference. Owner: Aimee
 - [x] **Aimee's results PDF** — `emotion_geometry_and_score_4_square_explorer_square_report_score_v2.pdf` will not be included in the project. Removed from scope 2026-05-03.
 - [ ] **Decide Phase 5 (logit consistency) scope: main paper vs. appendix** — r = 0.957–0.988 is a strong result. Daniel to confirm placement. Owner: Daniel
