@@ -16,7 +16,7 @@
 |---|---|---|
 | LOSO/bootstrap/permutation tests on LLM text experiments | DECISION: NOT REQUIRED | Cross-model replication across 4 architectures (BGE-Base, BGE-FT, MPNet-Base, MPNet-FT) serves as the generalization evidence for LLM results. The paper's contribution is the geometric pattern story and consistent structure across models — not a metrics benchmark. Statistical rigour at the subject level (LOSO etc.) applies to the brain fMRI data because of subject-level variance; LLM embedding geometry is deterministic given fixed weights. Decision made 2026-05-03. |
 | Ambiguity gradient source file | RESOLVED | File pushed by Pritish. Confirmed at `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt`. Actual values: r = **0.9565**, p = 3.1984e-54. ⚠️ **Correction:** Meeting minutes cited r ≈ 0.56 — this was an error (0.56 is the Brain LOSO accuracy, not this correlation). The paper must cite r = 0.9565. 95% CI: [0.9370, 0.9725]. Permutation p (n=5000): 0.000. |
-| Valence-arousal ground truth citation | PARTIAL | `PLAN.md` and `run_va_reduction.py` reference Russell's Circumplex and DEAP/Koelstra; May 1 meeting confirms Russell 1980 + DEAP as citations — exact numerical table not yet formally cited in a paper-facing document |
+| Valence-arousal ground truth citation | PARTIAL | Russell 1980 DOI confirmed: `10.1037/h0077714` (from `LLM_Brain.rtf`). DEAP/Koelstra still missing from reference bundle — exact page/table reference for V/A numerical scores outstanding. |
 | Aimee's results PDF | NOT IN SCOPE | File will not be included in the project. Removed 2026-05-03. |
 | Embedding extraction layer documented | RESOLVED | Full pipeline documented in `repo_context/project_context/embeddings_extraction.md`. Final layer = last hidden state (layer 12); mid layer = `hidden_states[6]`. Mean pooling with attention mask. Max 128 tokens, batch 32. All 8 variants covered. |
 | fMRI sample size justification | RESOLVED | Documented in `repo_context/project_context/Justification brain data.docx`. Precedents: IBC (12 subjects), PFM Children (12 subjects), NSD (8 subjects). N=40 exceeds all three. |
@@ -324,6 +324,7 @@ All files in `meetings/`.
 - `repo_context/neurips_context/neurips_deep_submission_structure_checklist_report.pdf` — detailed NeurIPS structure + checklist (11 pages; section-by-section build plan)
 - `repo_context/neurips_context/neurips_pre_submission_checklist_full.pdf` — pre-submission review checklist (6 pages; claim support, statistical validity, rejection patterns)
 - `repo_context/project_context/Emotion_Geometry_Complete_Report.pdf` — 3-page complete emotion geometry report (generated 2026-05-02; authoritative consolidated findings)
+- `repo_context/project_context/LLM_Brain.rtf` — Aimee's neuroscience reference bundle. Contains confirmed citations for: RSA methodology (Kriegeskorte 2008), LLM-brain alignment literature (Caucheteux & King 2022, Schrimpf et al. 2021, Li et al. 2023a/b, Huth et al. 2016, Horikawa et al. 2020, Ismayilzada et al. 2026), Russell 1980 (DOI confirmed), Mikolov 2013. ⚠️ Cooper & Kelsall (2023) quantum oscillations paper appears to have been accidentally included — unrelated to this project.
 - `repo_context/project_context/embeddings_extraction.md` — full documentation of the embedding extraction pipeline: 8 variants (BGE/MPNet × pretrained/fine-tuned × final layer 12/mid layer 6), tokenization (max 128 tokens, batch 32), mean pooling strategy, output file structure (`train_embeddings.npy`, `val_embeddings.npy`, `metadata.json`), and artifact directory layout. Authoritative reference for methods section embedding extraction description.
 - `repo_context/project_context/Full Scientific Justification (Tailored to Your Method).docx` — scientific justification for the 48D→11D brain representation transformation; includes network citations (Default Mode, Salience, Central Executive) and reviewer-facing framing for the domain-informed feature construction
 - `repo_context/project_context/Justification brain data.docx` — fMRI sample size justification with precedent studies: IBC (N=12), PFM (N=12), NSD (N=8) all published in high-impact venues; confirms our N=40 is above field standard
@@ -429,7 +430,7 @@ All files in `meetings/`.
 - [x] **LOSO + bootstrap CI + permutation tests on LLM text embedding results** — DECISION: NOT REQUIRED. Cross-model replication across 4 architectures is the generalization argument. The paper pushes the geometric pattern story; LOSO-style cross-validation applies to biological subject-level data (brain fMRI) where individual differences are the source of variance. LLM embedding geometry is deterministic. Reviewer challenge ("what is the significance of your silhouette improvement?") is answered by pointing to consistent patterns across all 4 model variants. Decision: 2026-05-03.
 - [x] **Push cross-system comparison file to repo** — DONE. File is at `experiments/brain_embedding_understanding/global_behavior_comparison/comparison_results.txt`. Confirmed r = 0.9565 (not 0.56 as cited in meeting — see correction note in Finding 5). Also includes enhanced_statistical_results.txt with CI/permutation test. Owner: Pritish ✓
 - [x] **Clarify Brain vs MPNet 48D discrepancy** — RESOLVED. Correct value is **−0.5476** per `CENTROID_RELATIONAL_FINAL_REPORT.md`. The `rdm_comparison_metrics.json` value of −0.1023 is from a superseded test and must not be used or cited anywhere in the paper.
-- [ ] **Confirm valence-arousal ground truth citation chain** — Russell 1980 circumplex + DEAP (Koelstra & Mühl) are confirmed as primary sources. Exact numerical V/A values for the 5/6 emotions need to be formally cited in a paper-facing document with page/table reference. Owner: Aimee
+- [ ] **Confirm valence-arousal ground truth citation chain** — Russell 1980 DOI now confirmed: `10.1037/h0077714` (via `LLM_Brain.rtf`). **Still outstanding:** DEAP (Koelstra & Mühl 2012) not yet in the reference bundle — exact page/table reference for the numerical V/A scores still needed. Owner: Aimee
 - [x] **Aimee's results PDF** — `emotion_geometry_and_score_4_square_explorer_square_report_score_v2.pdf` will not be included in the project. Removed from scope 2026-05-03.
 - [x] **Phase 5 (logit consistency) placement** — DECIDED: main paper, placed at the end of the LLM discussion section, immediately before the transition to the brain analysis. Rationale: r = 0.957–0.988 is strong and closes the LLM geometry story before cross-system comparison begins. Subject to change — update this item if placement is revised.
 - [x] **Justify fMRI sample size in methods** — DONE. Documented in `repo_context/project_context/Justification brain data.docx`. Precedents: IBC (12 subjects), PFM Children (12 subjects), NSD (8 subjects). Our N=40 exceeds all three high-impact published studies.
@@ -553,8 +554,8 @@ This section lists references that have been mentioned in meeting minutes, cited
 
 ### Affective Science / Psychological Grounding
 
-**[CONFIRMED]** Russell, J. A. (1980). A circumplex model of affect. *Journal of Personality and Social Psychology, 39*(6), 1161–1178.
-— Foundational source for the valence-arousal coordinate system. Justifies the two-axis (valence, arousal) decomposition of emotional states used throughout the paper.
+**[CONFIRMED]** Russell, J. A. (1980). A circumplex model of affect. *Journal of Personality and Social Psychology, 39*(6), 1161–1178. doi:10.1037/h0077714. Available at: https://psycnet.apa.org/doiLanding?doi=10.1037%2Fh0077714.
+— Foundational source for the valence-arousal coordinate system. Justifies the two-axis (valence, arousal) decomposition of emotional states used throughout the paper. DOI confirmed via `LLM_Brain.rtf`.
 
 **[CONFIRMED]** Koelstra, S., Mühl, C., Soleymani, M., Lee, J.-S., Yazdani, A., Ebrahimi, T., Pun, T., Nijholt, A., & Patras, I. (2012). DEAP: A database for emotion analysis using physiological signals. *IEEE Transactions on Affective Computing, 3*(1), 18–31.
 — Second V/A citation source. DEAP provides operational numerical V/A scores for emotion categories used in affective computing benchmarks. Confirmed as primary source in May 1 meeting; reportedly ~5245 citations.
@@ -570,8 +571,8 @@ This section lists references that have been mentioned in meeting minutes, cited
 **[CONFIRMED — from justification doc]** Seung Schik, Y. Central Executive Network. ScienceDirect Topics. Available at: https://www.sciencedirect.com/topics/psychology/central-executive-network.
 — Supports the Central Executive Network dimension in the 11D representation. Together with Li et al. (2014) and Seeley (2019), these three references anchor the functional network grouping strategy to published neurobiological principles.
 
-**[REQUIRED — confirm citation]** Haxby, J. V. et al. — Referenced in Apr 28 meeting minutes as support for the claim that "emotional states are encoded as distributed patterns rather than in single regions" and that negative silhouette in brain fMRI is not a failure. Aimee Bottrill-Frost has been tasked with providing the exact citation. Most likely reference: Haxby, J.V., Gobbini, M.I., Furey, M.L., Ishai, A., Schouten, J.L., & Pietrini, P. (2001). Distributed and overlapping representations of faces and objects in ventral temporal cortex. *Science, 293*(5539), 2425–2430.
-— *Use with caution — exact paper not confirmed in transcript; verify with Aimee before submitting.*
+**[REQUIRED — confirm citation]** Haxby, J. V. et al. — Referenced in Apr 28 meeting minutes as support for the claim that "emotional states are encoded as distributed patterns rather than in single regions" and that negative silhouette in brain fMRI is not a failure. Not yet in `LLM_Brain.rtf`. Most likely reference: Haxby, J.V., Gobbini, M.I., Furey, M.L., Ishai, A., Schouten, J.L., & Pietrini, P. (2001). Distributed and overlapping representations of faces and objects in ventral temporal cortex. *Science, 293*(5539), 2425–2430.
+— *Use with caution — exact paper not confirmed; verify with Aimee before submitting.*
 
 ### Datasets
 
@@ -608,10 +609,30 @@ Source document: `repo_context/project_context/Justification brain data.docx`
 **[MENTIONED — future paper, not NeurIPS scope]** Zhang, C., Bengio, S., Hardt, M., Recht, B., & Vinyals, O. (2017). Understanding deep learning requires rethinking generalization. *ICLR 2017*.
 — The Bengio (2017) label-randomisation idea discussed in Apr 11 meeting. Agreed as future/separate paper. Do not cite in this NeurIPS submission.
 
-### To Be Added (Pending Aimee's Reference Bundle)
+### LLM-Brain Alignment Literature (from `LLM_Brain.rtf`)
 
-The following categories need citations from Aimee's `LLM_brain.RTF` reference list:
-- Representational Similarity Analysis (RSA) methodology — likely: Kriegeskorte, N., Mur, M., & Bandettini, P. (2008). *Frontiers in Systems Neuroscience* [confirm]
-- Brain-AI alignment prior work — confirm list with Aimee
+**[CONFIRMED]** Caucheteux, C. & King, J.-R. (2022). Brains and algorithms partially converge in natural language processing. *Communications Biology, 5*(1). doi:10.1038/s42003-022-03036-1.
+
+**[CONFIRMED]** Horikawa, T., Cowen, A.S., Keltner, D. & Kamitani, Y. (2020). The neural representation of visually evoked emotion is high-dimensional, categorical, and distributed across transmodal brain regions. *iScience*, p.101060. doi:10.1016/j.isci.2020.101060.
+
+**[CONFIRMED]** Huth, A.G., de Heer, W.A., Griffiths, T.L., Theunissen, F.E. & Gallant, J.L. (2016). Natural speech reveals the semantic maps that tile human cerebral cortex. *Nature, 532*(7600), pp.453–458. doi:10.1038/nature17637.
+
+**[CONFIRMED]** Ismayilzada, M. et al. (2026). Large Language Models Align with the Human Brain during Creative Thinking. arXiv:2604.03480. Available at: https://arxiv.org/abs/2604.03480.
+
+**[CONFIRMED]** Kriegeskorte, N. (2008). Representational similarity analysis — connecting the branches of systems neuroscience. *Frontiers in Systems Neuroscience, 2*. doi:10.3389/neuro.06.004.2008.
+— RSA methodology citation. Previously [REQUIRED — confirm]; now confirmed via `LLM_Brain.rtf`.
+
+**[CONFIRMED]** Li, J., Karamolegkou, A., Kementchedjhieva, Y., Abdou, M., Lehmann, S. & Søgaard, A. (2023a). Structural Similarities Between Language Models and Neural Response Measurements. DTU Research Database, pp.346–365. Available at: https://orbit.dtu.dk/en/publications/structural-similarities-between-language-models-and-neural-respon/
+
+**[CONFIRMED]** Li, J., Karamolegkou, A., Kementchedjhieva, Y. & Søgaard, A. (2023b). Large Language Models Converge on Brain-Like Word Representations. arXiv. doi:10.48550/arXiv.2306.01930.
+
+**[CONFIRMED]** Mikolov, T., Chen, K., Corrado, G. & Dean, J. (2013). Distributed Representations of Words and Phrases and their Compositionality. *NeurIPS 2013*. Available at: https://proceedings.neurips.cc/paper_files/paper/2013/file/9aa42b31882ec039965f3c4923ce901b-Paper.pdf.
+
+**[CONFIRMED]** Schrimpf, M., Blank, I.A., Tuckute, G., Kauf, C., Hosseini, E.A., Kanwisher, N., Tenenbaum, J.B. & Fedorenko, E. (2021). The neural architecture of language: Integrative modeling converges on predictive processing. *PNAS, 118*(45), p.e2105646118. doi:10.1073/pnas.2105646118.
+
+### To Be Added
+
+- DEAP (Koelstra & Mühl 2012) — still missing from `LLM_Brain.rtf`; needed for V/A numerical score citation. Owner: Aimee
 - Prototype theory for emotion categories — confirm with Aimee
 - LOSO cross-validation methodology for fMRI — confirm with Aimee
+- ⚠️ Cooper & Kelsall (2023) quantum oscillations paper appears in `LLM_Brain.rtf` in error — unrelated to this project; do not cite
