@@ -302,7 +302,7 @@ All files in `meetings/`.
 |---|---|---|---|
 | 2026-04-07 | `2026-04-07_transcript_minutes.md` | `2026-04-07_transcript.md` | Core hypothesis established; raw pooling > L2; NeurIPS deadline set; Surprise identified as geometric outlier; 6% truncation risk flagged |
 | 2026-04-11 | `2026-04-11_transcript_minutes.md` | `2026-04-11_transcript.md` | Density belt discovery; "no pure emotion" articulated as initial team phrasing (later refined by Aimee 2026-05-03 → "no embedding aligns exclusively with a single class prototype" — see Finding 2 and Centroid Exclusion glossary entry); Qwen 1.7B agreed; logits > softmax principle; cross-model validation plan |
-| 2026-04-12 | *(no combined minutes — three raw transcript sessions only)* | `2026-04-12_1_transcript.md`, `2026-04-12_2_transcript.md`, `2026-04-12_3_transcript.md` | The Void formalised (nothing from centroid to 7.5 raw units); y-axis label correction (number of points per band, not density/volume); overlap definition clarified |
+| 2026-04-12 | `2026-04-12_1_2_3_transcript_minutes.md` | `2026-04-12_1_transcript.md`, `2026-04-12_2_transcript.md`, `2026-04-12_3_transcript.md` | The Void formalised (nothing from centroid to 7.5 raw units); y-axis label correction (number of points per band, not density/volume); overlap definition clarified; HPC text-model training setup recorded |
 | 2026-04-16 | `2026-04-16_transcript_minutes.md` | `2026-04-16_transcript.md` | Cross-dataset + cross-model validation confirms geometry is universal; fine-tuning hypothesis; image dataset selection assigned |
 | 2026-04-21 | `2026-04-21_transcript_minutes.md` | `2026-04-21_transcript.md` | Image extension designed; video segmentation approach; HPC four-account setup; project walkthrough for newer members |
 | 2026-04-28 | `2026-04-28_transcript_minutes.md` | `2026-04-28_transcript.md` | Pivot from 120K image set to brain fMRI; Aimee joins; OpenNeuro DS005700 confirmed; LOSO/bootstrap/permutation requirements set; cross-system comparison file path given (not in repo) |
@@ -347,14 +347,15 @@ All files in `meetings/`.
 - Bengio (2017) label-randomisation idea discussed as future/separate paper, not in NeurIPS scope
 **Source:** `2026-04-11_transcript_minutes.md`
 
-### 2026-04-12 — The Void Formalised (Three Sessions)
+### 2026-04-12 — The Void Formalised, Overlap Clarified, and HPC Training Setup
 **Present:** Daniel Sikar, Pritish Ranjan
 **Key outcomes:**
 - The Void formally named: zero-density region from centroid to ~7.5 raw Euclidean units (later normalised: ~0.625 for pretrained models). "There's a void in every emotion" — Pritish
 - Y-axis label corrected: "number of data points per band" (NOT "density" or "density per volume"). The volume of radial shells increases with distance in 768D; raw point counts rise then fall; but per-unit-volume density strictly decreases from the centroid outward. Only the number-of-points-per-band plot should be in the paper; the volume-normalised curve is technically correct but shows the opposite trend visually.
 - Overlap definition formally clarified: point P overlaps class C′ iff dist(P, C′) < dist(P, own centroid). Not a radius rule — purely a competitive distance comparison.
-- Three sessions recorded as separate transcripts: `2026-04-12_1_transcript.md`, `2026-04-12_2_transcript.md`, `2026-04-12_3_transcript.md` (no consolidated minutes file)
-**Source:** `2026-04-12_1_transcript.md`, `2026-04-12_2_transcript.md`, `2026-04-12_3_transcript.md`
+- HPC planning captured: Qwen 3 1.7B selected as the initial text-model starting point; HPC environment bring-up, repo clone, training run, and post-training geometry rerun agreed as the next execution path.
+- Three sessions were later consolidated into `2026-04-12_1_2_3_transcript_minutes.md`, based on `2026-04-12_1_transcript.md`, `2026-04-12_2_transcript.md`, and `2026-04-12_3_transcript.md`.
+**Source:** `2026-04-12_1_2_3_transcript_minutes.md`
 
 ### 2026-04-16 — Cross-Model and Cross-Dataset Validation
 **Present:** Daniel Sikar, Pritish Ranjan, Josh, Andrew
