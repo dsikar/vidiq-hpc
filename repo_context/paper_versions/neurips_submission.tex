@@ -63,27 +63,31 @@
 % ===========================================================================
 \begin{abstract}
 % ===========================================================================
-We investigate whether LLM embedding spaces and the human brain share a geometric
-principle for representational ambiguity in emotion processing.
-Across eight LLM variants (BGE and MPNet, pretrained and fine-tuned) applied to a
-6-class text emotion dataset (4,038 validation samples) and brain fMRI from 40 subjects
-(5 emotions, 48 ROIs; OpenNeuro DS005700), we identify six findings.
-First, no embedding exists within 0.375--0.625 normalised units of any emotion centroid
-(the \emph{Void}); density peaks at 0.56--0.94 units (the \emph{Belt}).
-Second, overlap rates range from 0.42\% (fine-tuned) to 19.22\% (pretrained);
-no embedding aligns exclusively with a single class prototype in any system.
-Third, fine-tuned LLMs concentrate signal into 15--20 dimensions;
-pretrained models distribute across 26--67.
-Fourth, projecting to the top 20 SVD directions resolves pretrained cloud structure
-(silhouette $+627$--$765\%$) while matching or exceeding 768D accuracy, confirming
-emotion occupies $\approx\!2.6\%$ of embedding capacity.
-Fifth, centroid margin predicts brain classification uncertainty
-(AUC$\,{=}\,0.81$) while raw distance fails (AUC$\,{=}\,0.56$);
-in fine-tuned LLMs, centroid distance predicts logit confidence ($r=0.957$--$0.988$).
-Sixth, LLMs sort emotions by valence (PC1 $r=0.97$--$0.98$);
-the brain sorts by arousal (PC1 $r=0.96$), producing near-opposite
-dissimilarity matrices ($r=-0.88$) that deepen as biological noise is reduced.
-Shared local geometry coexists with fundamentally different global representational priorities.
+A widely used geometric heuristic is that uncertainty is governed by radial distance to
+class prototypes: points near centroids are treated as certain, while distant points are
+treated as ambiguous.
+We show this account is incomplete.
+Studying emotion representations across eight large language model (LLM) variants and
+fMRI from 40 human subjects, we find that both artificial and biological systems organise
+emotional content in a consistent radial structure --- a dense shell of observed instances
+at intermediate distances from class centroids, with reduced density in the immediate
+vicinity of the centroids.
+Critically, ambiguity within this structure is not determined by raw distance to a prototype
+but by relative competition between prototypes.
+We formalise this as centroid margin and demonstrate that it predicts classifier uncertainty
+in brain representations substantially better than raw distance, with the relationship
+collapsing under feature shuffling.
+In fine-tuned LLMs, geometric margin is tightly coupled to logit confidence.
+We further find that emotional content is encoded in a low-rank linear subspace occupying
+a small fraction of embedding dimensions, with additional dimensions contributing limited
+signal.
+Despite this shared local geometry, global representational organisation is inverted:
+LLMs are structured primarily along valence while brain representations are structured
+primarily along arousal, producing near-opposite dissimilarity matrices that strengthen
+as biological noise is reduced.
+These findings establish a reusable geometric framework for comparing representational
+ambiguity across artificial and neural systems, while revealing a fundamental divergence
+in how the two systems prioritise the affective dimensions of emotional space.
 \end{abstract}
 
 % ===========================================================================
