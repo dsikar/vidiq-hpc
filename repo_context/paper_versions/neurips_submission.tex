@@ -46,6 +46,7 @@
   {../../experiments/brain_embedding_understanding/checking_centroids_with_spatial_context_data/reports/}
   {../../experiments/brain_embedding_understanding/checking_centroids/reports/}
   {../../experiments/brain_embedding_understanding/valence-arousal-dimensional_reduction/reports/}
+  {../../experiments/brain_embedding_understanding/checking_density_geometry/reports/}
 }
 
 % ---------------------------------------------------------------------------
@@ -327,33 +328,33 @@ Finding 5 documents the global representational inversion.
 
 \begin{figure}[t]
   \centering
-  \begin{subfigure}[b]{0.44\textwidth}
-    \includegraphics[width=\textwidth]{all_clusters_comparison}
-    \caption{PCA projections of all 8 LLM variants.
-             Pretrained models (rows 1--2): overlapping clouds with no visible
-             cluster structure.
-             Fine-tuned models (rows 3--4): compact, well-separated islands.}
-    \label{fig:clusters}
-  \end{subfigure}
-  \hfill
   \begin{subfigure}[b]{0.53\textwidth}
     \includegraphics[width=\textwidth]{global_density_ambiguity_curves}
     \caption{Radial density profiles (top) and ambiguity gradients (bottom)
-             for all 8 variants.
+             for all 8 LLM variants.
              The void region (zero density near centroid) and the Belt
              (peak density shell) are consistent across all systems.}
     \label{fig:density-ambiguity}
   \end{subfigure}
-  \caption{\textbf{Cluster geometry and density structure (Finding 1).}
-           (a) The cloud-to-island transition from pretrained to fine-tuned is
-           visible in raw PCA projection.
-           (b) Despite visual differences, all variants share the same two-zone
-           radial density structure in normalised-distance space.}
+  \hfill
+  \begin{subfigure}[b]{0.44\textwidth}
+    \includegraphics[width=\textwidth]{global_density_decay_comparison_}
+    \caption{Radial density decay for LLM variants (coloured) overlaid with
+             human brain fMRI (dashed black).
+             The two-zone structure extends to neural data.}
+    \label{fig:brain-density}
+  \end{subfigure}
+  \caption{\textbf{The Void and the Belt (Finding 1).}
+           (a) All 8 LLM variants share the same two-zone radial density
+           structure in normalised-distance space.
+           (b) The same structure is present in human brain fMRI emotion
+           representations, establishing it as a cross-system geometric
+           principle.}
   \label{fig:clusters-density}
 \end{figure}
 
-A consistent two-zone density structure emerges across all 8 LLM variants
-(Figure~\ref{fig:clusters-density}).
+A consistent two-zone density structure emerges across all 8 LLM variants and
+human brain fMRI (Figure~\ref{fig:clusters-density}).
 
 \textbf{The Void.}
 No data points exist within approximately 0.375--0.625 normalised distance units of
