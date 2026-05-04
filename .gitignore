@@ -14,3 +14,4 @@ experiments/text_model/runs/*/model/
 experiments/text_model/runs/*/tokenizer
 experiments/text_model/runs/*/tokenizer/
 meetings/*transcript*.docx
+prompts/
