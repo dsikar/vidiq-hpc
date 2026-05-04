@@ -536,28 +536,6 @@ Sadness--Surprise and Happiness--Fear are the most distant.
 \label{sec:finding4}
 % ---------------------------------------------------------------------------
 
-\begin{figure}[t]
-  \centering
-  \begin{subfigure}[b]{0.42\textwidth}
-    \includegraphics[width=\textwidth]{dist_logit_scatter_MPNet-FT-Final}
-    \caption{LLM: centroid distance (geometric margin) vs.\ logit margin
-             for MPNet-FT-Final ($r\!=\!0.988$).}
-    \label{fig:dist-logit}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.55\textwidth}
-    \includegraphics[width=\textwidth]{global_behavior_comparison}
-    \caption{Cross-system: brain (solid red) vs.\ LLM (dashed blue) density profiles
-             (left) and ambiguity gradients (right).
-             Shape correlation $r\!=\!0.9565$ over 100 normalised-distance bins.}
-    \label{fig:global-comparison}
-  \end{subfigure}
-  \caption{\textbf{The cross-system ambiguity gradient.}
-           Both systems link geometric proximity to prototypes with representational
-           certainty, through complementary mechanisms.}
-  \label{fig:finding4}
-\end{figure}
-
 Both systems show that geometric positioning relative to class prototypes predicts
 classification confidence --- through mechanistically distinct constructs.
 
@@ -597,6 +575,30 @@ with Spearman $r\!=\!0.6108$, $p\!=\!7.78\!\times\!10^{-22}$.
 A feature-shuffle control ($r\!=\!0.0287$, $p\!=\!0.687$) confirms the relationship
 vanishes under random permutation.
 
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[t]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{dist_logit_scatter_MPNet-FT-Final}
+    \caption{LLM: centroid distance vs.\ logit margin for MPNet-FT-Final
+             ($r\!=\!0.988$). Geometric position almost perfectly determines
+             classifier confidence.}
+    \label{fig:dist-logit}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.52\textwidth}
+    \includegraphics[width=\textwidth]{Uncertainity_report_brain_data}
+    \caption{Brain fMRI: centroid margin predicts classifier uncertainty
+             (AUC\,=\,0.8124); raw centroid distance fails
+             (AUC\,=\,0.5627). Margin is the operative geometric construct.}
+    \label{fig:brain-uncertainty}
+  \end{subfigure}
+  \caption{\textbf{Geometric predictors of confidence (Finding 4).}
+           (a) In LLMs, centroid distance tightly predicts logit confidence.
+           (b) In the brain, centroid \emph{margin} --- not distance --- predicts
+           uncertainty, revealing competition between prototypes as the key signal.}
+  \label{fig:finding4}
+\end{figure}
+
 \textbf{The ambiguity gradient comparison.}
 The analysis interpolates brain and LLM overlap-vs-distance curves onto a shared
 normalised-radius grid of 100 equally spaced points ($\tilde{d}\in[0, 2.5]$) and
@@ -607,7 +609,7 @@ independent emotion categories or 200 biological subjects.
 The tightly specified $p$-value reflects the effective sample size of 100 interpolation
 bins; inference must rest on the permutation test ($n\!=\!5000$, $p\!=\!0.000$, which
 destroys cross-system shape alignment when shuffled) and on the qualitative consistency
-of the functional form (Figure~\ref{fig:global-comparison}).
+of the functional form (Figure~\ref{fig:brain-uncertainty}).
 Additional evidence: KS statistic $= 0.57$ ($p\!=\!2.46\!\times\!10^{-15}$), Cohen's
 $d\!=\!1.34$ --- indicating that while gradient \emph{shape} is shared, absolute
 density of representations around centroids differs substantially between systems.
