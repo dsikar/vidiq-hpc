@@ -46,6 +46,8 @@
   {../../experiments/brain_embedding_understanding/checking_centroids_with_spatial_context_data/reports/}
   {../../experiments/brain_embedding_understanding/checking_centroids/reports/}
   {../../experiments/brain_embedding_understanding/valence-arousal-dimensional_reduction/reports/}
+  {../../experiments/brain_embedding_understanding/checking_density_geometry/reports/}
+  {../../experiments/understanding_text_embeddings/reports/phase4/visuals/}
 }
 
 % ---------------------------------------------------------------------------
@@ -227,7 +229,7 @@ BGE-Base-Mid    & bge-base-en-v1.5 & Pretrained & L6  & 768 \\
 \end{center}
 
 Fine-tuned models were trained on the \texttt{dair-ai/emotion} training split.
-The cross-system context retention experiment (Section~\ref{sec:finding3}) additionally
+The cross-system context retention experiment (Section~\ref{sec:finding2}) additionally
 includes Qwen3-1.7B fine-tuned~\citep{qwen2025} (PCA-projected to 768D).
 
 % ===========================================================================
@@ -313,47 +315,22 @@ Specific magnitudes are therefore indicative; directional findings (sign, contra
 noise ceiling) are the reliable quantities.
 
 % ===========================================================================
+\vspace{-0.5em}
 \section{Results}
 % ===========================================================================
 
-We present six findings in order of increasing cross-system scope.
-Findings 1--4 characterise LLM geometry; Finding 5 introduces the ambiguity gradient;
-Finding 6 documents the global representational inversion.
+We present five findings in order of increasing cross-system scope.
+Findings 1--3 characterise LLM geometry; Finding 4 introduces the ambiguity gradient;
+Finding 5 documents the global representational inversion.
+\vspace{-0.5em}
 
 % ---------------------------------------------------------------------------
 \subsection{Finding 1: The Void and the Belt}
 \label{sec:finding1}
 % ---------------------------------------------------------------------------
 
-\begin{figure}[t]
-  \centering
-  \begin{subfigure}[b]{0.44\textwidth}
-    \includegraphics[width=\textwidth]{all_clusters_comparison}
-    \caption{PCA projections of all 8 LLM variants.
-             Pretrained models (rows 1--2): overlapping clouds with no visible
-             cluster structure.
-             Fine-tuned models (rows 3--4): compact, well-separated islands.}
-    \label{fig:clusters}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.53\textwidth}
-    \includegraphics[width=\textwidth]{global_density_ambiguity_curves}
-    \caption{Radial density profiles (top) and ambiguity gradients (bottom)
-             for all 8 variants.
-             The void region (zero density near centroid) and the Belt
-             (peak density shell) are consistent across all systems.}
-    \label{fig:density-ambiguity}
-  \end{subfigure}
-  \caption{\textbf{Cluster geometry and density structure (Findings 1 and 2).}
-           (a) The cloud-to-island transition from pretrained to fine-tuned is
-           visible in raw PCA projection.
-           (b) Despite visual differences, all variants share the same two-zone
-           radial density structure in normalised-distance space.}
-  \label{fig:clusters-density}
-\end{figure}
-
-A consistent two-zone density structure emerges across all 8 LLM variants
-(Figure~\ref{fig:clusters-density}).
+A consistent two-zone density structure emerges across all 8 LLM variants and
+human brain fMRI (Figure~\ref{fig:clusters-density}).
 
 \textbf{The Void.}
 No data points exist within approximately 0.375--0.625 normalised distance units of
@@ -378,77 +355,53 @@ The radial gap between density peak and onset of geometric ambiguity
 \small
 \begin{tabular}{lcccc}
 \toprule
-Variant & Density Peak & Overlap Onset & Certainty Buffer & Void Onset \\
+Variant & Void Onset & Density Peak & Overlap Onset & Certainty Buffer \\
 \midrule
-MPNet-FT-Final  & 0.562 & 2.438 & $+1.875$ & 0.4375 \\
-BGE-FT-Final    & 0.688 & 2.438 & $+1.750$ & 0.4375 \\
-MPNet-Base-Final& 0.938 & 0.938 & $\phantom{+}0.000$ & 0.6875 \\
-BGE-Base-Final  & 0.938 & 1.062 & $+0.125$ & 0.6875 \\
+MPNet-FT-Final  & 0.4375 & 0.562 & 2.438 & $+1.875$ \\
+BGE-FT-Final    & 0.4375 & 0.688 & 2.438 & $+1.750$ \\
+MPNet-Base-Final& 0.6875 & 0.938 & 0.938 & $\phantom{+}0.000$ \\
+BGE-Base-Final  & 0.6875 & 0.938 & 1.062 & $+0.125$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 Fine-tuning creates a geometrically safe zone between peak density and the onset of
 competitive class confusion; for pretrained models this buffer is near zero.
+No embedding aligns exclusively with a single class prototype in any system:
+global overlap rates range from 0.42\% (MPNet-FT-Final) to 19.22\% (BGE-Base-Final),
+confirming that fine-tuning substantially reduces inter-class geometric confusion.
 
-% ---------------------------------------------------------------------------
-\subsection{Finding 2: Unoccupied Centroids}
-\label{sec:finding2}
-% ---------------------------------------------------------------------------
-
-No observed sample meets the condition of being within the void region near its own
-prototype. \textbf{No embedding aligns exclusively with a single class prototype in
-any tested model or the brain fMRI system.}
-
-\textbf{Graduated overlap rates (final layer, full validation set):}
-
-\begin{center}
-\small
-\begin{tabular}{lc}
-\toprule
-Variant & Global Overlap (\%) \\
-\midrule
-MPNet-FT-Final   & 0.42 \\
-BGE-FT-Final     & 1.81 \\
-MPNet-Base-Final & 18.45 \\
-BGE-Base-Final   & 19.22 \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-The most entangled pair is Happiness vs.\ Love (42\% pairwise overlap in pretrained
-models), sharing adjacent circumplex positions. The most separable is Fear vs.\ Anger
-(12\% overlap), despite both occupying the negative high-arousal quadrant.
-
-% ---------------------------------------------------------------------------
-\subsection{Finding 3: Information Compaction vs.\ Distribution}
-\label{sec:finding3}
-% ---------------------------------------------------------------------------
-
-\begin{figure}[t]
+\begin{figure}[h]
   \centering
-  \begin{subfigure}[b]{0.55\textwidth}
-    \includegraphics[width=\textwidth]{early_decay_comparison_top25}
-    \caption{Signal cliff: accuracy as dominant directions are removed iteratively.
-             Fine-tuned models reach chance at dimensions 15--20;
-             pretrained BGE at 26, pretrained MPNet at 67.}
-    \label{fig:signal-cliff}
+  \begin{subfigure}[t]{0.38\textwidth}
+    \includegraphics[height=5cm]{global_density_ambiguity_curves}
+    \caption{Radial density profiles (top) and ambiguity gradients (bottom)
+             for all 8 LLM variants.
+             The void region (zero density near centroid) and the Belt
+             (peak density shell) are consistent across all systems.}
+    \label{fig:density-ambiguity}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[b]{0.42\textwidth}
-    \includegraphics[width=\textwidth]{Content_Retention_Comparison_}
-    \caption{Cross-system context retention.
-             Brain $D_{50}\!=\!4$; fine-tuned LLM $D_{50}\!=\!12$;
-             pretrained LLM $D_{50}\!=\!17$.}
-    \label{fig:context-retention}
+  \begin{subfigure}[t]{0.59\textwidth}
+    \includegraphics[height=5cm]{global_density_decay_comparison_}
+    \caption{Radial density decay for LLM variants (coloured) overlaid with
+             human brain fMRI (dashed black).
+             The two-zone structure extends to neural data.}
+    \label{fig:brain-density}
   \end{subfigure}
-  \caption{\textbf{Signal structure across systems.}
-           (a) SVD ablation reveals qualitatively different compaction strategies.
-           (b) The brain requires only 4 dominant directions to achieve half its
-           classification accuracy, yet maintains a distributed plateau rather than
-           collapsing to chance --- consistent with distributed biological coding.}
-  \label{fig:signal-structure}
+  \caption{\textbf{The Void and the Belt (Finding 1).}
+           (a) All 8 LLM variants share the same two-zone radial density
+           structure in normalised-distance space.
+           (b) The same structure is present in human brain fMRI emotion
+           representations, establishing it as a cross-system geometric
+           principle.}
+  \label{fig:clusters-density}
 \end{figure}
+
+% ---------------------------------------------------------------------------
+\subsection{Finding 2: Information Compaction vs.\ Distribution}
+\label{sec:finding2}
+% ---------------------------------------------------------------------------
 
 Iterative SVD ablation removes the most informative linear direction at each step;
 a fresh logistic regression is re-trained on the residual.
@@ -474,42 +427,45 @@ into 15--20 directions; remove them and signal collapses entirely.
 Pretrained MPNet-Base retains decodable signal for 67 dimensions, a $4.5\times$ wider
 manifold than the fine-tuned equivalent (Figure~\ref{fig:signal-cliff}).
 
-\textbf{Cross-system extension.}
-A separate iterative ablation compared three systems
-(Figure~\ref{fig:context-retention}):
-
-\begin{center}
-\small
-\begin{tabular}{lccc}
-\toprule
-System & AUC & $D_{50}$ & Signal profile \\
-\midrule
-Human Brain                      & 0.302 & 4  & Highly distributed \\
-MPNet-Pretrained                 & 0.331 & 17 & Redundant manifold \\
-Qwen-FT~\citep{qwen2025}         & 0.260 & 12 & Compressed cliff   \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-The brain's $D_{50}\!=\!4$ means removing just 4 dominant directions halves
-classification accuracy, yet the curve flattens into a distributed plateau rather than
-dropping to chance~\citep{haxby2001}, consistent with distributed biological coding.
-
-% ---------------------------------------------------------------------------
-\subsection{Finding 4: The Low-Rank Emotion Subspace}
-\label{sec:finding4}
-% ---------------------------------------------------------------------------
-
-\begin{figure}[t]
+\begin{figure}[h!]
   \centering
-  \includegraphics[width=0.75\textwidth]{silhouette_comparison_20D}
-  \caption{\textbf{The Low-Rank Emotion Subspace.}
-           Silhouette scores in full 768D (grey) vs.\ the isolated top-20 SVD subspace
-           (red). Pretrained models improve from near-zero to $\approx\!0.41$;
-           fine-tuned models improve modestly from already-high baselines.
-           Accuracy in 20D equals or exceeds 768D in all four variants (see text).}
-  \label{fig:silhouette}
+  \begin{subfigure}[t]{0.50\textwidth}
+    \includegraphics[height=4cm]{early_decay_comparison_top25}
+    \caption{Signal cliff: accuracy as dominant directions are removed iteratively.
+             Fine-tuned models reach chance at dimensions 15--20;
+             pretrained BGE at 26, pretrained MPNet at 67.}
+    \label{fig:signal-cliff}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[height=4cm]{Content_Retention_Comparison_}
+    \caption{Cross-system context retention.
+             Brain $D_{50}\!=\!4$; fine-tuned LLM $D_{50}\!=\!12$;
+             pretrained LLM $D_{50}\!=\!17$.}
+    \label{fig:context-retention}
+  \end{subfigure}
+  \caption{\textbf{Signal structure across systems (Finding 2).}
+           (a) SVD ablation reveals qualitatively different compaction strategies.
+           (b) The brain requires only 4 dominant directions to achieve half its
+           classification accuracy, yet maintains a distributed plateau rather than
+           collapsing to chance --- consistent with distributed biological coding.}
+  \label{fig:signal-structure}
 \end{figure}
+
+\textbf{Cross-system extension.}
+A separate iterative ablation across three systems
+(Figure~\ref{fig:context-retention}) shows qualitatively distinct signal geometries:
+the human brain ($D_{50}\!=\!4$, AUC 0.302) uses the most distributed code ---
+removing just 4 dominant directions halves accuracy, yet the curve flattens into a
+plateau rather than collapsing to chance~\citep{haxby2001};
+Qwen-FT~\citep{qwen2025} ($D_{50}\!=\!12$, AUC 0.260) compresses signal into a steep
+cliff; pretrained MPNet ($D_{50}\!=\!17$, AUC 0.331) spreads it across the widest
+manifold.
+
+% ---------------------------------------------------------------------------
+\subsection{Finding 3: The Low-Rank Emotion Subspace}
+\label{sec:finding3}
+% ---------------------------------------------------------------------------
 
 \textbf{Named result.}
 Emotion is a low-rank linear property, occupying $\approx\!20/768\,{\approx}\,2.6\%$
@@ -518,35 +474,20 @@ The cloud appearance of pretrained models in 768D is not an absence of geometry 
 it is the geometry of $\approx\!748$ noise dimensions overwhelming 20 signal
 dimensions.
 
-\textbf{Silhouette scores before and after projection into the top 20 SVD directions
-(Figure~\ref{fig:silhouette}):}
+\textbf{Silhouette scores and classification accuracy before and after projection into
+the top 20 SVD directions (Figure~\ref{fig:silhouette}):}
 
 \begin{center}
 \small
-\begin{tabular}{lccc}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccccc}
 \toprule
-Variant & 768D Silhouette & 20D Silhouette & Relative Change \\
+Variant & 768D Sil. & 20D Sil. & Sil.\ Change & 768D Acc.\ (\%) & 20D Acc.\ (\%) \\
 \midrule
-MPNet-FT-Final   & 0.860 & 0.907 & $+5.5\%$ \\
-BGE-FT-Final     & 0.685 & 0.835 & $+22.0\%$ \\
-MPNet-Base-Final & 0.047 & 0.408 & $+765\%$ \\
-BGE-Base-Final   & 0.057 & 0.415 & $+627\%$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\textbf{Classification accuracy: 20D equals or exceeds 768D across all variants:}
-
-\begin{center}
-\small
-\begin{tabular}{lcc}
-\toprule
-Variant & 768D Accuracy (\%) & 20D Accuracy (\%) \\
-\midrule
-MPNet-FT-Final   & 98.24 & 98.27 \\
-BGE-FT-Final     & 97.99 & 98.09 \\
-MPNet-Base-Final & 94.08 & 95.64 \\
-BGE-Base-Final   & 93.78 & 95.12 \\
+MPNet-FT-Final   & 0.860 & 0.907 & $+5.5\%$  & 98.24 & 98.27 \\
+BGE-FT-Final     & 0.685 & 0.835 & $+22.0\%$ & 97.99 & 98.09 \\
+MPNet-Base-Final & 0.047 & 0.408 & $+765\%$  & 94.08 & 95.64 \\
+BGE-Base-Final   & 0.057 & 0.415 & $+627\%$  & 93.78 & 95.12 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -557,45 +498,57 @@ Pairwise centroid distances preserve the same relational structure in 20D as in 
 Happiness--Love and Fear--Anger are the closest pairs;
 Sadness--Surprise and Happiness--Fear are the most distant.
 
-% ---------------------------------------------------------------------------
-\subsection{Finding 5: The Cross-System Ambiguity Gradient}
-\label{sec:finding5}
-% ---------------------------------------------------------------------------
-
-\begin{figure}[t]
+\enlargethispage{6\baselineskip}
+\begin{figure}[h!]
   \centering
-  \begin{subfigure}[b]{0.42\textwidth}
-    \includegraphics[width=\textwidth]{dist_logit_scatter_MPNet-FT-Final}
-    \caption{LLM: centroid distance (geometric margin) vs.\ logit margin
-             for MPNet-FT-Final ($r\!=\!0.988$).}
-    \label{fig:dist-logit}
+  \includegraphics[width=0.60\textwidth]{silhouette_comparison_20D}
+  \caption{\textbf{The Low-Rank Emotion Subspace (Finding 3).}
+           Silhouette scores in full 768D (grey) vs.\ the isolated top-20 SVD subspace
+           (red). Pretrained models improve from near-zero to $\approx\!0.41$;
+           fine-tuned models improve modestly from already-high baselines.
+           Accuracy in 20D equals or exceeds 768D in all four variants (see text).}
+  \label{fig:silhouette}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[t]{0.49\textwidth}
+    \includegraphics[height=3cm]{comparison_scatter_BGE-Base-Final}
+    \caption{BGE-Base-Final: PCA scatter in full 768D (left) vs.\ top-20 SVD
+             subspace (right). Diffuse clouds sharpen into separated clusters.}
+    \label{fig:scatter-bge}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[b]{0.55\textwidth}
-    \includegraphics[width=\textwidth]{global_behavior_comparison}
-    \caption{Cross-system: brain (solid red) vs.\ LLM (dashed blue) density profiles
-             (left) and ambiguity gradients (right).
-             Shape correlation $r\!=\!0.9565$ over 100 normalised-distance bins.}
-    \label{fig:global-comparison}
+  \begin{subfigure}[t]{0.49\textwidth}
+    \includegraphics[height=3cm]{comparison_scatter_MPNet-Base-Final}
+    \caption{MPNet-Base-Final: same comparison. Silhouette improves from
+             0.057 to 0.415 ($+627\%$) and 0.047 to 0.408 ($+765\%$).}
+    \label{fig:scatter-mpnet}
   \end{subfigure}
-  \caption{\textbf{The cross-system ambiguity gradient.}
-           Both systems link geometric proximity to prototypes with representational
-           certainty, through complementary mechanisms.}
-  \label{fig:finding5}
+  \caption{\textbf{768D vs.\ top-20 SVD subspace (Finding 3).}
+           Projecting into the 20-dimensional signal subspace reveals the cluster
+           structure hidden by noise dimensions in the full embedding space.}
+  \label{fig:scatter-comparison}
 \end{figure}
+
+% ---------------------------------------------------------------------------
+\clearpage
+\subsection{Finding 4: The Cross-System Ambiguity Gradient}
+\label{sec:finding4}
+% ---------------------------------------------------------------------------
 
 Both systems show that geometric positioning relative to class prototypes predicts
 classification confidence --- through mechanistically distinct constructs.
 
-\textbf{LLMs: centroid distance $\to$ logit confidence.}
-For fine-tuned LLMs, centroid distance is a strong predictor of logit confidence
+\textbf{LLMs: centroid margin $\to$ logit margin.}
+For fine-tuned LLMs, centroid margin is a strong predictor of logit margin
 (Figure~\ref{fig:dist-logit}):
 
 \begin{center}
 \small
 \begin{tabular}{lcc}
 \toprule
-Variant & Dist-logit Pearson $r$ & Logit agreement in overlap (\%) \\
+Variant & Margin-logit Pearson $r$ & Logit agreement in overlap (\%) \\
 \midrule
 BGE-FT-Final    & 0.9572 & 93.4  \\
 MPNet-FT-Final  & 0.9884 & 100.0 \\
@@ -603,8 +556,8 @@ MPNet-FT-Final  & 0.9884 & 100.0 \\
 \end{tabular}
 \end{center}
 
-The near-linear relationship ($r\!=\!0.9884$ for MPNet-FT) means geometric position
-almost perfectly determines classifier confidence.
+The near-linear relationship ($r\!=\!0.9884$ for MPNet-FT) means centroid margin
+almost perfectly determines logit margin.
 In overlap regions, logit values are biased toward the competing class 93.4--100\% of
 the time.
 Note that in fine-tuned models this relationship is partially expected by the training
@@ -623,6 +576,30 @@ with Spearman $r\!=\!0.6108$, $p\!=\!7.78\!\times\!10^{-22}$.
 A feature-shuffle control ($r\!=\!0.0287$, $p\!=\!0.687$) confirms the relationship
 vanishes under random permutation.
 
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[t]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{dist_logit_scatter_MPNet-FT-Final}
+    \caption{LLM: centroid margin vs.\ logit margin for MPNet-FT-Final
+             ($r\!=\!0.988$). Geometric margin almost perfectly determines
+             logit margin.}
+    \label{fig:dist-logit}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.52\textwidth}
+    \includegraphics[width=\textwidth]{Uncertainity_report_brain_data}
+    \caption{Brain fMRI: centroid margin predicts classifier uncertainty
+             (AUC\,=\,0.8124); raw centroid distance fails
+             (AUC\,=\,0.5627). Margin is the operative geometric construct.}
+    \label{fig:brain-uncertainty}
+  \end{subfigure}
+  \caption{\textbf{Geometric predictors of confidence (Finding 4).}
+           (a) In LLMs, centroid margin tightly predicts logit margin.
+           (b) In the brain, centroid \emph{margin} --- not distance --- predicts
+           uncertainty, revealing competition between prototypes as the key signal.}
+  \label{fig:finding4}
+\end{figure}
+
 \textbf{The ambiguity gradient comparison.}
 The analysis interpolates brain and LLM overlap-vs-distance curves onto a shared
 normalised-radius grid of 100 equally spaced points ($\tilde{d}\in[0, 2.5]$) and
@@ -633,13 +610,13 @@ independent emotion categories or 200 biological subjects.
 The tightly specified $p$-value reflects the effective sample size of 100 interpolation
 bins; inference must rest on the permutation test ($n\!=\!5000$, $p\!=\!0.000$, which
 destroys cross-system shape alignment when shuffled) and on the qualitative consistency
-of the functional form (Figure~\ref{fig:global-comparison}).
+of the functional form (Figure~\ref{fig:brain-uncertainty}).
 Additional evidence: KS statistic $= 0.57$ ($p\!=\!2.46\!\times\!10^{-15}$), Cohen's
 $d\!=\!1.34$ --- indicating that while gradient \emph{shape} is shared, absolute
 density of representations around centroids differs substantially between systems.
 
 % ---------------------------------------------------------------------------
-\subsection{Finding 6: The Valence-Arousal Inversion}
+\subsection{Finding 5: The Valence-Arousal Inversion}
 \label{sec:inversion}
 % ---------------------------------------------------------------------------
 
@@ -815,7 +792,7 @@ not less --- inconsistent with the hypothesis that the paradox is noise-driven.
 Both LLM embedding spaces and the tested brain fMRI dataset exhibit the same general
 relationship: geometric positioning relative to class prototypes predicts
 representational certainty.
-In LLMs this operates via centroid distance predicting logit confidence; in the brain,
+In LLMs this operates via centroid margin predicting logit margin; in the brain,
 via centroid margin predicting classifier uncertainty.
 These are complementary implementations of a geometric competition principle.
 The mechanistic interpretation likely lies in the mathematics of distributed
@@ -861,8 +838,8 @@ All findings are observational; no causal evidence is established.
 We have presented six findings characterising the geometry of emotion representations
 in LLMs and human fMRI.
 The core result is a paradox: a geometric competition principle for representational
-ambiguity is observable across both systems --- LLMs via centroid distance predicting
-logit confidence; the brain via centroid margin predicting classifier uncertainty ---
+ambiguity is observable across both systems --- LLMs via centroid margin predicting
+logit margin; the brain via centroid margin predicting classifier uncertainty ---
 yet global representational organisation is inverted: LLMs sort emotions by valence,
 the brain by arousal.
 
