@@ -496,9 +496,10 @@ Pairwise centroid distances preserve the same relational structure in 20D as in 
 Happiness--Love and Fear--Anger are the closest pairs;
 Sadness--Surprise and Happiness--Fear are the most distant.
 
+\enlargethispage{6\baselineskip}
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.75\textwidth]{silhouette_comparison_20D}
+  \includegraphics[width=0.60\textwidth]{silhouette_comparison_20D}
   \caption{\textbf{The Low-Rank Emotion Subspace (Finding 3).}
            Silhouette scores in full 768D (grey) vs.\ the isolated top-20 SVD subspace
            (red). Pretrained models improve from near-zero to $\approx\!0.41$;
@@ -510,16 +511,16 @@ Sadness--Surprise and Happiness--Fear are the most distant.
 \begin{figure}[h!]
   \centering
   \begin{subfigure}[t]{0.49\textwidth}
-    \includegraphics[height=3.2cm]{comparison_scatter_BGE-Base-Final}
+    \includegraphics[height=3cm]{comparison_scatter_BGE-Base-Final}
     \caption{BGE-Base-Final: PCA scatter in full 768D (left) vs.\ top-20 SVD
              subspace (right). Diffuse clouds sharpen into separated clusters.}
     \label{fig:scatter-bge}
   \end{subfigure}
   \hfill
   \begin{subfigure}[t]{0.49\textwidth}
-    \includegraphics[height=3.2cm]{comparison_scatter_MPNet-Base-Final}
+    \includegraphics[height=3cm]{comparison_scatter_MPNet-Base-Final}
     \caption{MPNet-Base-Final: same comparison. Silhouette improves from
-             0.057 to 0.415 ($+627\%$) and from 0.047 to 0.408 ($+765\%$).}
+             0.057 to 0.415 ($+627\%$) and 0.047 to 0.408 ($+765\%$).}
     \label{fig:scatter-mpnet}
   \end{subfigure}
   \caption{\textbf{768D vs.\ top-20 SVD subspace (Finding 3).}
