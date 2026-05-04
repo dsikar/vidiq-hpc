@@ -424,29 +424,18 @@ into 15--20 directions; remove them and signal collapses entirely.
 Pretrained MPNet-Base retains decodable signal for 67 dimensions, a $4.5\times$ wider
 manifold than the fine-tuned equivalent (Figure~\ref{fig:signal-cliff}).
 
-\textbf{Cross-system extension.}
-A separate iterative ablation across three systems
-(Figure~\ref{fig:context-retention}) shows qualitatively distinct signal geometries:
-the human brain ($D_{50}\!=\!4$, AUC 0.302) uses the most distributed code ---
-removing just 4 dominant directions halves accuracy, yet the curve flattens into a
-plateau rather than collapsing to chance~\citep{haxby2001};
-Qwen-FT~\citep{qwen2025} ($D_{50}\!=\!12$, AUC 0.260) compresses signal into a steep
-cliff; pretrained MPNet ($D_{50}\!=\!17$, AUC 0.331) spreads it across the widest
-manifold.
-
-\enlargethispage{8\baselineskip}
 \begin{figure}[h!]
   \centering
-  \begin{subfigure}[t]{0.51\textwidth}
-    \includegraphics[height=3cm]{early_decay_comparison_top25}
+  \begin{subfigure}[t]{0.50\textwidth}
+    \includegraphics[height=4cm]{early_decay_comparison_top25}
     \caption{Signal cliff: accuracy as dominant directions are removed iteratively.
              Fine-tuned models reach chance at dimensions 15--20;
              pretrained BGE at 26, pretrained MPNet at 67.}
     \label{fig:signal-cliff}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[t]{0.47\textwidth}
-    \includegraphics[height=3cm]{Content_Retention_Comparison_}
+  \begin{subfigure}[t]{0.48\textwidth}
+    \includegraphics[height=4cm]{Content_Retention_Comparison_}
     \caption{Cross-system context retention.
              Brain $D_{50}\!=\!4$; fine-tuned LLM $D_{50}\!=\!12$;
              pretrained LLM $D_{50}\!=\!17$.}
@@ -459,6 +448,16 @@ manifold.
            collapsing to chance --- consistent with distributed biological coding.}
   \label{fig:signal-structure}
 \end{figure}
+
+\textbf{Cross-system extension.}
+A separate iterative ablation across three systems
+(Figure~\ref{fig:context-retention}) shows qualitatively distinct signal geometries:
+the human brain ($D_{50}\!=\!4$, AUC 0.302) uses the most distributed code ---
+removing just 4 dominant directions halves accuracy, yet the curve flattens into a
+plateau rather than collapsing to chance~\citep{haxby2001};
+Qwen-FT~\citep{qwen2025} ($D_{50}\!=\!12$, AUC 0.260) compresses signal into a steep
+cliff; pretrained MPNet ($D_{50}\!=\!17$, AUC 0.331) spreads it across the widest
+manifold.
 
 % ---------------------------------------------------------------------------
 \subsection{Finding 3: The Low-Rank Emotion Subspace}
