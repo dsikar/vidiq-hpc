@@ -471,35 +471,20 @@ The cloud appearance of pretrained models in 768D is not an absence of geometry 
 it is the geometry of $\approx\!748$ noise dimensions overwhelming 20 signal
 dimensions.
 
-\textbf{Silhouette scores before and after projection into the top 20 SVD directions
-(Figure~\ref{fig:silhouette}):}
+\textbf{Silhouette scores and classification accuracy before and after projection into
+the top 20 SVD directions (Figure~\ref{fig:silhouette}):}
 
 \begin{center}
 \small
-\begin{tabular}{lccc}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccccc}
 \toprule
-Variant & 768D Silhouette & 20D Silhouette & Relative Change \\
+Variant & 768D Sil. & 20D Sil. & Sil.\ Change & 768D Acc.\ (\%) & 20D Acc.\ (\%) \\
 \midrule
-MPNet-FT-Final   & 0.860 & 0.907 & $+5.5\%$ \\
-BGE-FT-Final     & 0.685 & 0.835 & $+22.0\%$ \\
-MPNet-Base-Final & 0.047 & 0.408 & $+765\%$ \\
-BGE-Base-Final   & 0.057 & 0.415 & $+627\%$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\textbf{Classification accuracy: 20D equals or exceeds 768D across all variants:}
-
-\begin{center}
-\small
-\begin{tabular}{lcc}
-\toprule
-Variant & 768D Accuracy (\%) & 20D Accuracy (\%) \\
-\midrule
-MPNet-FT-Final   & 98.24 & 98.27 \\
-BGE-FT-Final     & 97.99 & 98.09 \\
-MPNet-Base-Final & 94.08 & 95.64 \\
-BGE-Base-Final   & 93.78 & 95.12 \\
+MPNet-FT-Final   & 0.860 & 0.907 & $+5.5\%$  & 98.24 & 98.27 \\
+BGE-FT-Final     & 0.685 & 0.835 & $+22.0\%$ & 97.99 & 98.09 \\
+MPNet-Base-Final & 0.047 & 0.408 & $+765\%$  & 94.08 & 95.64 \\
+BGE-Base-Final   & 0.057 & 0.415 & $+627\%$  & 93.78 & 95.12 \\
 \bottomrule
 \end{tabular}
 \end{center}
