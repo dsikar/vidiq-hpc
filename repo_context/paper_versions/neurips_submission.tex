@@ -400,31 +400,6 @@ confirming that fine-tuning substantially reduces inter-class geometric confusio
 \label{sec:finding2}
 % ---------------------------------------------------------------------------
 
-\begin{figure}[h]
-  \centering
-  \begin{subfigure}[b]{0.55\textwidth}
-    \includegraphics[width=\textwidth]{early_decay_comparison_top25}
-    \caption{Signal cliff: accuracy as dominant directions are removed iteratively.
-             Fine-tuned models reach chance at dimensions 15--20;
-             pretrained BGE at 26, pretrained MPNet at 67.}
-    \label{fig:signal-cliff}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.42\textwidth}
-    \includegraphics[width=\textwidth]{Content_Retention_Comparison_}
-    \caption{Cross-system context retention.
-             Brain $D_{50}\!=\!4$; fine-tuned LLM $D_{50}\!=\!12$;
-             pretrained LLM $D_{50}\!=\!17$.}
-    \label{fig:context-retention}
-  \end{subfigure}
-  \caption{\textbf{Signal structure across systems.}
-           (a) SVD ablation reveals qualitatively different compaction strategies.
-           (b) The brain requires only 4 dominant directions to achieve half its
-           classification accuracy, yet maintains a distributed plateau rather than
-           collapsing to chance --- consistent with distributed biological coding.}
-  \label{fig:signal-structure}
-\end{figure}
-
 Iterative SVD ablation removes the most informative linear direction at each step;
 a fresh logistic regression is re-trained on the residual.
 \textbf{Signal erasure points} (dimension at which accuracy reaches the 6-class chance
@@ -469,6 +444,31 @@ Qwen-FT~\citep{qwen2025}         & 0.260 & 12 & Compressed cliff   \\
 The brain's $D_{50}\!=\!4$ means removing just 4 dominant directions halves
 classification accuracy, yet the curve flattens into a distributed plateau rather than
 dropping to chance~\citep{haxby2001}, consistent with distributed biological coding.
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[t]{0.55\textwidth}
+    \includegraphics[width=\textwidth]{early_decay_comparison_top25}
+    \caption{Signal cliff: accuracy as dominant directions are removed iteratively.
+             Fine-tuned models reach chance at dimensions 15--20;
+             pretrained BGE at 26, pretrained MPNet at 67.}
+    \label{fig:signal-cliff}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.42\textwidth}
+    \includegraphics[width=\textwidth]{Content_Retention_Comparison_}
+    \caption{Cross-system context retention.
+             Brain $D_{50}\!=\!4$; fine-tuned LLM $D_{50}\!=\!12$;
+             pretrained LLM $D_{50}\!=\!17$.}
+    \label{fig:context-retention}
+  \end{subfigure}
+  \caption{\textbf{Signal structure across systems (Finding 2).}
+           (a) SVD ablation reveals qualitatively different compaction strategies.
+           (b) The brain requires only 4 dominant directions to achieve half its
+           classification accuracy, yet maintains a distributed plateau rather than
+           collapsing to chance --- consistent with distributed biological coding.}
+  \label{fig:signal-structure}
+\end{figure}
 
 % ---------------------------------------------------------------------------
 \subsection{Finding 3: The Low-Rank Emotion Subspace}
