@@ -540,15 +540,15 @@ Sadness--Surprise and Happiness--Fear are the most distant.
 Both systems show that geometric positioning relative to class prototypes predicts
 classification confidence --- through mechanistically distinct constructs.
 
-\textbf{LLMs: centroid distance $\to$ logit confidence.}
-For fine-tuned LLMs, centroid distance is a strong predictor of logit confidence
+\textbf{LLMs: centroid margin $\to$ logit margin.}
+For fine-tuned LLMs, centroid margin is a strong predictor of logit margin
 (Figure~\ref{fig:dist-logit}):
 
 \begin{center}
 \small
 \begin{tabular}{lcc}
 \toprule
-Variant & Dist-logit Pearson $r$ & Logit agreement in overlap (\%) \\
+Variant & Margin-logit Pearson $r$ & Logit agreement in overlap (\%) \\
 \midrule
 BGE-FT-Final    & 0.9572 & 93.4  \\
 MPNet-FT-Final  & 0.9884 & 100.0 \\
@@ -556,8 +556,8 @@ MPNet-FT-Final  & 0.9884 & 100.0 \\
 \end{tabular}
 \end{center}
 
-The near-linear relationship ($r\!=\!0.9884$ for MPNet-FT) means geometric position
-almost perfectly determines classifier confidence.
+The near-linear relationship ($r\!=\!0.9884$ for MPNet-FT) means centroid margin
+almost perfectly determines logit margin.
 In overlap regions, logit values are biased toward the competing class 93.4--100\% of
 the time.
 Note that in fine-tuned models this relationship is partially expected by the training
@@ -580,9 +580,9 @@ vanishes under random permutation.
   \centering
   \begin{subfigure}[t]{0.45\textwidth}
     \includegraphics[width=\textwidth]{dist_logit_scatter_MPNet-FT-Final}
-    \caption{LLM: centroid distance vs.\ logit margin for MPNet-FT-Final
-             ($r\!=\!0.988$). Geometric position almost perfectly determines
-             classifier confidence.}
+    \caption{LLM: centroid margin vs.\ logit margin for MPNet-FT-Final
+             ($r\!=\!0.988$). Geometric margin almost perfectly determines
+             logit margin.}
     \label{fig:dist-logit}
   \end{subfigure}
   \hfill
@@ -594,7 +594,7 @@ vanishes under random permutation.
     \label{fig:brain-uncertainty}
   \end{subfigure}
   \caption{\textbf{Geometric predictors of confidence (Finding 4).}
-           (a) In LLMs, centroid distance tightly predicts logit confidence.
+           (a) In LLMs, centroid margin tightly predicts logit margin.
            (b) In the brain, centroid \emph{margin} --- not distance --- predicts
            uncertainty, revealing competition between prototypes as the key signal.}
   \label{fig:finding4}
@@ -792,7 +792,7 @@ not less --- inconsistent with the hypothesis that the paradox is noise-driven.
 Both LLM embedding spaces and the tested brain fMRI dataset exhibit the same general
 relationship: geometric positioning relative to class prototypes predicts
 representational certainty.
-In LLMs this operates via centroid distance predicting logit confidence; in the brain,
+In LLMs this operates via centroid margin predicting logit margin; in the brain,
 via centroid margin predicting classifier uncertainty.
 These are complementary implementations of a geometric competition principle.
 The mechanistic interpretation likely lies in the mathematics of distributed
@@ -838,8 +838,8 @@ All findings are observational; no causal evidence is established.
 We have presented six findings characterising the geometry of emotion representations
 in LLMs and human fMRI.
 The core result is a paradox: a geometric competition principle for representational
-ambiguity is observable across both systems --- LLMs via centroid distance predicting
-logit confidence; the brain via centroid margin predicting classifier uncertainty ---
+ambiguity is observable across both systems --- LLMs via centroid margin predicting
+logit margin; the brain via centroid margin predicting classifier uncertainty ---
 yet global representational organisation is inverted: LLMs sort emotions by valence,
 the brain by arousal.
 
