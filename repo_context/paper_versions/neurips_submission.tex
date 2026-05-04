@@ -464,17 +464,6 @@ manifold.
 \label{sec:finding3}
 % ---------------------------------------------------------------------------
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.75\textwidth]{silhouette_comparison_20D}
-  \caption{\textbf{The Low-Rank Emotion Subspace.}
-           Silhouette scores in full 768D (grey) vs.\ the isolated top-20 SVD subspace
-           (red). Pretrained models improve from near-zero to $\approx\!0.41$;
-           fine-tuned models improve modestly from already-high baselines.
-           Accuracy in 20D equals or exceeds 768D in all four variants (see text).}
-  \label{fig:silhouette}
-\end{figure}
-
 \textbf{Named result.}
 Emotion is a low-rank linear property, occupying $\approx\!20/768\,{\approx}\,2.6\%$
 of full embedding capacity.
@@ -520,6 +509,17 @@ classification performance.
 Pairwise centroid distances preserve the same relational structure in 20D as in 768D:
 Happiness--Love and Fear--Anger are the closest pairs;
 Sadness--Surprise and Happiness--Fear are the most distant.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.75\textwidth]{silhouette_comparison_20D}
+  \caption{\textbf{The Low-Rank Emotion Subspace (Finding 3).}
+           Silhouette scores in full 768D (grey) vs.\ the isolated top-20 SVD subspace
+           (red). Pretrained models improve from near-zero to $\approx\!0.41$;
+           fine-tuned models improve modestly from already-high baselines.
+           Accuracy in 20D equals or exceeds 768D in all four variants (see text).}
+  \label{fig:silhouette}
+\end{figure}
 
 % ---------------------------------------------------------------------------
 \subsection{Finding 4: The Cross-System Ambiguity Gradient}
