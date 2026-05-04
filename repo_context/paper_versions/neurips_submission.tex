@@ -316,9 +316,9 @@ noise ceiling) are the reliable quantities.
 \section{Results}
 % ===========================================================================
 
-We present six findings in order of increasing cross-system scope.
-Findings 1--4 characterise LLM geometry; Finding 5 introduces the ambiguity gradient;
-Finding 6 documents the global representational inversion.
+We present five findings in order of increasing cross-system scope.
+Findings 1--3 characterise LLM geometry; Finding 4 introduces the ambiguity gradient;
+Finding 5 documents the global representational inversion.
 
 % ---------------------------------------------------------------------------
 \subsection{Finding 1: The Void and the Belt}
@@ -344,7 +344,7 @@ Finding 6 documents the global representational inversion.
              (peak density shell) are consistent across all systems.}
     \label{fig:density-ambiguity}
   \end{subfigure}
-  \caption{\textbf{Cluster geometry and density structure (Findings 1 and 2).}
+  \caption{\textbf{Cluster geometry and density structure (Finding 1).}
            (a) The cloud-to-island transition from pretrained to fine-tuned is
            visible in raw PCA projection.
            (b) Despite visual differences, all variants share the same two-zone
@@ -390,35 +390,9 @@ BGE-Base-Final  & 0.938 & 1.062 & $+0.125$ & 0.6875 \\
 
 Fine-tuning creates a geometrically safe zone between peak density and the onset of
 competitive class confusion; for pretrained models this buffer is near zero.
-
-% ---------------------------------------------------------------------------
-\subsection{Finding 2: Unoccupied Centroids}
-\label{sec:finding2}
-% ---------------------------------------------------------------------------
-
-No observed sample meets the condition of being within the void region near its own
-prototype. \textbf{No embedding aligns exclusively with a single class prototype in
-any tested model or the brain fMRI system.}
-
-\textbf{Graduated overlap rates (final layer, full validation set):}
-
-\begin{center}
-\small
-\begin{tabular}{lc}
-\toprule
-Variant & Global Overlap (\%) \\
-\midrule
-MPNet-FT-Final   & 0.42 \\
-BGE-FT-Final     & 1.81 \\
-MPNet-Base-Final & 18.45 \\
-BGE-Base-Final   & 19.22 \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-The most entangled pair is Happiness vs.\ Love (42\% pairwise overlap in pretrained
-models), sharing adjacent circumplex positions. The most separable is Fear vs.\ Anger
-(12\% overlap), despite both occupying the negative high-arousal quadrant.
+No embedding aligns exclusively with a single class prototype in any system:
+global overlap rates range from 0.42\% (MPNet-FT-Final) to 19.22\% (BGE-Base-Final),
+confirming that fine-tuning substantially reduces inter-class geometric confusion.
 
 % ---------------------------------------------------------------------------
 \subsection{Finding 3: Information Compaction vs.\ Distribution}
