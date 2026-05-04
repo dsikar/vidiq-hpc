@@ -425,27 +425,16 @@ Pretrained MPNet-Base retains decodable signal for 67 dimensions, a $4.5\times$ 
 manifold than the fine-tuned equivalent (Figure~\ref{fig:signal-cliff}).
 
 \textbf{Cross-system extension.}
-A separate iterative ablation compared three systems
-(Figure~\ref{fig:context-retention}):
+A separate iterative ablation across three systems
+(Figure~\ref{fig:context-retention}) shows qualitatively distinct signal geometries:
+the human brain ($D_{50}\!=\!4$, AUC 0.302) uses the most distributed code ---
+removing just 4 dominant directions halves accuracy, yet the curve flattens into a
+plateau rather than collapsing to chance~\citep{haxby2001};
+Qwen-FT~\citep{qwen2025} ($D_{50}\!=\!12$, AUC 0.260) compresses signal into a steep
+cliff; pretrained MPNet ($D_{50}\!=\!17$, AUC 0.331) spreads it across the widest
+manifold.
 
-\begin{center}
-\small
-\begin{tabular}{lccc}
-\toprule
-System & AUC & $D_{50}$ & Signal profile \\
-\midrule
-Human Brain                      & 0.302 & 4  & Highly distributed \\
-MPNet-Pretrained                 & 0.331 & 17 & Redundant manifold \\
-Qwen-FT~\citep{qwen2025}         & 0.260 & 12 & Compressed cliff   \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-The brain's $D_{50}\!=\!4$ means removing just 4 dominant directions halves
-classification accuracy, yet the curve flattens into a distributed plateau rather than
-dropping to chance~\citep{haxby2001}, consistent with distributed biological coding.
-
-\begin{figure}[h]
+\begin{figure}[h!]
   \centering
   \begin{subfigure}[t]{0.51\textwidth}
     \includegraphics[height=4cm]{early_decay_comparison_top25}
