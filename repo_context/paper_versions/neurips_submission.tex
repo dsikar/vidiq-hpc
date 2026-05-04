@@ -47,6 +47,7 @@
   {../../experiments/brain_embedding_understanding/checking_centroids/reports/}
   {../../experiments/brain_embedding_understanding/valence-arousal-dimensional_reduction/reports/}
   {../../experiments/brain_embedding_understanding/checking_density_geometry/reports/}
+  {../../experiments/understanding_text_embeddings/reports/phase4/visuals/}
 }
 
 % ---------------------------------------------------------------------------
@@ -504,6 +505,27 @@ Sadness--Surprise and Happiness--Fear are the most distant.
            fine-tuned models improve modestly from already-high baselines.
            Accuracy in 20D equals or exceeds 768D in all four variants (see text).}
   \label{fig:silhouette}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[t]{0.49\textwidth}
+    \includegraphics[height=3.2cm]{comparison_scatter_BGE-Base-Final}
+    \caption{BGE-Base-Final: PCA scatter in full 768D (left) vs.\ top-20 SVD
+             subspace (right). Diffuse clouds sharpen into separated clusters.}
+    \label{fig:scatter-bge}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.49\textwidth}
+    \includegraphics[height=3.2cm]{comparison_scatter_MPNet-Base-Final}
+    \caption{MPNet-Base-Final: same comparison. Silhouette improves from
+             0.057 to 0.415 ($+627\%$) and from 0.047 to 0.408 ($+765\%$).}
+    \label{fig:scatter-mpnet}
+  \end{subfigure}
+  \caption{\textbf{768D vs.\ top-20 SVD subspace (Finding 3).}
+           Projecting into the 20-dimensional signal subspace reveals the cluster
+           structure hidden by noise dimensions in the full embedding space.}
+  \label{fig:scatter-comparison}
 \end{figure}
 
 % ---------------------------------------------------------------------------
