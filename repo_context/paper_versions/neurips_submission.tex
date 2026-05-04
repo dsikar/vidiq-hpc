@@ -228,7 +228,7 @@ BGE-Base-Mid    & bge-base-en-v1.5 & Pretrained & L6  & 768 \\
 \end{center}
 
 Fine-tuned models were trained on the \texttt{dair-ai/emotion} training split.
-The cross-system context retention experiment (Section~\ref{sec:finding3}) additionally
+The cross-system context retention experiment (Section~\ref{sec:finding2}) additionally
 includes Qwen3-1.7B fine-tuned~\citep{qwen2025} (PCA-projected to 768D).
 
 % ===========================================================================
@@ -329,33 +329,6 @@ Finding 5 documents the global representational inversion.
 A consistent two-zone density structure emerges across all 8 LLM variants and
 human brain fMRI (Figure~\ref{fig:clusters-density}).
 
-\begin{figure}[h]
-  \centering
-  \begin{subfigure}[b]{0.38\textwidth}
-    \includegraphics[height=5cm]{global_density_ambiguity_curves}
-    \caption{Radial density profiles (top) and ambiguity gradients (bottom)
-             for all 8 LLM variants.
-             The void region (zero density near centroid) and the Belt
-             (peak density shell) are consistent across all systems.}
-    \label{fig:density-ambiguity}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.59\textwidth}
-    \includegraphics[height=5cm]{global_density_decay_comparison_}
-    \caption{Radial density decay for LLM variants (coloured) overlaid with
-             human brain fMRI (dashed black).
-             The two-zone structure extends to neural data.}
-    \label{fig:brain-density}
-  \end{subfigure}
-  \caption{\textbf{The Void and the Belt (Finding 1).}
-           (a) All 8 LLM variants share the same two-zone radial density
-           structure in normalised-distance space.
-           (b) The same structure is present in human brain fMRI emotion
-           representations, establishing it as a cross-system geometric
-           principle.}
-  \label{fig:clusters-density}
-\end{figure}
-
 \textbf{The Void.}
 No data points exist within approximately 0.375--0.625 normalised distance units of
 any emotion centroid.
@@ -395,12 +368,39 @@ No embedding aligns exclusively with a single class prototype in any system:
 global overlap rates range from 0.42\% (MPNet-FT-Final) to 19.22\% (BGE-Base-Final),
 confirming that fine-tuning substantially reduces inter-class geometric confusion.
 
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.38\textwidth}
+    \includegraphics[height=5cm]{global_density_ambiguity_curves}
+    \caption{Radial density profiles (top) and ambiguity gradients (bottom)
+             for all 8 LLM variants.
+             The void region (zero density near centroid) and the Belt
+             (peak density shell) are consistent across all systems.}
+    \label{fig:density-ambiguity}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.59\textwidth}
+    \includegraphics[height=5cm]{global_density_decay_comparison_}
+    \caption{Radial density decay for LLM variants (coloured) overlaid with
+             human brain fMRI (dashed black).
+             The two-zone structure extends to neural data.}
+    \label{fig:brain-density}
+  \end{subfigure}
+  \caption{\textbf{The Void and the Belt (Finding 1).}
+           (a) All 8 LLM variants share the same two-zone radial density
+           structure in normalised-distance space.
+           (b) The same structure is present in human brain fMRI emotion
+           representations, establishing it as a cross-system geometric
+           principle.}
+  \label{fig:clusters-density}
+\end{figure}
+
 % ---------------------------------------------------------------------------
-\subsection{Finding 3: Information Compaction vs.\ Distribution}
-\label{sec:finding3}
+\subsection{Finding 2: Information Compaction vs.\ Distribution}
+\label{sec:finding2}
 % ---------------------------------------------------------------------------
 
-\begin{figure}[t]
+\begin{figure}[h]
   \centering
   \begin{subfigure}[b]{0.55\textwidth}
     \includegraphics[width=\textwidth]{early_decay_comparison_top25}
@@ -471,8 +471,8 @@ classification accuracy, yet the curve flattens into a distributed plateau rathe
 dropping to chance~\citep{haxby2001}, consistent with distributed biological coding.
 
 % ---------------------------------------------------------------------------
-\subsection{Finding 4: The Low-Rank Emotion Subspace}
-\label{sec:finding4}
+\subsection{Finding 3: The Low-Rank Emotion Subspace}
+\label{sec:finding3}
 % ---------------------------------------------------------------------------
 
 \begin{figure}[t]
@@ -533,8 +533,8 @@ Happiness--Love and Fear--Anger are the closest pairs;
 Sadness--Surprise and Happiness--Fear are the most distant.
 
 % ---------------------------------------------------------------------------
-\subsection{Finding 5: The Cross-System Ambiguity Gradient}
-\label{sec:finding5}
+\subsection{Finding 4: The Cross-System Ambiguity Gradient}
+\label{sec:finding4}
 % ---------------------------------------------------------------------------
 
 \begin{figure}[t]
@@ -556,7 +556,7 @@ Sadness--Surprise and Happiness--Fear are the most distant.
   \caption{\textbf{The cross-system ambiguity gradient.}
            Both systems link geometric proximity to prototypes with representational
            certainty, through complementary mechanisms.}
-  \label{fig:finding5}
+  \label{fig:finding4}
 \end{figure}
 
 Both systems show that geometric positioning relative to class prototypes predicts
@@ -614,7 +614,7 @@ $d\!=\!1.34$ --- indicating that while gradient \emph{shape} is shared, absolute
 density of representations around centroids differs substantially between systems.
 
 % ---------------------------------------------------------------------------
-\subsection{Finding 6: The Valence-Arousal Inversion}
+\subsection{Finding 5: The Valence-Arousal Inversion}
 \label{sec:inversion}
 % ---------------------------------------------------------------------------
 
