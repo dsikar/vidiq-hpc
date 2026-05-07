@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 import numpy as np
 
+ROOT = Path(__file__).resolve().parents[1]
+
 def get_heatmap_color(val):
     """Returns a background color based on distance (Darker for distant, Lighter for close)"""
     # Normalized val expected to be around 0.5 to 2.0
@@ -19,7 +21,7 @@ def get_heatmap_color(val):
     return f"rgb({r}, {g}, {b})"
 
 def generate_phase4_report():
-    root = Path("/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/understanding_text_embeddings")
+    root = ROOT
     metrics_path = root / "reports/phase4/subspace_metrics_20D.json"
     dist_path = root / "reports/phase4/centroid_distances_20D.json"
     

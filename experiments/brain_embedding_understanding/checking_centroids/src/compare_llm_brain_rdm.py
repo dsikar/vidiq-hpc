@@ -7,7 +7,7 @@ from scipy.spatial import procrustes
 from pathlib import Path
 
 # --- CONFIG ---
-EXP_ROOT = Path("/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/brain_embedding_understanding/checking_centroids")
+EXP_ROOT = Path(__file__).resolve().parents[1]
 RDM_PATH = EXP_ROOT / "reports/rdm_matrices.json"
 OUTPUT_DIR = EXP_ROOT / "reports"
 

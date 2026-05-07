@@ -6,10 +6,24 @@ from pathlib import Path
 from scipy.integrate import simpson
 
 # --- PATHS ---
-METRICS_SOURCE = "/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/understanding_text_embeddings/reports/phase3_high_res/high_res_metrics_v2.json"
-EXP_ROOT = Path("/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/brain_embedding_understanding/checking_context_retention_across_dimensions")
+REPO_ROOT = Path(__file__).resolve().parents[4]
+TEXT_EXPERIMENT_ROOT = REPO_ROOT / "experiments/understanding_text_embeddings"
+METRICS_SOURCE = Path(
+    os.environ.get(
+        "RETENTION_METRICS_SOURCE",
+        str(TEXT_EXPERIMENT_ROOT / "reports/phase3/retention_metrics_top200_directions.json"),
+    )
+)
+EXP_ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = EXP_ROOT / "reports"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+
+def unpack_metrics(metrics):
+    accuracies = metrics["accuracies"]
+    dims = metrics.get("dims_removed", list(range(len(accuracies))))
+    chance = metrics.get("chance_level", 1.0 / 6.0)
+    return dims, accuracies, chance
 
 def calculate_comparison_metrics(name, dims, accs, chance):
     # 1. AUC (Signal Volume)
@@ -52,9 +66,7 @@ def main():
     plt.figure(figsize=(12, 7))
     
     for name, metrics in data.items():
-        dims = metrics["dims_removed"]
-        accs = metrics["accuracies"]
-        chance = metrics["chance_level"]
+        dims, accs, chance = unpack_metrics(metrics)
         
         # Calculate comparison numbers
         comp = calculate_comparison_metrics(name, dims, accs, chance)

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
@@ -13,13 +14,18 @@ from tqdm.auto import tqdm
 from transformers import AutoModel, AutoTokenizer
 
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CSV_PATH = Path(
-    "/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/data/Text_Datasets/20-emotions/"
-    "balanced_emotions_6classes.csv"
+    os.environ.get(
+        "BALANCED_EMOTIONS_CSV",
+        str(REPO_ROOT / "data/text/balanced_emotions_6classes.csv"),
+    )
 )
 DEFAULT_OUTPUT_ROOT = Path(
-    "/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/artifacts/embeddings/"
-    "balanced-6-emotions"
+    os.environ.get(
+        "BALANCED_EMOTIONS_OUTPUT_ROOT",
+        str(REPO_ROOT / "artifacts/embeddings/balanced-6-emotions"),
+    )
 )
 DEFAULT_MODEL_NAME = "BAAI/bge-base-en-v1.5"
 DEFAULT_LABELS = ["sadness", "happiness", "love", "anger", "fear", "surprise"]
@@ -34,6 +40,13 @@ def write_json(path: Path, data: Any) -> None:
     ensure_dir(path.parent)
     with path.open("w", encoding="utf-8") as fh:
         json.dump(data, fh, indent=2)
+
+
+def anonymize_source_path(path: Path) -> str:
+    try:
+        return str(path.resolve().relative_to(REPO_ROOT))
+    except ValueError:
+        return path.name
 
 
 def load_rows(csv_path: Path, text_column: str, label_column: str, label_names: list[str]) -> list[dict[str, str]]:
@@ -188,6 +201,10 @@ def main() -> None:
     args = parser.parse_args()
 
     label_names = parse_labels(args.label_names)
+    if not args.csv_path.exists():
+        raise FileNotFoundError(
+            f"Missing input CSV at {args.csv_path}. Pass --csv-path or set BALANCED_EMOTIONS_CSV."
+        )
     rows = load_rows(args.csv_path, args.text_column, args.label_column, label_names)
     texts = [row["text"] for row in rows]
     output_root = ensure_dir(args.output_root)
@@ -200,7 +217,7 @@ def main() -> None:
     )
     run_metadata = {
         **embedding_metadata,
-        "source_csv": str(args.csv_path),
+        "source_csv": anonymize_source_path(args.csv_path),
         "text_column": args.text_column,
         "label_column": args.label_column,
         "label_names": label_names,

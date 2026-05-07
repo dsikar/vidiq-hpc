@@ -2,6 +2,8 @@ import json
 import numpy as np
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[1]
+
 def calculate_all_buffers(metrics_data):
     results = []
     for name, m in metrics_data.items():
@@ -25,7 +27,7 @@ def calculate_all_buffers(metrics_data):
     return results
 
 def generate_phase2_report():
-    root = Path("/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/understanding_text_embeddings")
+    root = ROOT
     metrics_path = root / "reports/phase2/overlap_metrics.json"
     
     with open(metrics_path, "r") as f:

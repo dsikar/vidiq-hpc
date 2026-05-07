@@ -1,8 +1,10 @@
 import json
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[1]
+
 def generate_phase3_report():
-    root = Path("/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/understanding_text_embeddings")
+    root = ROOT
     metrics_path = root / "reports/phase3/retention_metrics_top200_directions.json"
     
     if not metrics_path.exists():

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 # --- CONFIG ---
-ROOT = Path("/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/understanding_text_embeddings")
+ROOT = Path(__file__).resolve().parents[1]
 METRICS_PATH = ROOT / "reports/phase3/retention_metrics_top200_directions.json"
 REPORT_DIR = ROOT / "reports/phase3"
 

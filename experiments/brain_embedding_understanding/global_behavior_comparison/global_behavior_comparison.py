@@ -5,11 +5,19 @@ import json
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import pearsonr, ks_2samp
+from pathlib import Path
 
 # --- PATHS ---
-brain_dir = "/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/human_brain_emotion_exports"
-llm_dir = "/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/embeddings_field/text/multiclass/pairwise"
-output_dir = os.path.join(brain_dir, "global_behavior_comparison")
+REPO_ROOT = Path(__file__).resolve().parents[3]
+EXP_ROOT = Path(__file__).resolve().parent
+brain_dir = Path(os.environ.get("BRAIN_GEOMETRY_DIR", str(REPO_ROOT / "data/brain")))
+llm_dir = Path(
+    os.environ.get(
+        "LLM_PAIRWISE_DIR",
+        str(REPO_ROOT / "experiments/embeddings_field/text/multiclass/pairwise"),
+    )
+)
+output_dir = Path(os.environ.get("GLOBAL_BEHAVIOR_OUTPUT_DIR", str(EXP_ROOT)))
 os.makedirs(output_dir, exist_ok=True)
 
 # --- 1. LOAD BRAIN DATA ---

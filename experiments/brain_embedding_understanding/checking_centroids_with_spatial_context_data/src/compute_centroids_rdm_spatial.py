@@ -12,12 +12,23 @@ from pathlib import Path
 
 # Reuse existing loaders
 import sys
-sys.path.append("/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/understanding_text_embeddings/src")
+REPO_ROOT = Path(__file__).resolve().parents[4]
+TEXT_SRC = REPO_ROOT / "experiments/understanding_text_embeddings/src"
+if str(TEXT_SRC) not in sys.path:
+    sys.path.append(str(TEXT_SRC))
 from loader_text import load_all_text_datasets
 
 # --- CONFIG ---
-EXP_ROOT = Path("/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/brain_embedding_understanding/checking_centroids_with_spatial_context_data")
-BRAIN_11D_CSV = "/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/brain_embedding_understanding/adding_spatial_context/outputs/brain_11d_representation.csv"
+EXP_ROOT = Path(__file__).resolve().parents[1]
+BRAIN_11D_CSV = Path(
+    os.environ.get(
+        "BRAIN_11D_CSV",
+        str(
+            REPO_ROOT
+            / "experiments/brain_embedding_understanding/adding_spatial_context/outputs/brain_11d_representation.csv"
+        ),
+    )
+)
 OUTPUT_DIR = EXP_ROOT / "reports"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 

@@ -8,12 +8,15 @@ from scipy.stats import ks_2samp
 
 # Reuse existing loaders
 import sys
-sys.path.append("/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/understanding_text_embeddings/src")
+REPO_ROOT = Path(__file__).resolve().parents[4]
+TEXT_SRC = REPO_ROOT / "experiments/understanding_text_embeddings/src"
+if str(TEXT_SRC) not in sys.path:
+    sys.path.append(str(TEXT_SRC))
 from loader_text import load_all_text_datasets
 from loader_brain import load_brain_data
 
 # --- CONFIG ---
-EXP_ROOT = Path("/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/brain_embedding_understanding/checking_density_geometry")
+EXP_ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = EXP_ROOT / "reports"
 SRC_DIR = EXP_ROOT / "src"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -92,7 +95,12 @@ def main():
 
     # 2. Load Brain Data
     print("   Processing Brain Data...")
-    brain_csv = "/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/human_brain_emotion_exports/human_subject_emotion_roi_48D_scaled.csv"
+    brain_csv = Path(
+        os.environ.get(
+            "BRAIN_48D_CSV",
+            str(REPO_ROOT / "data/brain/human_subject_emotion_roi_48D_scaled.csv"),
+        )
+    )
     _, _, df_z = load_brain_data(brain_csv)
     
     df_z["mapped"] = df_z["emotion"].map(EMOTION_MAP)

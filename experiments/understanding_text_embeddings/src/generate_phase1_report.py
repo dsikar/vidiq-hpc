@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 import numpy as np
 
+ROOT = Path(__file__).resolve().parents[1]
+
 def get_heatmap_color(val):
     factor = max(0, min(1, (val - 0.4) / 1.6))
     r = int(255 - factor * 225)
@@ -10,7 +12,7 @@ def get_heatmap_color(val):
     return f"rgb({r}, {g}, {b})"
 
 def update_html_with_visuals():
-    root = Path("/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/understanding_text_embeddings")
+    root = ROOT
     metrics_path = root / "reports/phase1/baseline_metrics.json"
     dist_path = root / "reports/phase1/centroid_distances_768D.json"
     

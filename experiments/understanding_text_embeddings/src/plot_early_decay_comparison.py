@@ -4,7 +4,7 @@ import numpy as np
 from pathlib import Path
 
 # --- CONFIG ---
-ROOT = Path("/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/understanding_text_embeddings")
+ROOT = Path(__file__).resolve().parents[1]
 METRICS_PATH = ROOT / "reports/phase3/importance_metrics.json"
 
 def plot_early_decay():

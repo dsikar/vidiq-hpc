@@ -5,8 +5,11 @@ from sklearn.preprocessing import LabelEncoder
 from pathlib import Path
 
 # --- PATHS ---
-INPUT_FILE = "/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/human_brain_emotion_exports/human_subject_emotion_roi_48D.csv"
-EXP_ROOT = Path("/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/vidiq-hpc/experiments/brain_embedding_understanding/adding_spatial_context")
+REPO_ROOT = Path(__file__).resolve().parents[4]
+INPUT_FILE = Path(
+    os.environ.get("BRAIN_48D_CSV", str(REPO_ROOT / "data/brain/human_subject_emotion_roi_48D.csv"))
+)
+EXP_ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = EXP_ROOT / "outputs"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 

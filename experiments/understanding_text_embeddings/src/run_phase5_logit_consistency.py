@@ -15,9 +15,12 @@ sys.path.append(str(Path(__file__).parent))
 from loader_text import load_all_text_datasets
 
 # --- CONFIG ---
-EXP_ROOT = Path(__file__).parent.parent
+REPO_ROOT = Path(__file__).resolve().parents[3]
+EXP_ROOT = Path(__file__).resolve().parents[1]
 REPORT_DIR = EXP_ROOT / "reports/phase5"
-VAL_CSV_PATH = Path("/Users/pritishrv/Documents/VIDEO_UNDERSTANDIG/data/Text_Datasets/20-emotions/Balanced_Data_split/validation.csv")
+VAL_CSV_PATH = Path(
+    os.environ.get("TEXT_VALIDATION_CSV", str(REPO_ROOT / "data/text/validation.csv"))
+)
 os.makedirs(REPORT_DIR, exist_ok=True)
 
 def analyze_logit_consistency(name, X, y, logits, label_names, texts=None):
